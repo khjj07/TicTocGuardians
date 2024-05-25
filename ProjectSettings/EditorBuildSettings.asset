@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/TicTocGuardians/Scenes/TitleScene.unity
+    guid: d77040913b1832847ac3d55be38d5b8c
+  - enabled: 1
+    path: Assets/TicTocGuardians/Scenes/LobbyScene.unity
+    guid: 5e9a1c002b6a1d14abd3fe6bed8fe529
+  - enabled: 1
+    path: Assets/TicTocGuardians/Scenes/PlayScene.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  m_configObjects: {}
