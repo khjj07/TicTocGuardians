@@ -1,0 +1,64 @@
+using System;
+using Default.Scripts.Util;
+using System.Collections.Generic;
+using TicTocGuardians.Scripts.Game.Manager;
+using UniRx;
+using UniRx.Triggers;
+using UnityEngine;
+
+namespace TicTocGuardians.Scripts.Game.Player
+{
+    [Serializable]
+    public class PlayerCloneData
+    {
+        public PlayerCloneData(PlayerType type, List<List<Action>> actions)
+        {
+            this.type = type;
+            this.actions = actions;
+        }
+
+        public PlayerType type;
+        public List<List<Action>> actions;
+
+    }
+
+    [RequireComponent(typeof(Player))]
+    public class PlayerClone : MonoBehaviour
+    {
+        [SerializeField]
+        private List<List<Action>> _actions;
+
+        private Player _player;
+        private int _index = 0;
+
+        [SerializeField] private float playRate=0.01f;
+
+        public void Awake()
+        {
+            _player = GetComponent<Player>();
+        }
+
+        public void Start()
+        {
+            //CreateMovementStream();
+        }
+
+        public void SetActions(List<List<Action>> actions)
+        {
+            _actions = actions;
+        }
+
+        public void CreateMovementStream()
+        {
+            this.FixedUpdateAsObservable().TakeWhile(_=> _actions.Count > _index).Subscribe(v =>
+            {
+                foreach (var action in _actions[_index])
+                {
+                    _player.Act(action);
+                }
+                _index++;
+            }).AddTo(gameObject);
+            
+        }
+    }
+}

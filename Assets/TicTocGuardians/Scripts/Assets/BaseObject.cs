@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TicTocGuardians.Scripts.Assets.LevelAsset;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,13 +33,8 @@ namespace TicTocGuardians.Scripts.Assets
 
     public abstract class BaseObject<T> : MonoBehaviour where T : BaseObjectAsset
     {
-        public abstract T Serialize(PlaceAsset parent);
+        public abstract T Serialize(LevelAsset.LevelAsset parent);
 
         public abstract void Deserialize(T asset);
-
-        public virtual void PostDeserialize(T asset)
-        {
-            //throw new System.NotImplementedException();
-        }
     }
 }

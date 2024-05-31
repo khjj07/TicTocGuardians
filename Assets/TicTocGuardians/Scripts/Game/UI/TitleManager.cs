@@ -1,4 +1,5 @@
 using DG.Tweening;
+using TicTocGuardians.Scripts.Game.Manager;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -21,9 +22,9 @@ namespace TicTocGuardians.Scripts.Game.UI
 
         private void TitleBegin()
         {
-             
-             _tapToStartButtonRect.localScale = Vector3.zero;
-             cinemaPlayer.AddCallback(OnCinemaEnd);
+
+            _tapToStartButtonRect.localScale = Vector3.zero;
+            cinemaPlayer.AddCallback(OnCinemaEnd);
             cinemaPlayer.Play();
         }
 
@@ -34,7 +35,7 @@ namespace TicTocGuardians.Scripts.Game.UI
 
         public void OnTapToStartButtonClick()
         {
-            StartCoroutine(GlobalLoadingManager.Instance.Loading("LobbyScene",1));
+            StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1));
             Debug.Log("next");
         }
 

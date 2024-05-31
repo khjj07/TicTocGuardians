@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -33,6 +34,28 @@ namespace Default.Scripts.Extension
         {
             string absPath = GetAbsolutePath(@this);
             return (absPath != null) ? new System.IO.DirectoryInfo(absPath) : null;
+        }
+
+        public static List<T> LoadAllObjectsInFolder<T>(this UnityEditor.DefaultAsset @this) where T : class
+        {
+            List<T> assets =new List<T>();
+            // 폴더 내 모든 자산의 GUID 배열을 가져옴
+            string[] assetGUIDs = AssetDatabase.FindAssets("", new[] { GetLocalPath(@this) });
+
+            foreach (string guid in assetGUIDs)
+            {
+                // GUID를 경로로 변환
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                // 자산을 Object 타입으로 로드
+                if (AssetDatabase.LoadAssetAtPath<Object>(assetPath) is T tmp)
+                {
+                    assets.Add(tmp);
+                }
+               
+
+            }
+
+            return assets;
         }
     }
 }
