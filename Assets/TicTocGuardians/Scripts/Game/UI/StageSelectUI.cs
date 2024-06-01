@@ -3,54 +3,17 @@ using TicTocGuardians.Scripts.Assets;
 using UnityEditor;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.Serialization;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 namespace TicTocGuardians.Scripts.Game.UI
 {
-    [CustomEditor(typeof(StageSelectUI))]
-    public class StageSelectUIInspector : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-            if (GUI.changed)
-            {
-                var ui = (StageSelectUI)target;
-                foreach (var button in ui.frame.GetComponentsInChildren<StageSelectButton>(true))
-                {
-                    DestroyImmediate(button.gameObject);
-                }
-                foreach (var preset in ui.asset.presets)
-                {
-                    var instance = PrefabUtility.InstantiatePrefab(ui.buttonPrefab, ui.frame) as StageSelectButton;
-                    instance.text.SetText(preset.text);
-                    instance.levelAsset = preset.levelAsset;
-                }
-            }
-
-            if (GUILayout.Button("Apply Changed"))
-            {
-                var ui = (StageSelectUI)target;
-                foreach (var button in ui.frame.GetComponentsInChildren<StageSelectButton>(true))
-                {
-                    DestroyImmediate(button.gameObject);
-                }
-                foreach (var preset in ui.asset.presets)
-                {
-                    var instance = PrefabUtility.InstantiatePrefab(ui.buttonPrefab, ui.frame) as StageSelectButton;
-                    instance.text.SetText(preset.text);
-                    instance.levelAsset = preset.levelAsset;
-                }
-            }
-           
-        }
-    }
-
+    
     public class StageSelectUI : MonoBehaviour
     {
         public StageSelectButton buttonPrefab;
         public RectTransform frame;
-        public StageSelectUIAsset asset;
+        public LevelPresetListAsset listAsset;
 
         public void Start()
         {
@@ -58,11 +21,15 @@ namespace TicTocGuardians.Scripts.Game.UI
             {
                 Destroy(button.gameObject);
             }
-            foreach (var preset in asset.presets)
+
+            int count = 0;
+            foreach (var preset in listAsset.presets)
             {
                 var instance = Instantiate(buttonPrefab, frame);
-                instance.text.SetText(preset.text);
-                instance.levelAsset = preset.levelAsset;
+                instance.text.SetText(preset.name);
+                instance.presetList = listAsset;
+                instance.index = count;
+                count++;
             }
             gameObject.SetActive(false);
         }

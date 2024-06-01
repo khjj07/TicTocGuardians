@@ -1,6 +1,6 @@
 using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
-using TicTocGuardians.Scripts.Game.Abstract;
+using TicTocGuardians.Scripts.Game.ETC;
 using UnityEditor;
 using UnityEngine;
 

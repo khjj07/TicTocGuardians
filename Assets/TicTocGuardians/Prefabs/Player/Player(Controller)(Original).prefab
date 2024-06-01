@@ -115,7 +115,7 @@ MonoBehaviour:
   acceleration: 0.5
   drag: 0.1
   footOrigin: {fileID: 3500753121403414045}
-  checkGroundDistance: 0.3
+  checkGroundDistance: 0.5
 --- !u!114 &3500753121927173927
 MonoBehaviour:
   m_ObjectHideFlags: 0

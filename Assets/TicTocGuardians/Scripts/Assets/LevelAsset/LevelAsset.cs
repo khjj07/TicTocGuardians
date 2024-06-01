@@ -1,5 +1,5 @@
 using TicTocGuardians.Scripts.Game;
-using TicTocGuardians.Scripts.Game.Abstract;
+using TicTocGuardians.Scripts.Game.LevelObjects;
 using UnityEditor;
 using UnityEngine;
 

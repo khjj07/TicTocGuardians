@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
 using TicTocGuardians.Scripts.Game;
-using TicTocGuardians.Scripts.Game.Abstract;
+using TicTocGuardians.Scripts.Game.LevelObjects;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,26 +11,26 @@ namespace TicTocGuardians.Scripts.LevelEditor
 {
     public class LevelEditorWindow : EditorWindow
     {
-        static LevelEditorWindow window;
+        private static LevelEditorWindow _window;
 
         private Vector2 _scrollPosition;
         private static int _tabIndex = 0;
         private int _createGridIndex = 0;
         readonly string[] _tabSubject = { "Create", "Level" };
-        private GameObject[] objects;
-        private LevelObject prefab;
+        private GameObject[] _objects;
+        private LevelObject _prefab;
         private LevelAsset _targetLevelAsset;
 
         public static void Open(Scripts.LevelEditor.LevelEditor tool)
         {
-            if (window == null)
+            if (_window == null)
             {
-                window = CreateInstance<LevelEditorWindow>();
+                _window = CreateInstance<LevelEditorWindow>();
             }
 
-            window.objects = LevelEditor.Instance.modelsFolder.LoadAllObjectsInFolder<GameObject>().ToArray();
+            _window._objects = LevelEditor.Instance.modelsFolder.LoadAllObjectsInFolder<GameObject>().ToArray();
             Debug.Log(LevelEditor.Instance.modelsFolder.GetLocalPath());
-            window.Show();
+            _window.Show();
         }
 
 
@@ -54,13 +54,13 @@ namespace TicTocGuardians.Scripts.LevelEditor
             EditorGUILayout.BeginVertical();
             {
 
-                prefab = (LevelObject)EditorGUILayout.ObjectField("Level Object", prefab, typeof(LevelObject), true);
+                _prefab = (LevelObject)EditorGUILayout.ObjectField("Level Object", _prefab, typeof(LevelObject), true);
 
-                if (GUILayout.Button("Create Level Object", EditorStyles.miniButton) && prefab)
+                if (GUILayout.Button("Create Level Object", EditorStyles.miniButton) && _prefab)
                 {
-                    var instance = PrefabUtility.InstantiatePrefab(prefab, Scripts.LevelEditor.LevelEditor.Instance.origin) as LevelObject;
+                    var instance = PrefabUtility.InstantiatePrefab(_prefab, Scripts.LevelEditor.LevelEditor.Instance.origin) as LevelObject;
 
-                    instance.Initialize(objects[_createGridIndex] as GameObject);
+                    instance.Initialize(_objects[_createGridIndex] as GameObject);
 
                     Selection.activeObject = instance;
                 }
@@ -73,10 +73,10 @@ namespace TicTocGuardians.Scripts.LevelEditor
             EditorGUILayout.BeginVertical();
             {
                 _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-                if (objects != null)
+                if (_objects != null)
                 {
                     List<GUIContent> contents = new List<GUIContent>();
-                    foreach (var obj in objects)
+                    foreach (var obj in _objects)
                     {
                         var content = new GUIContent(obj.name, (Texture)AssetPreview.GetAssetPreview(obj)); // file name in the resources folder without the (.png) extension
                         contents.Add(content);

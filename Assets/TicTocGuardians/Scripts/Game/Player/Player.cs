@@ -138,7 +138,7 @@ namespace TicTocGuardians.Scripts.Game.Player
                             }).AddTo(gameObject);
                         }).AddTo(gameObject);
                     }).AddTo(gameObject);
-               
+
 
             }
         }
@@ -152,14 +152,14 @@ namespace TicTocGuardians.Scripts.Game.Player
                 tmp.y = 0;
                 SetDirection(tmp.normalized);
             }
-     
+
             Animate();
             Debug.DrawRay(footOrigin.position, Vector3.down * checkGroundDistance, Color.red);
         }
 
         private bool IsContactGround()
         {
-          return Physics.Raycast(footOrigin.position, Vector3.down, checkGroundDistance);
+            return Physics.Raycast(footOrigin.position, Vector3.down, checkGroundDistance);
         }
 
         public void Act(Action action)
@@ -179,7 +179,10 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         private void SetDirection(Vector3 direction)
         {
-            transform.rotation = Quaternion.LookRotation(direction);
+            if (direction.magnitude > 0)
+            {
+                transform.rotation = Quaternion.LookRotation(direction);
+            }
         }
 
 
@@ -195,7 +198,7 @@ namespace TicTocGuardians.Scripts.Game.Player
         {
             if (MathF.Abs(_rigidbody.velocity.z) < speedMax)
             {
-                _rigidbody.AddForce(Vector3.forward * acceleration * direction,ForceMode.VelocityChange);
+                _rigidbody.AddForce(Vector3.forward * acceleration * direction, ForceMode.VelocityChange);
             }
         }
 

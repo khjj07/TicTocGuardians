@@ -1,6 +1,6 @@
 using System;
 
-namespace TicTocGuardians.Scripts.Game
+namespace TicTocGuardians.Scripts.Game.ETC
 {
     [Serializable]
     public class LevelTileData

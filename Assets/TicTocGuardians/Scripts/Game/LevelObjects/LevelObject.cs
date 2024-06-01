@@ -2,7 +2,7 @@ using System;
 using TicTocGuardians.Scripts.Assets;
 using UnityEngine;
 
-namespace TicTocGuardians.Scripts.Game.Abstract
+namespace TicTocGuardians.Scripts.Game.LevelObjects
 {
     [Serializable]
     public class LevelObjectAsset : BaseObjectAsset

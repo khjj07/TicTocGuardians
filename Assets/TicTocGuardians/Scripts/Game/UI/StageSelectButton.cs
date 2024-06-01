@@ -11,16 +11,16 @@ namespace TicTocGuardians.Scripts.Game.UI
 {
     public class StageSelectButton : MonoBehaviour
     {
+        public LevelPresetListAsset presetList;
+        public int index;
         public Button button;
         public TMP_Text text;
-        public LevelAsset levelAsset;
 
         public void Start()
         {
             button.onClick.AddListener(() =>
             {
-                GameManager.Instance.LoadLevel(levelAsset);
-                StartCoroutine(GlobalLoadingManager.Instance.Load(levelAsset.scene.name, 1.0f));
+                GameManager.Instance.LoadLevel(presetList,index);
             });
         }
     }

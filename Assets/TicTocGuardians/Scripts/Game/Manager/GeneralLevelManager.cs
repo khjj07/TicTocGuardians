@@ -27,7 +27,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
             Player1,
             Player2,
             Player3,
-            End
+            Success,
+            Fail
         }
 
         [SerializeField] private PlayerClone[] clonePrefabs = new PlayerClone[3];
@@ -36,7 +37,9 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [Header("UI")]
         [SerializeField] private Canvas readyUI;
         [SerializeField] private OrderingUI orderingUI;
-        [SerializeField] private Canvas ingameUI;
+        [SerializeField] private IngameUI ingameUI;
+        [SerializeField] private SuccessUI successUI;
+        [SerializeField] private FailUI failUI;
 
         [Header("ป๓ลย")]
         [SerializeField]
@@ -58,12 +61,23 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void Start()
         {
             base.Start();
-            GameManager.Instance.SetLevelManager(this);
+            GameManager.Instance.ActiveLevel(this);
             orderingUI.submitButton.onClick.AddListener(SubmitOrder);
             orderingUI.cancelButton.onClick.AddListener(CancelOrder);
             orderingUI.selectButtons[0].AddListener(() => { CharacterSelectButtonOnClick(0); });
             orderingUI.selectButtons[1].AddListener(() => { CharacterSelectButtonOnClick(1); });
             orderingUI.selectButtons[2].AddListener(() => { CharacterSelectButtonOnClick(2); });
+            successUI.goToHomeButton.onClick.AddListener(() => { StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));});
+            successUI.nextLevelButton.onClick.AddListener(() =>
+            {
+                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex()+1);
+            });
+
+            failUI.goToHomeButton.onClick.AddListener(() => { StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f)); });
+            failUI.retryButton.onClick.AddListener(() =>
+            { 
+                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex());
+            });
             _stateSubject.Where(x => x == Phase.Ready).Subscribe(_ =>
             {
                 EnableReadyUI();
@@ -90,11 +104,36 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 PlayerPhaseStart(2);
             });
 
-            _stateSubject.Where(x => x == Phase.End).Subscribe(_ =>
+            _stateSubject.Where(x => x == Phase.Success).Subscribe(_ =>
             {
-                Debug.Log("Game End");
+                EnableSuccessUI();
+            });
+
+            _stateSubject.Where(x => x == Phase.Fail).Subscribe(_ =>
+            {
+                EnableFailUI();
             });
             ChangeState(Phase.Ready);
+        }
+
+        private void EnableFailUI()
+        {
+            readyUI.gameObject.SetActive(false);
+            orderingUI.gameObject.SetActive(false);
+            ingameUI.gameObject.SetActive(false);
+            successUI.gameObject.SetActive(false);
+            failUI.gameObject.SetActive(true);
+            failUI.Enable();;
+        }
+
+        private void EnableSuccessUI()
+        {
+            readyUI.gameObject.SetActive(false);
+            orderingUI.gameObject.SetActive(false);
+            ingameUI.gameObject.SetActive(false);
+            successUI.gameObject.SetActive(true);
+            failUI.gameObject.SetActive(false);
+            successUI.Enable(); ;
         }
 
         private void EnableReadyUI()
@@ -102,6 +141,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
             readyUI.gameObject.SetActive(true);
             orderingUI.gameObject.SetActive(false);
             ingameUI.gameObject.SetActive(false);
+            successUI.gameObject.SetActive(false);
+            failUI.gameObject.SetActive(false);
         }
 
         private void CharacterSelectButtonOnClick(int i)
@@ -156,6 +197,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
             readyUI.gameObject.SetActive(false);
             orderingUI.gameObject.SetActive(true);
             ingameUI.gameObject.SetActive(false);
+            successUI.gameObject.SetActive(false);
+            failUI.gameObject.SetActive(false);
         }
 
         private void EnableIngameUI()
@@ -163,6 +206,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
             readyUI.gameObject.SetActive(false);
             orderingUI.gameObject.SetActive(false);
             ingameUI.gameObject.SetActive(true);
+            successUI.gameObject.SetActive(false);
+            failUI.gameObject.SetActive(false);
         }
 
         public void PlayerPhaseStart(int order)

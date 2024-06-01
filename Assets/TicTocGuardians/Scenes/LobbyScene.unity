@@ -843,6 +843,10 @@ PrefabInstance:
       propertyPath: asset
       value: 
       objectReference: {fileID: 11400000, guid: d9021c579ecf8104887e96aeb6a85126, type: 2}
+    - target: {fileID: 8008935683377202360, guid: 63f5133611668ce468282b0db62858ed, type: 3}
+      propertyPath: listAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: d9021c579ecf8104887e96aeb6a85126, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 63f5133611668ce468282b0db62858ed, type: 3}
 --- !u!224 &974368954 stripped
@@ -1381,7 +1385,7 @@ MonoBehaviour:
   normalUIArea: {fileID: 348549434}
   hardUIArea: {fileID: 393128613}
   controller: {fileID: 856377295}
-  difficultySelectUI: {fileID: 1233594197}
+  difficultySelectTV: {fileID: 1233594197}
   centerCameraPoint: {fileID: 4649815368960726258}
   leftCameraPoint: {fileID: 3922216459941282057}
   rightCameraPoint: {fileID: 633587697686439910}
@@ -1512,6 +1516,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8008935683377202360, guid: 63f5133611668ce468282b0db62858ed, type: 3}
       propertyPath: asset
+      value: 
+      objectReference: {fileID: 11400000, guid: 6e442148a3b85ed4588121d6cbcce186, type: 2}
+    - target: {fileID: 8008935683377202360, guid: 63f5133611668ce468282b0db62858ed, type: 3}
+      propertyPath: listAsset
       value: 
       objectReference: {fileID: 11400000, guid: 6e442148a3b85ed4588121d6cbcce186, type: 2}
     m_RemovedComponents: []

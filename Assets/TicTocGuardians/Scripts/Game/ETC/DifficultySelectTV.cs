@@ -3,9 +3,9 @@ using DG.Tweening;
 using UniRx;
 using UnityEngine;
 
-namespace TicTocGuardians.Scripts.Game.UI
+namespace TicTocGuardians.Scripts.Game.ETC
 {
-    public class DifficultySelectUI : MonoBehaviour
+    public class DifficultySelectTV : MonoBehaviour
     {
         public enum State
         {
@@ -47,7 +47,7 @@ namespace TicTocGuardians.Scripts.Game.UI
         public async Task ChangeStateWithGlitch(State state)
         {
             _stateSubject.OnNext(State.Glitch);
-            await Task.Delay(1000);
+            await Task.Delay(500);
             _stateSubject.OnNext(state);
         }
     }

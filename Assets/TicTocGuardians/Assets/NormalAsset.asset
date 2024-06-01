@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: NormalAsset
   m_EditorClassIdentifier: 
   presets:
-  - text: 01
-    placeAsset: {fileID: 0}
-  - text: 02
-    placeAsset: {fileID: 0}
-  - text: 03
-    placeAsset: {fileID: 0}
+  - name: 01
+    levelAsset: {fileID: 0}
+  - name: 02
+    levelAsset: {fileID: 0}
+  - name: 03
+    levelAsset: {fileID: 0}

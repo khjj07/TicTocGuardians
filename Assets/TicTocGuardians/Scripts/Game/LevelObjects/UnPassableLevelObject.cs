@@ -1,6 +1,5 @@
 using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
-using TicTocGuardians.Scripts.Game.Abstract;
 using UnityEditor;
 using UnityEngine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
