@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1283317330623440567}
   - component: {fileID: 1283317330623440563}
   - component: {fileID: 1283317330623440562}
-  - component: {fileID: 1283317330623440565}
+  - component: {fileID: 6356664021852180705}
   - component: {fileID: 1283317330623440564}
   m_Layer: 6
   m_Name: Player(Controller)(Rabbit)
@@ -67,7 +67,7 @@ Rigidbody:
   m_Interpolate: 2
   m_Constraints: 112
   m_CollisionDetection: 2
---- !u!114 &1283317330623440565
+--- !u!114 &6356664021852180705
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1283317330623440566}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9c59955ffc9a5040ab76bab6d06b8f0, type: 3}
+  m_Script: {fileID: 11500000, guid: 4acff06a0e857574392de55ff89fb5e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   jumpForce: 10
@@ -108,7 +108,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1283317331139860366}
   m_Layer: 0
-  m_Name: footOrigin
+  m_Name: FootOrigin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

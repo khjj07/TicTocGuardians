@@ -36,7 +36,6 @@ namespace TicTocGuardians.Scripts.Game.UI
         public void OnTapToStartButtonClick()
         {
             StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1));
-            Debug.Log("next");
         }
 
     }

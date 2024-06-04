@@ -14,15 +14,11 @@ namespace TicTocGuardians.Scripts.Game.Player
             _player = GetComponent<Player>();
         }
 
-
         public void CreateMovementStream()
         {
             GlobalInputBinder.CreateGetAxisStreamOptimize("Horizontal").Subscribe(v => _player.Act(new Action(Action.State.MoveX, v))).AddTo(gameObject);
             GlobalInputBinder.CreateGetAxisStreamOptimize("Vertical").Subscribe(v => _player.Act(new Action(Action.State.MoveZ, v))).AddTo(gameObject);
             GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space).Subscribe(_ => _player.Act(new Action(Action.State.Jump))).AddTo(gameObject);
         }
-
-     
-
     }
 }

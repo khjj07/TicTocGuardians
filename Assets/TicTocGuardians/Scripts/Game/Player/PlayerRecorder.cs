@@ -12,8 +12,6 @@ namespace TicTocGuardians.Scripts.Game.Player
         private List<List<Action>> _actions = new List<List<Action>>();
         private List<Action> _currentActionBuffer;
         private bool _isRecord;
-        [SerializeField]
-        private float recordRate = 0.01f;
 
         public void RecordStart(Player target)
         {

@@ -12,8 +12,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
 {
     public class LobbyManager : MonoBehaviour
     {
-        [SerializeField]
-        private LevelCamera levelCamera;
+        [FormerlySerializedAs("levelCamera")] [SerializeField]
+        private CameraLevelObject cameraLevelObject;
         [SerializeField]
         private ReactableArea normalUIArea;
         [SerializeField]
@@ -39,7 +39,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             GlobalLoadingManager.Instance.ActiveScene();
             normalUIArea.stepInEvent.AddListener(() =>
             {
-                levelCamera.Move(rightCameraPoint.position, 1.0f);
+                cameraLevelObject.Move(rightCameraPoint.position, 1.0f);
                  difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Normal);
                 normalSelectUI.transform.DOMove(normalSelectUIEndPoint.position, 1.0f);
                 EventSystem.current.SetSelectedGameObject(normalSelectUI.frame.GetChild(0).gameObject);
@@ -47,7 +47,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             });
             normalUIArea.stepOutEvent.AddListener(() =>
             {
-                levelCamera.Move(centerCameraPoint.position, 1.0f);
+                cameraLevelObject.Move(centerCameraPoint.position, 1.0f);
                 difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Select);
                 normalSelectUI.transform.DOMove(normalSelectUIStartPoint.position, 1.0f).OnComplete(() =>
                 {
@@ -58,7 +58,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
             hardUIArea.stepInEvent.AddListener(() =>
             {
-                levelCamera.Move(leftCameraPoint.position, 1.0f);
+                cameraLevelObject.Move(leftCameraPoint.position, 1.0f);
                 difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Hard);
                 hardSelectUI.transform.DOMove(hardSelectUIEndPoint.position, 1.0f);
                 EventSystem.current.SetSelectedGameObject(hardSelectUI.frame.GetChild(0).gameObject);
@@ -66,7 +66,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             });
             hardUIArea.stepOutEvent.AddListener(() =>
             {
-                levelCamera.Move(centerCameraPoint.position, 1.0f);
+                cameraLevelObject.Move(centerCameraPoint.position, 1.0f);
                 difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Select);
                 hardSelectUI.transform.DOMove(hardSelectUIStartPoint.position, 1.0f).OnComplete(() =>
                 {

@@ -7,10 +7,9 @@ using TicTocGuardians.Scripts.Game.Player;
 using TicTocGuardians.Scripts.Game.UI;
 using UniRx;
 using UniRx.Triggers;
-using Unity.VisualScripting;
+
 using UnityEngine;
-using UnityEngine.Profiling;
-using UnityEngine.Rendering;
+
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Action = TicTocGuardians.Scripts.Game.Player.Action;
@@ -33,7 +32,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         [SerializeField] private PlayerClone[] clonePrefabs = new PlayerClone[3];
 
-        [SerializeField] private List<PlayerType> playerOrder = new List<PlayerType>();
         [Header("UI")]
         [SerializeField] private Canvas readyUI;
         [SerializeField] private OrderingUI orderingUI;
@@ -45,13 +43,11 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField]
         private Phase currentState;
 
-        private Subject<Phase> _stateSubject = new Subject<Phase>();
-
-
-        private PlayerRecorder _recorder;
-        [SerializeField]
+        private Subject<Phase> _phaseSubject = new Subject<Phase>();
+        private List<PlayerType> playerOrder = new List<PlayerType>();
         private List<PlayerCloneData> _cloneData = new List<PlayerCloneData>();
         private List<PlayerClone> _currentClones = new List<PlayerClone>();
+        private PlayerRecorder _recorder;
 
         public void Awake()
         {
@@ -62,58 +58,83 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             base.Start();
             GameManager.Instance.ActiveLevel(this);
-            orderingUI.submitButton.onClick.AddListener(SubmitOrder);
-            orderingUI.cancelButton.onClick.AddListener(CancelOrder);
-            orderingUI.selectButtons[0].AddListener(() => { CharacterSelectButtonOnClick(0); });
-            orderingUI.selectButtons[1].AddListener(() => { CharacterSelectButtonOnClick(1); });
-            orderingUI.selectButtons[2].AddListener(() => { CharacterSelectButtonOnClick(2); });
-            successUI.goToHomeButton.onClick.AddListener(() => { StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));});
-            successUI.nextLevelButton.onClick.AddListener(() =>
-            {
-                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex()+1);
-            });
+            InitializeOrderingUI();
+            InitializeSuccessUI();
+            InitializeFailUI();
+            InitializePhaseSubject();
+            ChangeState(Phase.Ready);
+        }
 
-            failUI.goToHomeButton.onClick.AddListener(() => { StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f)); });
-            failUI.retryButton.onClick.AddListener(() =>
-            { 
-                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex());
-            });
-            _stateSubject.Where(x => x == Phase.Ready).Subscribe(_ =>
+        private void InitializePhaseSubject()
+        {
+            _phaseSubject.Where(x => x == Phase.Ready).Subscribe(_ =>
             {
                 EnableReadyUI();
                 CreateReadyPhaseStream();
             });
 
-            _stateSubject.Where(x => x == Phase.Ordering).Subscribe(_ =>
+            _phaseSubject.Where(x => x == Phase.Ordering).Subscribe(_ =>
             {
                 EnableOrderingUI();
             });
 
-            _stateSubject.Where(x => x == Phase.Player1).Subscribe(_ =>
+            _phaseSubject.Where(x => x == Phase.Player1).Subscribe(_ =>
             {
                 PlayerPhaseStart(0);
             });
 
-            _stateSubject.Where(x => x == Phase.Player2).Subscribe(_ =>
+            _phaseSubject.Where(x => x == Phase.Player2).Subscribe(_ =>
             {
                 PlayerPhaseStart(1);
             });
 
-            _stateSubject.Where(x => x == Phase.Player3).Subscribe(_ =>
+            _phaseSubject.Where(x => x == Phase.Player3).Subscribe(_ =>
             {
                 PlayerPhaseStart(2);
             });
 
-            _stateSubject.Where(x => x == Phase.Success).Subscribe(_ =>
+            _phaseSubject.Where(x => x == Phase.Success).Subscribe(_ =>
             {
                 EnableSuccessUI();
             });
 
-            _stateSubject.Where(x => x == Phase.Fail).Subscribe(_ =>
+            _phaseSubject.Where(x => x == Phase.Fail).Subscribe(_ =>
             {
                 EnableFailUI();
             });
-            ChangeState(Phase.Ready);
+        }
+
+        private void InitializeFailUI()
+        {
+            failUI.goToHomeButton.onClick.AddListener(() =>
+            {
+                StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
+            });
+            failUI.retryButton.onClick.AddListener(() =>
+            {
+                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex());
+            });
+        }
+
+        private void InitializeSuccessUI()
+        {
+            successUI.goToHomeButton.onClick.AddListener(() =>
+            {
+                StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
+            });
+            successUI.nextLevelButton.onClick.AddListener(() =>
+            {
+                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex() + 1);
+            });
+        }
+
+        private void InitializeOrderingUI()
+        {
+            orderingUI.submitButton.onClick.AddListener(SubmitOrder);
+            orderingUI.cancelButton.onClick.AddListener(CancelOrder);
+            orderingUI.selectButtons[0].AddListener(() => { CharacterSelectButtonOnClick(0); });
+            orderingUI.selectButtons[1].AddListener(() => { CharacterSelectButtonOnClick(1); });
+            orderingUI.selectButtons[2].AddListener(() => { CharacterSelectButtonOnClick(2); });
         }
 
         private void EnableFailUI()
@@ -279,8 +300,9 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public PlayerClone CreateClone(PlayerCloneData data)
         {
             var instance = Instantiate(clonePrefabs[(int)data.type - 1], origin);
-            instance.transform.position = spawnPoint.transform.position;
+            instance.transform.position = SpawnPointLevelObject.Instance.transform.position;
             instance.SetActions(data.actions);
+            CreateDimensionCheckStream(instance.GetComponent<Player.Player>());
             playerInstances.Add(instance.GetComponent<Player.Player>());
             _currentClones.Add(instance);
             return instance;
@@ -317,7 +339,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void ChangeState(Phase state)
         {
-            _stateSubject.OnNext(state);
+            _phaseSubject.OnNext(state);
             currentState = state;
         }
 

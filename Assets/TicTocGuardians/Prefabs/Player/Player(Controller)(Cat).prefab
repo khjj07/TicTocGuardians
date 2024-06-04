@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2281571449447862081}
   - component: {fileID: 2281571449447862085}
   - component: {fileID: 2281571449447862084}
-  - component: {fileID: 2281571449447862083}
+  - component: {fileID: 7486971043672711894}
   - component: {fileID: 2281571449447862082}
   m_Layer: 6
   m_Name: Player(Controller)(Cat)
@@ -67,7 +67,7 @@ Rigidbody:
   m_Interpolate: 2
   m_Constraints: 112
   m_CollisionDetection: 2
---- !u!114 &2281571449447862083
+--- !u!114 &7486971043672711894
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2281571449447862080}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9c59955ffc9a5040ab76bab6d06b8f0, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a934bebf446bc247917d75292449b24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   jumpForce: 10

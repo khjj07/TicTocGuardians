@@ -1,4 +1,6 @@
 using System;
+using TicTocGuardians.Scripts.Game.LevelObjects;
+using TicTocGuardians.Scripts.Game.Manager;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -48,63 +50,84 @@ namespace TicTocGuardians.Scripts.Game.Player
         }
 
         [SerializeField]
-        private float jumpForce;
+        protected float jumpForce;
         [SerializeField]
-        private AnimationState animationState;
+        protected AnimationState animationState;
 
         [SerializeField]
-        private float speedMax;
+        protected float speedMax;
         [SerializeField]
-        private float acceleration;
+        protected float acceleration;
         [SerializeField]
-        private float drag;
+        protected float drag;
 
-        [SerializeField] private Transform footOrigin;
-        [SerializeField] private float checkGroundDistance;
+        [SerializeField] protected Transform footOrigin;
+        [SerializeField] protected float checkGroundDistance;
 
-        private Vector3 _direction;
-        private Rigidbody _rigidbody;
-        private Animator _animator;
-        private Subject<Action> _actionSubject = new Subject<Action>();
+        protected Vector3 _direction;
+        protected CapsuleCollider _capsuleCollider;
+        protected Rigidbody _rigidbody;
+        protected Animator animator;
+        protected Subject<Action> actionSubject;
+        public DimensionLevelObject repairTarget;
 
-        private static readonly int Run = Animator.StringToHash("Run");
-        private static readonly int Jump1 = Animator.StringToHash("Jump");
-        private static readonly int Idle = Animator.StringToHash("Idle");
-        private static readonly int Push = Animator.StringToHash("Push");
-        private static readonly int Repair = Animator.StringToHash("Repair");
-        private static readonly int Landing = Animator.StringToHash("Landing");
+        protected static readonly int Run = Animator.StringToHash("Run");
+        protected static readonly int Jump1 = Animator.StringToHash("Jump");
+        protected static readonly int Idle = Animator.StringToHash("Idle");
+        protected static readonly int Push = Animator.StringToHash("Push");
+        protected static readonly int Repair = Animator.StringToHash("Repair");
+        protected static readonly int Landing = Animator.StringToHash("Landing");
 
-        private bool _isJumping = false;
-        private bool _isFalling = false;
-        private static readonly int Falling = Animator.StringToHash("Falling");
+        protected bool _isJumping = false;
+        protected bool _isFalling = false;
+        protected static readonly int Falling = Animator.StringToHash("Falling");
 
-        private void Awake()
+        public float dimensionCheckDistance;
+
+        public virtual void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
-            _animator = GetComponentInChildren<Animator>();
+            animator = GetComponentInChildren<Animator>();
+            _capsuleCollider = GetComponent<CapsuleCollider>();
+            actionSubject = new Subject<Action>();
         }
 
-        private void CreateDefaultStream()
+        public virtual void Start()
         {
-            var baseStream = _actionSubject.Where(_ => _ != null);
+            CreateDefaultStream();
+        }
+
+        public virtual void Update()
+        {
+            MoveAnimation();
+            if (_rigidbody.velocity.magnitude > 0.1)
+            {
+                var tmp = _rigidbody.velocity;
+                tmp.y = 0;
+                SetDirection(tmp.normalized);
+            }
+
+            Animate();
+            Debug.DrawRay(footOrigin.position, Vector3.down * checkGroundDistance, Color.red);
+        }
+
+        public void CreateDefaultStream()
+        {
+            var baseStream = actionSubject.Where(_ => _ != null);
             var moveXStream = baseStream.Where(action => action.state == Action.State.MoveX);
             moveXStream.Subscribe(action => MoveX(action.direction)).AddTo(gameObject);
 
             var moveZStream = baseStream.Where(action => action.state == Action.State.MoveZ);
             moveZStream.Subscribe(action => MoveZ(action.direction)).AddTo(gameObject);
 
-            var jumpStream = baseStream.Where(_ => IsContactGround()).Where(action => action.state == Action.State.Jump);
+            var jumpStream = baseStream.Where(_ => IsContactGround())
+                .Where(action => action.state == Action.State.Jump);
             jumpStream.Subscribe(action => Jump()).AddTo(gameObject);
             jumpStream.Subscribe(action =>
             {
                 _isJumping = true;
                 SetAnimationState(AnimationState.Jump);
             }).AddTo(gameObject);
-        }
-
-        public virtual void Start()
-        {
-            CreateDefaultStream();
         }
 
         public void MoveAnimation()
@@ -143,41 +166,27 @@ namespace TicTocGuardians.Scripts.Game.Player
             }
         }
 
-        public virtual void Update()
-        {
-            MoveAnimation();
-            if (_rigidbody.velocity.magnitude > 0.1)
-            {
-                var tmp = _rigidbody.velocity;
-                tmp.y = 0;
-                SetDirection(tmp.normalized);
-            }
-
-            Animate();
-            Debug.DrawRay(footOrigin.position, Vector3.down * checkGroundDistance, Color.red);
-        }
-
-        private bool IsContactGround()
+        public bool IsContactGround()
         {
             return Physics.Raycast(footOrigin.position, Vector3.down, checkGroundDistance);
         }
 
         public void Act(Action action)
         {
-            _actionSubject.OnNext(action);
+            actionSubject.OnNext(action);
         }
 
-        private void MoveX(float direction)
+        public void MoveX(float direction)
         {
             AccelerateX(direction);
         }
 
-        private void MoveZ(float direction)
+        public void MoveZ(float direction)
         {
             AccelerateZ(direction);
         }
 
-        private void SetDirection(Vector3 direction)
+        public void SetDirection(Vector3 direction)
         {
             if (direction.magnitude > 0)
             {
@@ -185,8 +194,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             }
         }
 
-
-        private void AccelerateX(float direction)
+        public void AccelerateX(float direction)
         {
             if (MathF.Abs(_rigidbody.velocity.x) < speedMax)
             {
@@ -194,7 +202,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             }
         }
 
-        private void AccelerateZ(float direction)
+        public void AccelerateZ(float direction)
         {
             if (MathF.Abs(_rigidbody.velocity.z) < speedMax)
             {
@@ -202,7 +210,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             }
         }
 
-        private void Jump()
+        public void Jump()
         {
             _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 
@@ -213,43 +221,42 @@ namespace TicTocGuardians.Scripts.Game.Player
             animationState = state;
         }
 
-        private void Animate()
+        public void Animate()
         {
-            _animator.SetBool(Idle, false);
-            _animator.SetBool(Run, false);
-            _animator.SetBool(Jump1, false);
-            _animator.SetBool(Push, false);
-            _animator.SetBool(Repair, false);
-            _animator.SetBool(Landing, false);
-            _animator.SetBool(Falling, false);
+            animator.SetBool(Idle, false);
+            animator.SetBool(Run, false);
+            animator.SetBool(Jump1, false);
+            animator.SetBool(Push, false);
+            animator.SetBool(Repair, false);
+            animator.SetBool(Landing, false);
+            animator.SetBool(Falling, false);
             switch (animationState)
             {
                 case AnimationState.Idle:
-                    _animator.SetBool(Idle, true);
+                    animator.SetBool(Idle, true);
                     break;
                 case AnimationState.Run:
-                    _animator.SetBool(Run, true);
+                    animator.SetBool(Run, true);
                     break;
                 case AnimationState.Jump:
-                    _animator.SetBool(Jump1, true);
+                    animator.SetBool(Jump1, true);
                     break;
                 case AnimationState.Push:
-                    _animator.SetBool(Push, true);
+                    animator.SetBool(Push, true);
                     break;
                 case AnimationState.Repair:
-                    _animator.SetBool(Repair, true);
+                    animator.SetBool(Repair, true);
                     break;
                 case AnimationState.Landing:
-                    _animator.SetBool(Landing, true);
+                    animator.SetBool(Landing, true);
                     break;
                 case AnimationState.Falling:
-                    _animator.SetBool(Falling, true);
+                    animator.SetBool(Falling, true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
-
 
     }
 }

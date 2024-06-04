@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69563576037cd274db513e3ae844b39f, type: 3}
+  m_Name: Global LevelObject Setting
+  m_EditorClassIdentifier: 
+  defaultTilePrefab: {fileID: 1682834203809709802, guid: cfafb3f2e9f6a4f4292d844b66249be3, type: 3}
+  unPassableLevelObject: {fileID: 3648000357696671818, guid: 97931a91d3c1869478e391cecdbd27a9, type: 3}
+  dimensionPrefab: {fileID: 937108263415772158, guid: 1783916175c1af443b4d97feb9fda158, type: 3}
+  dummy: {fileID: 0}
+  playerMesh: {fileID: 6434008096517374666, guid: 676d88d1234bc8142a1e6a6d5dc98d5f, type: 3}

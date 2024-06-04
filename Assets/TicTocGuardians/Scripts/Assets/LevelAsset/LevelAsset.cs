@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TicTocGuardians.Scripts.Game;
 using TicTocGuardians.Scripts.Game.LevelObjects;
 using UnityEditor;
@@ -7,14 +8,14 @@ namespace TicTocGuardians.Scripts.Assets.LevelAsset
 {
     public class LevelAsset : ScriptableObject
     {
-        [Header("Setting")] 
-        public SceneAsset scene;
+        [Header("Setting")]
         public float timeLimit;
 
         [Header("Objects")]
-        public BaseObjectAsset spawnPoint;
-        public BaseObjectAsset levelCamera;
-        public BaseObjectAsset levelLight;
         public LevelObjectAsset[] objects;
+
+        public LevelObjectAsset spawnPoint;
+        public LevelObjectAsset camera;
+        public LevelObjectAsset light;
     }
 }

@@ -514,6 +514,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31dfb8de50ecafd4888fda98f94b65ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tutorialScene: {fileID: 102900000, guid: b04861feb9eccd2428d3414e26671caa, type: 3}
+  generalScene: {fileID: 102900000, guid: 9fc0d4010bbf28b4594072e72b8655ab, type: 3}
   normalPresetList: {fileID: 11400000, guid: 6e442148a3b85ed4588121d6cbcce186, type: 2}
   hardPresetList: {fileID: 11400000, guid: d9021c579ecf8104887e96aeb6a85126, type: 2}
 --- !u!1 &473741167
