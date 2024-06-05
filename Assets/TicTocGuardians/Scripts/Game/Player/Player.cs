@@ -80,6 +80,7 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         protected bool _isJumping = false;
         protected bool _isFalling = false;
+        protected bool _isRepair = false;
         protected static readonly int Falling = Animator.StringToHash("Falling");
 
         public float dimensionCheckDistance;
@@ -130,14 +131,57 @@ namespace TicTocGuardians.Scripts.Game.Player
             }).AddTo(gameObject);
         }
 
+        public void CreateDimensionCheckStream()
+        {
+            var dimensionCheck = this.UpdateAsObservable().Select(_ => {
+                Debug.DrawRay(transform.position, transform.forward * dimensionCheckDistance);
+
+                var results = Physics.RaycastAll(transform.position,
+                    transform.forward * dimensionCheckDistance);
+
+                foreach (var hit in results)
+                {
+                    if (hit.collider.CompareTag("Dimension"))
+                    {
+                        return hit.collider.GetComponent<DimensionLevelObject>();
+                    }
+                }
+                return null;
+            }).DistinctUntilChanged();
+
+            dimensionCheck.Subscribe(x =>
+            {
+                if (x != null)
+                {
+                    repairTarget = x;
+                    LevelManager.Instance.AddRepairDimension(repairTarget);
+                    _isRepair = true;
+                }
+                else
+                {
+                    LevelManager.Instance.RemoveRepairDimension(repairTarget);
+                    _isRepair = false;
+                    repairTarget = null;
+                }
+
+            }).AddTo(gameObject);
+        }
+
         public void MoveAnimation()
         {
-            if (IsContactGround() && !_isFalling && !_isJumping)
+            if (IsContactGround())
             {
-                SetAnimationState(AnimationState.Idle);
-                if (_rigidbody.velocity.magnitude >= 1)
+                if (_isRepair)
                 {
-                    SetAnimationState(AnimationState.Run);
+                    SetAnimationState(AnimationState.Repair);
+                }
+                else if(!_isFalling && !_isJumping)
+                {
+                    SetAnimationState(AnimationState.Idle);
+                    if (_rigidbody.velocity.magnitude >= 1)
+                    {
+                        SetAnimationState(AnimationState.Run);
+                    }
                 }
             }
             else

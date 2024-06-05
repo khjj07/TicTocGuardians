@@ -13,7 +13,11 @@ namespace TicTocGuardians.Scripts.Game.UI
         public Button submitButton;
         public Button cancelButton;
 
-        // Update is called once per frame
+        public void Start()
+        {
+            ResetUI();
+        }
+
         public void ResetUI()
         {
             foreach (var button in selectButtons)

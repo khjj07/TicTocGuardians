@@ -16,16 +16,10 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             None,
             Ready,
-            Player,
+            Play,
             Success,
             Fail
         }
-
-        [Header("UI")]
-        [SerializeField] private Canvas readyUI;
-        [SerializeField] private IngameUI ingameUI;
-        [SerializeField] private SuccessUI successUI;
-        [SerializeField] private FailUI failUI;
 
         private Subject<Phase> _phaseSubject = new Subject<Phase>();
 
@@ -51,89 +45,21 @@ namespace TicTocGuardians.Scripts.Game.Manager
             playerType = tutorialAsset.character;
         }
 
-        private void InitializeFailUI()
-        {
-            failUI.goToHomeButton.onClick.AddListener(() =>
-            {
-                StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
-            });
-            failUI.retryButton.onClick.AddListener(() =>
-            {
-                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex());
-            });
-        }
-
-        private void InitializeSuccessUI()
-        {
-            successUI.goToHomeButton.onClick.AddListener(() =>
-            {
-                StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
-            });
-            successUI.nextLevelButton.onClick.AddListener(() =>
-            {
-                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex() + 1);
-            });
-        }
-
-        private void EnableReadyUI()
-        {
-            readyUI.gameObject.SetActive(true);
-            ingameUI.gameObject.SetActive(false);
-            successUI.gameObject.SetActive(false);
-            failUI.gameObject.SetActive(false);
-        }
-        private void EnableIngameUI()
-        {
-            readyUI.gameObject.SetActive(false);
-            ingameUI.gameObject.SetActive(true);
-            successUI.gameObject.SetActive(false);
-            failUI.gameObject.SetActive(false);
-        }
         public void CreateReadyPhaseStream()
         {
-            this.UpdateAsObservable().Where(_ => Input.anyKey).First().Subscribe(_ => ChangeState(Phase.Player)).AddTo(gameObject);
+            this.UpdateAsObservable().Where(_ => Input.anyKey).First().Subscribe(_ => ChangeState(Phase.Play)).AddTo(gameObject);
         }
 
-        public void PlayerPhaseStart()
+        public override void PlayPhaseEnd()
         {
-            EnableIngameUI();
-            var player = SpawnPlayer(playerType);
-            SetTimer(timeLimit);
-            CreateMovementWaitStream(playerInstances[0].GetComponent<PlayerController>());
-        }
-        public void PlayerPhaseEnd()
-        {
-            
-            NextState();
-        }
-
-
-        public void CreateMovementWaitStream(PlayerController controller)
-        {
-            Observable.Amb(GlobalInputBinder.CreateGetAxisStreamOptimize("Horizontal").Select(x => Math.Abs(x) != 0),
-                GlobalInputBinder.CreateGetAxisStreamOptimize("Vertical").Select(x => Math.Abs(x) != 0),
-                GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space)).First().Subscribe(_ =>
+            if (repairingDimensions.Count == 1)
             {
-                controller.CreateMovementStream();
-                StartTimer();
-            }).AddTo(gameObject);
-        }
-
-        public void SetTimer(double time)
-        {
-            currentTime = time;
-            timerText.SetText(currentTime.ToString("N2"));
-        }
-        public void StartTimer()
-        {
-
-            Observable.Interval(TimeSpan.FromSeconds(timeStep)).TakeWhile(_ => currentTime > 0).Subscribe(_ =>
+                ChangeState(Phase.Success);
+            }
+            else
             {
-                SetTimer(currentTime - timeStep);
-            }, null, () =>
-            {
-                PlayerPhaseEnd();
-            });
+                ChangeState(Phase.Fail);
+            }
         }
 
         private void InitializePhaseSubject()
@@ -144,9 +70,10 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 CreateReadyPhaseStream();
             });
 
-            _phaseSubject.Where(x => x == Phase.Player).Subscribe(_ =>
+            _phaseSubject.Where(x => x == Phase.Play).Subscribe(_ =>
             {
-                PlayerPhaseStart();
+                var player = SpawnPlayer(playerType);
+                PlayPhaseStart(player);
             });
 
             _phaseSubject.Where(x => x == Phase.Success).Subscribe(_ =>
@@ -173,24 +100,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public void PreviousState()
         {
             ChangeState((Phase)(currentState - 1));
-        }
-
-        private void EnableFailUI()
-        {
-            readyUI.gameObject.SetActive(false);
-            ingameUI.gameObject.SetActive(false);
-            successUI.gameObject.SetActive(false);
-            failUI.gameObject.SetActive(true);
-            failUI.Enable(); ;
-        }
-
-        private void EnableSuccessUI()
-        {
-            readyUI.gameObject.SetActive(false);
-            ingameUI.gameObject.SetActive(false);
-            successUI.gameObject.SetActive(true);
-            failUI.gameObject.SetActive(false);
-            successUI.Enable(); ;
         }
     }
 }

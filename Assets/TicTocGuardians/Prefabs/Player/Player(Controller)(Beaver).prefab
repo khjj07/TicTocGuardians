@@ -87,12 +87,15 @@ MonoBehaviour:
   drag: 0.1
   footOrigin: {fileID: 2281571450007289464}
   checkGroundDistance: 0.5
+  repairTarget: {fileID: 0}
+  dimensionCheckDistance: 2
   beaverBoxPrefab: {fileID: -4599495885175602804, guid: bb870ffd09ed5924b9f6221a755416d8, type: 3}
   boxPoint: {fileID: 3555796334701131178}
   boxCreateCheckDistance: 3
   boxCreateUpDistance: 3
   pushTime: 3
   pushOffset: 2
+  _pushTarget: {fileID: 0}
 --- !u!114 &2281571449447862082
 MonoBehaviour:
   m_ObjectHideFlags: 0

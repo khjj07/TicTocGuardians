@@ -26,6 +26,7 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         public override void Start()
         {
+            base.Start();
             CreateBeaverStream();
         }
 

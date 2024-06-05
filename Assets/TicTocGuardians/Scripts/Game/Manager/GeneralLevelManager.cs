@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Default.Scripts.Util;
 using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Game.LevelObjects;
@@ -12,6 +13,7 @@ using UnityEngine;
 
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 using Action = TicTocGuardians.Scripts.Game.Player.Action;
 
 namespace TicTocGuardians.Scripts.Game.Manager
@@ -23,9 +25,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             None,
             Ready,
             Ordering,
-            Player1,
-            Player2,
-            Player3,
+            Play,
             Success,
             Fail
         }
@@ -33,18 +33,17 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField] private PlayerClone[] clonePrefabs = new PlayerClone[3];
 
         [Header("UI")]
-        [SerializeField] private Canvas readyUI;
         [SerializeField] private OrderingUI orderingUI;
-        [SerializeField] private IngameUI ingameUI;
-        [SerializeField] private SuccessUI successUI;
-        [SerializeField] private FailUI failUI;
+
 
         [Header("ป๓ลย")]
         [SerializeField]
         private Phase currentState;
 
+        private int _currentPlayerIndex = 0;
+
         private Subject<Phase> _phaseSubject = new Subject<Phase>();
-        private List<PlayerType> playerOrder = new List<PlayerType>();
+        private List<PlayerType> _playerOrder = new List<PlayerType>();
         private List<PlayerCloneData> _cloneData = new List<PlayerCloneData>();
         private List<PlayerClone> _currentClones = new List<PlayerClone>();
         private PlayerRecorder _recorder;
@@ -78,19 +77,10 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 EnableOrderingUI();
             });
 
-            _phaseSubject.Where(x => x == Phase.Player1).Subscribe(_ =>
+            _phaseSubject.Where(x => x == Phase.Play).Subscribe(_ =>
             {
-                PlayerPhaseStart(0);
-            });
-
-            _phaseSubject.Where(x => x == Phase.Player2).Subscribe(_ =>
-            {
-                PlayerPhaseStart(1);
-            });
-
-            _phaseSubject.Where(x => x == Phase.Player3).Subscribe(_ =>
-            {
-                PlayerPhaseStart(2);
+                var player = SpawnPlayer(_playerOrder[_currentPlayerIndex]);
+                PlayPhaseStart(player);
             });
 
             _phaseSubject.Where(x => x == Phase.Success).Subscribe(_ =>
@@ -104,30 +94,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
             });
         }
 
-        private void InitializeFailUI()
-        {
-            failUI.goToHomeButton.onClick.AddListener(() =>
-            {
-                StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
-            });
-            failUI.retryButton.onClick.AddListener(() =>
-            {
-                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex());
-            });
-        }
-
-        private void InitializeSuccessUI()
-        {
-            successUI.goToHomeButton.onClick.AddListener(() =>
-            {
-                StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
-            });
-            successUI.nextLevelButton.onClick.AddListener(() =>
-            {
-                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex() + 1);
-            });
-        }
-
         private void InitializeOrderingUI()
         {
             orderingUI.submitButton.onClick.AddListener(SubmitOrder);
@@ -137,33 +103,29 @@ namespace TicTocGuardians.Scripts.Game.Manager
             orderingUI.selectButtons[2].AddListener(() => { CharacterSelectButtonOnClick(2); });
         }
 
-        private void EnableFailUI()
+        public override void EnableReadyUI()
         {
-            readyUI.gameObject.SetActive(false);
+            base.EnableReadyUI();
             orderingUI.gameObject.SetActive(false);
-            ingameUI.gameObject.SetActive(false);
-            successUI.gameObject.SetActive(false);
-            failUI.gameObject.SetActive(true);
-            failUI.Enable();;
         }
 
-        private void EnableSuccessUI()
+        public override void EnableIngameUI()
         {
+            base.EnableIngameUI();
             readyUI.gameObject.SetActive(false);
             orderingUI.gameObject.SetActive(false);
-            ingameUI.gameObject.SetActive(false);
-            successUI.gameObject.SetActive(true);
-            failUI.gameObject.SetActive(false);
-            successUI.Enable(); ;
         }
 
-        private void EnableReadyUI()
+        public override void EnableFailUI()
         {
-            readyUI.gameObject.SetActive(true);
+            base.EnableFailUI();
             orderingUI.gameObject.SetActive(false);
-            ingameUI.gameObject.SetActive(false);
-            successUI.gameObject.SetActive(false);
-            failUI.gameObject.SetActive(false);
+        }
+
+        public override void EnableSuccessUI()
+        {
+            base.EnableSuccessUI();
+            orderingUI.gameObject.SetActive(false);
         }
 
         private void CharacterSelectButtonOnClick(int i)
@@ -173,16 +135,16 @@ namespace TicTocGuardians.Scripts.Game.Manager
             {
                 AddPlayerOrder(orderingUI.selectButtons[i].type);
 
-                if (playerOrder.Count >= 3)
+                if (_playerOrder.Count >= 3)
                 {
                     orderingUI.SubmitAvailable();
                 }
             }
             else
             {
-                for (int j = 0; j < playerOrder.Count; j++)
+                for (int j = 0; j < _playerOrder.Count; j++)
                 {
-                    if (orderingUI.selectButtons[i].type == playerOrder[j])
+                    if (orderingUI.selectButtons[i].type == _playerOrder[j])
                     {
                         RemovePlayerOrder(j);
                         break;
@@ -192,9 +154,9 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
             foreach (var button in orderingUI.selectButtons)
             {
-                for (int j = 0; j < playerOrder.Count; j++)
+                for (int j = 0; j < _playerOrder.Count; j++)
                 {
-                    if (button.type == playerOrder[j])
+                    if (button.type == _playerOrder[j])
                     {
                         button.order.sprite = orderingUI.orderSprites[j];
                     }
@@ -222,74 +184,49 @@ namespace TicTocGuardians.Scripts.Game.Manager
             failUI.gameObject.SetActive(false);
         }
 
-        private void EnableIngameUI()
+        public override void PlayPhaseStart(Player.Player player)
         {
-            readyUI.gameObject.SetActive(false);
-            orderingUI.gameObject.SetActive(false);
-            ingameUI.gameObject.SetActive(true);
-            successUI.gameObject.SetActive(false);
-            failUI.gameObject.SetActive(false);
-        }
-
-        public void PlayerPhaseStart(int order)
-        {
-            Debug.Log("Player Phase Start");
-            EnableIngameUI();
-            var player = SpawnPlayer(playerOrder[order]);
+            base.PlayPhaseStart(player);
             CreateAllClones();
-            SetTimer(timeLimit);
-            CreateMovementWaitStream(playerInstances[0].GetComponent<PlayerController>(), order);
         }
 
-        public void PlayerPhaseEnd(int order)
+        public override void PlayPhaseEnd()
         {
-            Debug.Log("Player Phase End");
             _recorder.RecordStop();
-            if (order != 2)
+            if (_currentPlayerIndex<_playerOrder.Count-1)
             {
                 DestroyAllPlayer();
-                CreateCloneData(playerOrder[order], _recorder.GetActionLists());
+                CreateCloneData(_playerOrder[_currentPlayerIndex], _recorder.GetActionLists());
+                _currentPlayerIndex++;
+                ChangeState(Phase.Play);
             }
-            NextState();
+            else
+            {
+                if (repairingDimensions.Count == _playerOrder.Count)
+                {
+                    ChangeState(Phase.Success);
+                }
+                else
+                {
+                    ChangeState(Phase.Fail);
+                }
+            }
         }
 
-        public void SetTimer(double time)
-        {
-            currentTime = time;
-            timerText.SetText(currentTime.ToString("N2"));
-        }
-
-        public void CreateReadyPhaseStream()
+        private void CreateReadyPhaseStream()
         {
             this.UpdateAsObservable().Where(_ => Input.anyKey).First().Subscribe(_ => ChangeState(Phase.Ordering)).AddTo(gameObject);
         }
 
-        public void CreateMovementWaitStream(PlayerController controller, int order)
+        public override void ActiveLevel(PlayerController controller)
         {
-            Observable.Amb(GlobalInputBinder.CreateGetAxisStreamOptimize("Horizontal").Select(x => Math.Abs(x) != 0),
-                GlobalInputBinder.CreateGetAxisStreamOptimize("Vertical").Select(x => Math.Abs(x) != 0),
-                GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space)).First().Subscribe(_ =>
-             {
-                 controller.CreateMovementStream();
-                 foreach (var clone in _currentClones)
-                 {
-                     clone.CreateMovementStream();
-                 }
-                 _recorder.RecordStart(controller.GetComponent<Player.Player>());
-                 StartTimer(order);
-             }).AddTo(gameObject);
-        }
-
-        public void StartTimer(int order)
-        {
-
-            Observable.Interval(TimeSpan.FromSeconds(timeStep)).TakeWhile(_ => currentTime > 0).Subscribe(_ =>
+            base.ActiveLevel(controller);
+            foreach (var clone in _currentClones)
             {
-                SetTimer(currentTime - timeStep);
-            }, null, () =>
-            {
-                PlayerPhaseEnd(order);
-            });
+                clone.CreateMovementStream();
+            }
+            _recorder.RecordStart(controller.GetComponent<Player.Player>());
+            StartTimer();
         }
 
         public void CreateCloneData(PlayerType type, List<List<Action>> actions)
@@ -302,7 +239,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             var instance = Instantiate(clonePrefabs[(int)data.type - 1], origin);
             instance.transform.position = SpawnPointLevelObject.Instance.transform.position;
             instance.SetActions(data.actions);
-            CreateDimensionCheckStream(instance.GetComponent<Player.Player>());
+            instance.GetComponent<Player.Player>().CreateDimensionCheckStream();
             playerInstances.Add(instance.GetComponent<Player.Player>());
             _currentClones.Add(instance);
             return instance;
@@ -329,12 +266,12 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void AddPlayerOrder(PlayerType type)
         {
-            playerOrder.Add(type);
+            _playerOrder.Add(type);
         }
 
         public void RemovePlayerOrder(int index)
         {
-            playerOrder.RemoveAt(index);
+            _playerOrder.RemoveAt(index);
         }
 
         public void ChangeState(Phase state)

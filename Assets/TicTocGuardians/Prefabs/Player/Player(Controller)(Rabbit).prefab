@@ -86,6 +86,8 @@ MonoBehaviour:
   drag: 0.1
   footOrigin: {fileID: 1283317331139860366}
   checkGroundDistance: 0.5
+  repairTarget: {fileID: 0}
+  dimensionCheckDistance: 2
 --- !u!114 &1283317330623440564
 MonoBehaviour:
   m_ObjectHideFlags: 0
