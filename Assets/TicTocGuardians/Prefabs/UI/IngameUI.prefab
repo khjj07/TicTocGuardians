@@ -372,6 +372,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8d0a4d849670743ae6faaefc0ccc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeOrderButton: {fileID: 6110787272606911178}
+  replayButton: {fileID: 6110787271700777232}
+  skipButton: {fileID: 6110787272086178191}
+  portraits:
+  - {fileID: 6110787272019260816}
+  - {fileID: 6110787272150013983}
+  - {fileID: 6110787272684426763}
 --- !u!1 &6110787272019260814
 GameObject:
   m_ObjectHideFlags: 0

@@ -24,7 +24,6 @@ namespace TicTocGuardians.Scripts.Game.UI
             {
                 button.ResetUI();
             }
-
             SubmitUnavilable();
         }
 

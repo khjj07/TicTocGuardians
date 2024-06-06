@@ -1,10 +1,12 @@
 using DG.Tweening;
-using TicTocGuardians.Scripts.Game.Manager;
+using TicTocGuardians.Scripts.Game.UI;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-namespace TicTocGuardians.Scripts.Game.UI
+namespace TicTocGuardians.Scripts.Game.Manager
 {
     public class TitleManager : MonoBehaviour
     {
@@ -15,7 +17,6 @@ namespace TicTocGuardians.Scripts.Game.UI
         // Start is called before the first frame update
         void Start()
         {
-            tapToStart.onClick.AddListener(OnTapToStartButtonClick);
             _tapToStartButtonRect = tapToStart.GetComponent<RectTransform>();
             TitleBegin();
         }
@@ -30,13 +31,13 @@ namespace TicTocGuardians.Scripts.Game.UI
 
         private void OnCinemaEnd(VideoPlayer videoPlayer)
         {
-            _tapToStartButtonRect.DOScale(Vector3.one, 1f).SetEase(Ease.OutBounce);
+            _tapToStartButtonRect.DOScale(Vector3.one, 1f).SetEase(Ease.OutBounce).OnComplete(() =>
+            {
+                this.UpdateAsObservable().Where(_ => Input.anyKey).First()
+                    .Subscribe(_ => StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene",1.0f))).AddTo(gameObject);
+            });
         }
 
-        public void OnTapToStartButtonClick()
-        {
-            StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1));
-        }
 
     }
 }

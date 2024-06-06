@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Default.Scripts.Util;
+using DG.Tweening;
 using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
 using TicTocGuardians.Scripts.Game.LevelObjects;
@@ -27,6 +28,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public Player.Player[] playerPrefabs = new Player.Player[3];
         public List<Player.Player> playerInstances = new List<Player.Player>();
+        public PlayerController playerController;
         public List<DimensionLevelObject> repairingDimensions = new List<DimensionLevelObject>();
 
         [HideInInspector]
@@ -37,9 +39,17 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public SuccessUI successUI;
         public FailUI failUI;
 
+        public IDisposable timerHandler;
+        public IDisposable movementWaitHandler;
+        public bool isPlaying = false;
+
         public virtual void Start()
         {
+            GameManager.Instance.ActiveLevel(this);
             GlobalLoadingManager.Instance.ActiveScene();
+            InitializeIngameUI();
+            InitializeSuccessUI();
+            InitializeFailUI();
         }
 
         public virtual void LoadLevel(LevelAsset asset)
@@ -60,6 +70,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             var instance = Instantiate(playerPrefabs[(int)type - 1], origin);
             instance.transform.position = SpawnPointLevelObject.Instance.transform.position;
             instance.CreateDimensionCheckStream();
+            playerController = instance.GetComponent<PlayerController>();
             playerInstances.Add(instance);
             return instance;
         }
@@ -72,18 +83,16 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void StartTimer()
         {
-
-            Observable.Interval(TimeSpan.FromSeconds(timeStep)).TakeWhile(_ => currentTime > 0).Subscribe(_ =>
+            timerHandler = this.UpdateAsObservable().TakeWhile(_ => currentTime > 0).Subscribe(_ =>
             {
-                SetTimer(currentTime - timeStep);
-            }, null, PlayPhaseEnd);
+                SetTimer(currentTime - Time.deltaTime);
+            }, null, PlayPhaseEnd).AddTo(gameObject);
         }
-        public virtual void PlayPhaseStart(Player.Player player)
+        public virtual void PlayPhaseStart(PlayerController player)
         {
             ResetRepairing();
-            EnableIngameUI();
             SetTimer(timeLimit);
-            CreateMovementWaitStream(player.GetComponent<PlayerController>());
+            CreateMovementWaitStream(player);
         }
 
         private void ResetRepairing()
@@ -93,15 +102,16 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void PlayPhaseEnd()
         {
-            
+            isPlaying = false;
         }
 
         public void CreateMovementWaitStream(PlayerController controller)
         {
-            Observable.Amb(GlobalInputBinder.CreateGetAxisStreamOptimize("Horizontal").Select(x => Math.Abs(x) != 0),
+            movementWaitHandler = Observable.Amb(GlobalInputBinder.CreateGetAxisStreamOptimize("Horizontal").Select(x => Math.Abs(x) != 0),
                 GlobalInputBinder.CreateGetAxisStreamOptimize("Vertical").Select(x => Math.Abs(x) != 0),
                 GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space)).First().Subscribe(_ =>
             {
+                isPlaying = true;
                 ActiveLevel(controller);
             }).AddTo(gameObject);
         }
@@ -121,7 +131,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             repairingDimensions.Remove(repairTarget);
         }
 
-        public virtual void EnableReadyUI()
+        public virtual void OnReadyPhaseActive()
         {
             readyUI.gameObject.SetActive(true);
             ingameUI.gameObject.SetActive(false);
@@ -129,7 +139,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             failUI.gameObject.SetActive(false);
         }
 
-        public virtual void EnableIngameUI()
+        public virtual void OnPlayPhaseActive()
         {
             readyUI.gameObject.SetActive(false);
             ingameUI.gameObject.SetActive(true);
@@ -138,23 +148,35 @@ namespace TicTocGuardians.Scripts.Game.Manager
         }
 
 
-        public virtual void EnableFailUI()
+        public virtual void OnFailPhaseActive()
         {
             readyUI.gameObject.SetActive(false);
             ingameUI.gameObject.SetActive(false);
             successUI.gameObject.SetActive(false);
             failUI.gameObject.SetActive(true);
-            failUI.Enable(); ;
+            failUI.label.transform.position = failUI.labelStartPoint.position;
+            failUI.label.transform.DOLocalMoveX(0, 0.2f);
         }
 
 
-        public virtual void EnableSuccessUI()
+        public virtual void OnSuccessPhaseActive()
         {
             readyUI.gameObject.SetActive(false);
             ingameUI.gameObject.SetActive(false);
-            successUI.gameObject.SetActive(true);
             failUI.gameObject.SetActive(false);
-            successUI.Enable(); ;
+            successUI.gameObject.SetActive(true);
+            successUI.label.transform.position = successUI.labelStartPoint.position;
+            successUI.label.transform.DOLocalMoveX(0, 0.2f);
+        }
+
+        public virtual void InitializeIngameUI()
+        {
+            ingameUI.skipButton.onClick.AddListener(() =>
+            {
+                Time.timeScale = 4.0f;
+                playerController.DisposeMovementStream();
+            });
+
         }
 
         public void InitializeFailUI()

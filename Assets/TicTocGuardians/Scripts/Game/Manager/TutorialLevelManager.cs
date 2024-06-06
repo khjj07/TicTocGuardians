@@ -32,9 +32,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void Start()
         {
             base.Start();
-            GameManager.Instance.ActiveLevel(this);
-            InitializeSuccessUI();
-            InitializeFailUI();
             ChangeState(Phase.Ready);
         }
 
@@ -66,24 +63,24 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             _phaseSubject.Where(x => x == Phase.Ready).Subscribe(_ =>
             {
-                EnableReadyUI();
+                OnReadyPhaseActive();
                 CreateReadyPhaseStream();
             });
 
             _phaseSubject.Where(x => x == Phase.Play).Subscribe(_ =>
             {
                 var player = SpawnPlayer(playerType);
-                PlayPhaseStart(player);
+                PlayPhaseStart(playerController);
             });
 
             _phaseSubject.Where(x => x == Phase.Success).Subscribe(_ =>
             {
-                EnableSuccessUI();
+                OnSuccessPhaseActive();
             });
 
             _phaseSubject.Where(x => x == Phase.Fail).Subscribe(_ =>
             {
-                EnableFailUI();
+                OnFailPhaseActive();
             });
         }
         public void ChangeState(Phase state)
