@@ -1,159 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7125713780466123079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d46d7bfb8cac694fbb943d471b02fda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: tileOffset
-  value: {x: 0, y: 0, z: 0}
---- !u!114 &-6589659601005564198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b7ed3299e61fd242a0431b108874a47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: orthographicSize
-  value: 10
---- !u!114 &-5436515540755152212
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4acd4b759df7c1d4e9923247b55cf197, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: column
-  value: 5
---- !u!114 &-2989579779791364699
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b7ed3299e61fd242a0431b108874a47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: offset
-  value: 2
---- !u!114 &-399952477574679181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f932282d0c1d09347ab268168a4db36b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: modelPrefab
-  value: {fileID: 919132149155446097, guid: 5f681153e50b59746bddd022cc053682, type: 3}
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34db921de1787af48bdd0546910a5c95, type: 3}
-  m_Name: Test
-  m_EditorClassIdentifier: 
-  timeLimit: 10
-  objects:
-  - name: TileLevelObject
-    position: {x: 0, y: 0, z: 0}
-    eulerAngles: {x: -0, y: 44.999996, z: -0}
-    scale: {x: 1, y: 1, z: 1}
-    data:
-    - {fileID: -399952477574679181}
-    - {fileID: 5020678855964578339}
-    - {fileID: -5436515540755152212}
-    - {fileID: -2989579779791364699}
-    - {fileID: 7574592312522618627}
-    - {fileID: 8620173556267186288}
-    - {fileID: -7125713780466123079}
-    - {fileID: 4609426492137842208}
-    - {fileID: 2547844708511955531}
-    prefab: {fileID: 8665096233941902942, guid: ea00418c1afd8f64fa3b9d27bf2ee4e5, type: 3}
-  - name: Dimension1
-    position: {x: 3.9739401, y: 2.24, z: -2.0647519}
-    eulerAngles: {x: -0, y: 44.999996, z: -0}
-    scale: {x: 2, y: 2, z: 2}
-    data: []
-    prefab: {fileID: 937108263415772158, guid: 1783916175c1af443b4d97feb9fda158, type: 3}
-  - name: Dimension2
-    position: {x: 0.94752306, y: 2.24, z: 0.96166533}
-    eulerAngles: {x: -0, y: 44.999996, z: -0}
-    scale: {x: 2, y: 2, z: 2}
-    data: []
-    prefab: {fileID: 937108263415772158, guid: 1783916175c1af443b4d97feb9fda158, type: 3}
-  - name: Dimension3
-    position: {x: 6.7033725, y: 2.24, z: -4.794184}
-    eulerAngles: {x: -0, y: 44.999996, z: -0}
-    scale: {x: 2, y: 2, z: 2}
-    data: []
-    prefab: {fileID: 937108263415772158, guid: 1783916175c1af443b4d97feb9fda158, type: 3}
-  spawnPoint:
-    name: SpawnPoint
-    position: {x: -0.005467534, y: 2.83, z: -0.2659355}
-    eulerAngles: {x: -0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    data: []
-    prefab: {fileID: 0}
-  camera:
-    name: Camera
-    position: {x: 0, y: 20, z: -25}
-    eulerAngles: {x: 45.000004, y: -0, z: -0}
-    scale: {x: 1, y: 1, z: 1}
-    data:
-    - {fileID: -6589659601005564198}
-    prefab: {fileID: 0}
-  light:
-    name: Light
-    position: {x: -0.19191094, y: -0.5348116, z: -0.18417868}
-    eulerAngles: {x: 45.000008, y: 90, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    data: []
-    prefab: {fileID: 0}
---- !u!114 &2547844708511955531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d46d7bfb8cac694fbb943d471b02fda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: tileScale
-  value: {x: 1, y: 1, z: 1}
---- !u!114 &4609426492137842208
+--- !u!114 &-6476238187441041951
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -167,7 +14,49 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: tileRotation
   value: {x: 0, y: 0, z: 0}
---- !u!114 &5020678855964578339
+--- !u!114 &-5203885236794653959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f932282d0c1d09347ab268168a4db36b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: modelPrefab
+  value: {fileID: 2566682189498990378, guid: b1c1fe09b06a66443957ecf59e163ddd, type: 3}
+--- !u!114 &-4542179123749178460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d46d7bfb8cac694fbb943d471b02fda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: tileScale
+  value: {x: 1, y: 1, z: 1}
+--- !u!114 &-4411221326661251175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7ed3299e61fd242a0431b108874a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: orthographicSize
+  value: 10
+--- !u!114 &-778925257514743390
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -181,7 +70,118 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: row
   value: 5
---- !u!114 &7574592312522618627
+--- !u!114 &-504684664747703413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4acd4b759df7c1d4e9923247b55cf197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: column
+  value: 5
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34db921de1787af48bdd0546910a5c95, type: 3}
+  m_Name: Test
+  m_EditorClassIdentifier: 
+  timeLimit: 20
+  objects:
+  - name: Dimension1
+    position: {x: 3.9739401, y: 2.24, z: -2.0647519}
+    eulerAngles: {x: -0, y: 44.999996, z: -0}
+    scale: {x: 2, y: 2, z: 2}
+    data: []
+    prefab: {fileID: 937108263415772158, guid: 1783916175c1af443b4d97feb9fda158, type: 3}
+  - name: Dimension2
+    position: {x: 0.947523, y: 2.24, z: 0.96166533}
+    eulerAngles: {x: -0, y: 44.999996, z: -0}
+    scale: {x: 2, y: 2, z: 2}
+    data: []
+    prefab: {fileID: 937108263415772158, guid: 1783916175c1af443b4d97feb9fda158, type: 3}
+  - name: Dimension3
+    position: {x: 6.7033725, y: 2.24, z: -4.794184}
+    eulerAngles: {x: -0, y: 44.999996, z: -0}
+    scale: {x: 2, y: 2, z: 2}
+    data: []
+    prefab: {fileID: 937108263415772158, guid: 1783916175c1af443b4d97feb9fda158, type: 3}
+  - name: TileLevelObject
+    position: {x: -0.19191094, y: -0.5348116, z: -0.18417868}
+    eulerAngles: {x: -0, y: 44.999996, z: -0}
+    scale: {x: 1, y: 1, z: 1}
+    data:
+    - {fileID: -5203885236794653959}
+    - {fileID: -778925257514743390}
+    - {fileID: -504684664747703413}
+    - {fileID: 1633551640399468691}
+    - {fileID: 7219027001468333265}
+    - {fileID: 9025086437074565202}
+    - {fileID: 1712679395484044772}
+    - {fileID: -6476238187441041951}
+    - {fileID: -4542179123749178460}
+    prefab: {fileID: 8665096233941902942, guid: ea00418c1afd8f64fa3b9d27bf2ee4e5, type: 3}
+  spawnPoint:
+    name: SpawnPoint
+    position: {x: -4.29, y: 2.83, z: -7.99}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    data: []
+    prefab: {fileID: 0}
+  camera:
+    name: Camera
+    position: {x: 0, y: 20, z: -25}
+    eulerAngles: {x: 45.000004, y: -0, z: -0}
+    scale: {x: 1, y: 1, z: 1}
+    data:
+    - {fileID: -4411221326661251175}
+    prefab: {fileID: 0}
+  light:
+    name: Light
+    position: {x: -0.19191094, y: -0.5348116, z: -0.18417868}
+    eulerAngles: {x: 45.000015, y: 90, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    data: []
+    prefab: {fileID: 0}
+--- !u!114 &1633551640399468691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7ed3299e61fd242a0431b108874a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: offset
+  value: 2
+--- !u!114 &1712679395484044772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d46d7bfb8cac694fbb943d471b02fda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: tileOffset
+  value: {x: 0, y: 0, z: 0}
+--- !u!114 &7219027001468333265
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: blockAround
   value: 1
---- !u!114 &8620173556267186288
+--- !u!114 &9025086437074565202
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -211,8 +211,8 @@ MonoBehaviour:
   value:
   - data: 0101010101
   - data: 0101010101
-  - data: 0101010101
-  - data: 0101010101
-  - data: 0101010000
+  - data: 0101000000
+  - data: 0101000000
+  - data: 0101000000
   row: 5
   column: 5

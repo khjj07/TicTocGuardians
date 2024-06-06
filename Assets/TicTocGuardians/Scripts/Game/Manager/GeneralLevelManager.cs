@@ -237,6 +237,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 movementWaitHandler.Dispose();
                 movementWaitHandler = null;
             }
+
+            ResetRepairing();
             _recorder.RecordStop();
             DestroyAllPlayer();
             Time.timeScale = 1.0f;
@@ -250,6 +252,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             {
                 DestroyAllPlayer();
                 CreateCloneData(_playerOrder[_currentPlayPhaseIndex], _recorder.GetActionLists());
+                ResetRepairing();
                 NextState();
             }
             else

@@ -90,12 +90,11 @@ namespace TicTocGuardians.Scripts.Game.Manager
         }
         public virtual void PlayPhaseStart(PlayerController player)
         {
-            ResetRepairing();
             SetTimer(timeLimit);
             CreateMovementWaitStream(player);
         }
 
-        private void ResetRepairing()
+        public void ResetRepairing()
         {
             repairingDimensions.Clear();
         }
