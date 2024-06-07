@@ -105,6 +105,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 9100000, guid: 4c95fba4907bddb44b1d7ea186bc954f, type: 2}
     - target: {fileID: 7834216257777997746, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7834216257777997746, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: fef866b0d0b5c2049b54471dad7aa240, type: 2}
@@ -112,8 +116,39 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: 7fc7ff3f86fac8c4a818fbc3d6d313a0, type: 2}
+    - target: {fileID: 7834216257777997746, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 311313efa011949e98b6761d652ad13c, type: 2}
+    - target: {fileID: 7834216257777997746, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}
+      propertyPath: m_Materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: 106f3ff43a17d4967a2b64c7a92e49ec, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}
+--- !u!1 &3635400885471526549 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6403075825989479387, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}
+  m_PrefabInstance: {fileID: 7687576746242463054}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5316552900411091357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3635400885471526549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0.1509434, g: 0.11605554, b: 0.11605554, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!4 &7864827755494945445 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}

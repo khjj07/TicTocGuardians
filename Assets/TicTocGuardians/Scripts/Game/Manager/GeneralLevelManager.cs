@@ -147,6 +147,10 @@ namespace TicTocGuardians.Scripts.Game.Manager
             _currentPlayPhaseIndex = 2;
             SpawnPlayer(_playerOrder[_currentPlayPhaseIndex]);
             PlayPhaseStart(playerController);
+            foreach (var instance in playerInstances)
+            {
+                CreateDimensionCheckStream(instance);
+            }
         }
         public override void OnFailPhaseActive()
         {
@@ -333,7 +337,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
             var instance = Instantiate(clonePrefabs[(int)data.type - 1], origin);
             instance.transform.position = SpawnPointLevelObject.Instance.transform.position;
             instance.SetActions(data.actions);
-            instance.GetComponent<Player.Player>().CreateDimensionCheckStream();
             playerInstances.Add(instance.GetComponent<Player.Player>());
             _currentClones.Add(instance);
             return instance;

@@ -1,6 +1,7 @@
 using System;
 using TicTocGuardians.Scripts.Game.LevelObjects;
 using TicTocGuardians.Scripts.Game.Manager;
+using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -36,7 +37,7 @@ namespace TicTocGuardians.Scripts.Game.Player
     }
 
     [RequireComponent(typeof(CapsuleCollider), typeof(Rigidbody))]
-    public class Player : MonoBehaviour
+    public class Player : MonoBehaviour, IMovable
     {
         public enum AnimationState
         {
@@ -63,6 +64,8 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         [SerializeField] protected Transform footOrigin;
         [SerializeField] protected float checkGroundDistance;
+
+        [SerializeField] protected SpriteRenderer repairImage;
 
         protected Vector3 _direction;
         protected CapsuleCollider _capsuleCollider;
@@ -108,6 +111,15 @@ namespace TicTocGuardians.Scripts.Game.Player
                 SetDirection(tmp.normalized);
             }
 
+            if (_isRepair)
+            {
+                Repairing();
+            }
+            else
+            {
+                UnRepairing();
+            }
+
             Animate();
             Debug.DrawRay(footOrigin.position, Vector3.down * checkGroundDistance, Color.red);
         }
@@ -129,41 +141,24 @@ namespace TicTocGuardians.Scripts.Game.Player
                 _isJumping = true;
                 SetAnimationState(AnimationState.Jump);
             }).AddTo(gameObject);
-        }
 
-        public void CreateDimensionCheckStream()
-        {
-            var dimensionCheck = this.UpdateAsObservable().Select(_ => {
-                Debug.DrawRay(transform.position, transform.forward * dimensionCheckDistance);
+            var dimensionEnterStream = this.OnTriggerEnterAsObservable()
+                .Where(x => x.CompareTag("Dimension"))
+                .Select(x => x.GetComponent<DimensionLevelObject>());
+            var dimensionExitStream = this.OnTriggerExitAsObservable()
+                .Where(x => x.CompareTag("Dimension"))
+                .Select(x => x.GetComponent<DimensionLevelObject>());
 
-                var results = Physics.RaycastAll(transform.position,
-                    transform.forward * dimensionCheckDistance);
-
-                foreach (var hit in results)
-                {
-                    if (hit.collider.CompareTag("Dimension"))
-                    {
-                        return hit.collider.GetComponent<DimensionLevelObject>();
-                    }
-                }
-                return null;
-            }).DistinctUntilChanged();
-
-            dimensionCheck.Subscribe(x =>
+            dimensionEnterStream.Subscribe(x =>
             {
-                if (x != null)
-                {
-                    repairTarget = x;
-                    LevelManager.Instance.AddRepairDimension(repairTarget);
-                    _isRepair = true;
-                }
-                else
-                {
-                    LevelManager.Instance.RemoveRepairDimension(repairTarget);
-                    _isRepair = false;
-                    repairTarget = null;
-                }
+                repairTarget = x;
+                _isRepair = true;
+            }).AddTo(gameObject);
 
+            dimensionExitStream.Subscribe(x =>
+            {
+                _isRepair = false;
+                repairTarget = null;
             }).AddTo(gameObject);
         }
 
@@ -171,11 +166,7 @@ namespace TicTocGuardians.Scripts.Game.Player
         {
             if (IsContactGround())
             {
-                if (_isRepair)
-                {
-                    SetAnimationState(AnimationState.Repair);
-                }
-                else if(!_isFalling && !_isJumping)
+                if (!_isFalling && !_isJumping)
                 {
                     SetAnimationState(AnimationState.Idle);
                     if (_rigidbody.velocity.magnitude >= 1)
@@ -205,10 +196,19 @@ namespace TicTocGuardians.Scripts.Game.Player
                             }).AddTo(gameObject);
                         }).AddTo(gameObject);
                     }).AddTo(gameObject);
-
-
             }
         }
+
+        public void Repairing()
+        {
+            repairImage.gameObject.SetActive(true);
+        }
+
+        public void UnRepairing()
+        {
+            repairImage.gameObject.SetActive(false);
+        }
+
 
         public bool IsContactGround()
         {
@@ -234,7 +234,7 @@ namespace TicTocGuardians.Scripts.Game.Player
         {
             if (direction.magnitude > 0)
             {
-                transform.rotation = Quaternion.LookRotation(direction);
+                animator.transform.rotation = Quaternion.LookRotation(direction);
             }
         }
 

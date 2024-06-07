@@ -69,7 +69,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             var instance = Instantiate(playerPrefabs[(int)type - 1], origin);
             instance.transform.position = SpawnPointLevelObject.Instance.transform.position;
-            instance.CreateDimensionCheckStream();
             playerController = instance.GetComponent<PlayerController>();
             playerInstances.Add(instance);
             return instance;
@@ -200,6 +199,23 @@ namespace TicTocGuardians.Scripts.Game.Manager
             {
                 GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex() + 1);
             });
+
+
+        }
+
+        public void CreateDimensionCheckStream(Player.Player player)
+        {
+            var dimensionEnterStream = player.OnTriggerEnterAsObservable()
+                .Where(x => x.CompareTag("Dimension"))
+                .Select(x => x.GetComponent<DimensionLevelObject>());
+
+            var dimensionExitStream = player.OnTriggerEnterAsObservable()
+                .Where(x => x.CompareTag("Dimension"))
+                .Select(x => x.GetComponent<DimensionLevelObject>());
+
+            dimensionEnterStream.Subscribe(AddRepairDimension).AddTo(gameObject);
+            dimensionExitStream.Subscribe(RemoveRepairDimension).AddTo(gameObject);
+
         }
     }
 }
