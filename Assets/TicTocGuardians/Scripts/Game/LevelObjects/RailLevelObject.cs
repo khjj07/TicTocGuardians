@@ -9,7 +9,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
     public class RailLevelObject : LevelObject
     {
         public float speed;
-        private void Start()
+        public void Start()
         {
             GetComponentInChildren<MeshCollider>().OnCollisionStayAsObservable()
                 .Select(x => x.collider.GetComponent<IMovable>())

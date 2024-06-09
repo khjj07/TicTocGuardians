@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 3500753121927173927}
   m_Layer: 6
   m_Name: Player(Controller)(Original)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -116,6 +116,7 @@ MonoBehaviour:
   drag: 0.1
   footOrigin: {fileID: 3500753121403414045}
   checkGroundDistance: 0.5
+  repairImage: {fileID: 0}
   repairTarget: {fileID: 0}
   dimensionCheckDistance: 2
 --- !u!114 &3500753121927173927
@@ -130,3 +131,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff3f56eef907128488b8ca2859700c57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0

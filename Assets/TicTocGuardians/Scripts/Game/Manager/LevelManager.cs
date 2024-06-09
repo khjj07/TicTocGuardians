@@ -107,7 +107,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             movementWaitHandler = Observable.Amb(GlobalInputBinder.CreateGetAxisStreamOptimize("Horizontal").Select(x => Math.Abs(x) != 0),
                 GlobalInputBinder.CreateGetAxisStreamOptimize("Vertical").Select(x => Math.Abs(x) != 0),
-                GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space)).First().Subscribe(_ =>
+                GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space).Select(_=>true)).First().Subscribe(_ =>
             {
                 isPlaying = true;
                 ActiveLevel(controller);
@@ -116,7 +116,23 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void ActiveLevel(PlayerController controller)
         {
-            controller.CreateMovementStream();
+            switch (controller.type)
+            {
+                case PlayerType.None:
+                    break;
+                case PlayerType.Beaver:
+                    controller.CreateMovementStream();
+                    controller.CreateBeaverStream();
+                    break;
+                case PlayerType.Cat:
+                    controller.CreateMovementStream();
+                    break;
+                case PlayerType.Rabbit:
+                    controller.CreateMovementStream();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public void AddRepairDimension(DimensionLevelObject repairTarget)

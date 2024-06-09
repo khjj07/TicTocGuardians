@@ -24,6 +24,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             LoopForward,
             OncePingpong,
             LoopPingpong,
+            Returning
         }
 
         [Space(10)]
@@ -62,8 +63,14 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
 
             this.UpdateAsObservable().Where(_ => isMove)
                 .Subscribe(_ => Move()).AddTo(gameObject);
+
             this.UpdateAsObservable().Where(_ => isMove)
                 .Subscribe(_ => instance.transform.position += _velocity * Time.deltaTime).AddTo(gameObject);
+
+            this.UpdateAsObservable().Where(_ => playback==Playback.Returning && !isMove)
+                .Subscribe(_ => Return()).AddTo(gameObject);
+
+
 
             var children = instance.GetComponentsInChildren<MeshCollider>();
             foreach (var child in children)
@@ -76,20 +83,41 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                         other.collider.transform.parent = instance.transform;
                     }
                 });
+                child.OnCollisionExitAsObservable().Subscribe(other =>
+                {
+                    if (other.collider.GetComponent<IMovable>() != null)
+                    {
+                        other.collider.transform.parent = LevelOrigin.Instance.transform;
+                    }
+                });
             }
 
-
-            instance.GetComponentInChildren<MeshCollider>().OnCollisionExitAsObservable().Subscribe(other =>
-            {
-                if (other.collider.GetComponent<IMovable>() != null)
-                {
-                    other.collider.transform.parent = LevelOrigin.Instance.transform;
-                }
-            });
+            
             instance.transform.position = points[0].position;
         }
 
 
+
+        private void Return()
+        {
+            if (nextPointIndex > 0)
+            {
+                var targetPoint = points[nextPointIndex-1];
+                var diffrence = targetPoint.position - instance.transform.position;
+                var direction = diffrence.normalized;
+                var distance = diffrence.magnitude;
+                if (distance > tolerance)
+                {
+                    _velocity = direction * moveSpeed;
+                }
+                else
+                {
+                    nextPointIndex--;
+                }
+
+                instance.transform.position += _velocity * Time.deltaTime;
+            }
+        }
 
         private void Move()
         {
@@ -169,6 +197,12 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                     else if (_reverse)
                     {
                         nextPointIndex--;
+                    }
+                    break;
+                case Playback.Returning:
+                    if (nextPointIndex < points.Length - 1)
+                    {
+                        nextPointIndex++;
                     }
                     break;
                 default:
@@ -256,7 +290,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
         {
             var objects = instance.GetComponentsInChildren<StaticModelLevelObject>();
             float size = 1.0f;
-            foreach (var instance in objects)
+            foreach (var x in objects)
             {
                 var mesh = instance.GetComponentInChildren<MeshFilter>().sharedMesh;
                 for (int i = 0; i < points.Length; i++)
@@ -265,7 +299,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                     grean.a = 0.5f;
                     Gizmos.color = grean;
 
-                    Matrix4x4 matrix = transform.localToWorldMatrix * Matrix4x4.Translate(points[i].localPosition);
+                    Matrix4x4 matrix = transform.localToWorldMatrix * Matrix4x4.TRS(x.transform.localPosition,x.transform.localRotation,x.transform.localScale) * Matrix4x4.Translate(points[i].localPosition);
                     Gizmos.DrawWireMesh(mesh, matrix.GetPosition(), matrix.rotation);
                     size = mesh.bounds.size.x;
                 }
@@ -314,7 +348,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                     direction1 = Vector3.Normalize(to1 - from1);
                     break;
             }
-            if (playback != Playback.OnceForward)
+            if (playback != Playback.OnceForward && playback != Playback.Returning)
             {
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawLine(from1, to1);

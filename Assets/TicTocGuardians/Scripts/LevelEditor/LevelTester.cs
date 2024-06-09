@@ -13,7 +13,23 @@ namespace TicTocGuardians.Scripts.LevelEditor
         public void Start()
         {
             var instance = Instantiate(playerPrefab, origin);
-            instance.CreateMovementStream();
+            switch (instance.type)
+            {
+                case PlayerType.None:
+                    break;
+                case PlayerType.Beaver:
+                    instance.CreateMovementStream();
+                    instance.CreateBeaverStream();
+                    break;
+                case PlayerType.Cat:
+                    instance.CreateMovementStream();
+                    break;
+                case PlayerType.Rabbit:
+                    instance.CreateMovementStream();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             instance.transform.position = SpawnPointLevelObject.Instance.transform.position;
         }
     }

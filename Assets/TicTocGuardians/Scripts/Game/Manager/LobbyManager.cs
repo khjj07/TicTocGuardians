@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using DG.Tweening;
 using TicTocGuardians.Scripts.Game.ETC;
@@ -35,7 +36,23 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField] private RectTransform hardSelectUIEndPoint;
         void Start()
         {
-            controller.CreateMovementStream();
+            switch (controller.type)
+            {
+                case PlayerType.None:
+                    break;
+                case PlayerType.Beaver:
+                    controller.CreateMovementStream();
+                    controller.CreateBeaverStream();
+                    break;
+                case PlayerType.Cat:
+                    controller.CreateMovementStream();
+                    break;
+                case PlayerType.Rabbit:
+                    controller.CreateMovementStream();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             GlobalLoadingManager.Instance.ActiveScene();
             normalUIArea.stepInEvent.AddListener(() =>
             {
@@ -48,6 +65,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             normalUIArea.stepOutEvent.AddListener(() =>
             {
                 cameraLevelObject.Move(centerCameraPoint.position, 1.0f);
+               
                 difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Select);
                 normalSelectUI.transform.DOMove(normalSelectUIStartPoint.position, 1.0f).OnComplete(() =>
                 {

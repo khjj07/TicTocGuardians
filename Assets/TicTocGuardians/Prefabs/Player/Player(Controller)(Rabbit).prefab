@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1283317330623440564}
   m_Layer: 6
   m_Name: Player(Controller)(Rabbit)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -102,6 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff3f56eef907128488b8ca2859700c57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 3
 --- !u!1 &1283317331139860353
 GameObject:
   m_ObjectHideFlags: 0

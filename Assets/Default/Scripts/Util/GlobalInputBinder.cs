@@ -24,13 +24,13 @@ namespace Default.Scripts.Util
         {
             return Instance.FixedUpdateAsObservable().Where(_ => Input.GetKey(key)).Select(_=>Input.GetKey(key));
         }
-        public static IObservable<bool> CreateGetKeyDownStream(KeyCode key)
+        public static IObservable<Unit> CreateGetKeyDownStream(KeyCode key)
         {
-            return Instance.FixedUpdateAsObservable().Where(_ => Input.GetKeyDown(key)).Select(_ => Input.GetKeyDown(key));
+            return Instance.UpdateAsObservable().Where(_ => Input.GetKeyDown(key));
         }
-        public static IObservable<bool> CreateGetKeyUpStream(KeyCode key)
+        public static IObservable<Unit> CreateGetKeyUpStream(KeyCode key)
         {
-            return Instance.FixedUpdateAsObservable().Where(_ => Input.GetKeyUp(key)).Select(_ => Input.GetKeyUp(key));
+            return Instance.FixedUpdateAsObservable().Where(_ => Input.GetKeyUp(key));
         }
         public static IObservable<bool> CreateGetMouseButtonStream(int btn)
         {
