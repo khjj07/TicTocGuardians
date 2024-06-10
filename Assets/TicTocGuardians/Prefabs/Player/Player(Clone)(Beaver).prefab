@@ -133,7 +133,7 @@ MonoBehaviour:
   checkGroundDistance: 1
   repairImage: {fileID: 7986634692866613149}
   repairTarget: {fileID: 0}
-  dimensionCheckDistance: 2
+  dimensionCheckDistance: 1
   boxCreatePoint: {fileID: 6972562023380570967}
   boxCreateCheckDistance: 0
   beaverBoxPrefab: {fileID: -4599495885175602804, guid: bb870ffd09ed5924b9f6221a755416d8, type: 3}

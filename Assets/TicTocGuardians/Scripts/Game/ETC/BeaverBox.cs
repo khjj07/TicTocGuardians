@@ -12,7 +12,7 @@ namespace TicTocGuardians.Scripts.Game.ETC
 
         public Vector3 contactDirection;
         public float offset =2.0f;
-
+        private bool _isMove = false;
         private Rigidbody _rigidbody;
 
         public void Awake()
@@ -37,27 +37,33 @@ namespace TicTocGuardians.Scripts.Game.ETC
 
         public void Update()
         {
-            if (!Physics.Raycast(transform.position, -contactDirection, offset))
+            if (!_isMove)
             {
+                if (!Physics.Raycast(transform.position, -contactDirection, offset))
+                {
 
-                Debug.DrawRay(transform.position, -contactDirection * offset);
+                    Debug.DrawRay(transform.position, -contactDirection * offset);
+                }
+                else
+                {
+
+                    Debug.DrawRay(transform.position, -contactDirection * offset, Color.red);
+                }
+
             }
-            else
-            {
-
-                Debug.DrawRay(transform.position , -contactDirection * offset, Color.red);
-            }
-
+            _isMove=false;
         }
 
         public void MoveX(float speed)
         {
             transform.Translate(Vector3.right* speed*Time.deltaTime,Space.World);
+            _isMove = true;
         }
 
         public void MoveZ(float speed)
         {
             transform.Translate(Vector3.forward * speed * Time.deltaTime, Space.World);
+            _isMove = true;
         }
 
         public void OnPush()

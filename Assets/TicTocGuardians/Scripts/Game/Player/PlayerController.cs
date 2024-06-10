@@ -15,6 +15,8 @@ namespace TicTocGuardians.Scripts.Game.Player
         private IDisposable _horizontalMovementHandler;
         private IDisposable _verticalMovementHandler;
         private IDisposable _jumpHandler;
+        private IDisposable _pushHandler;
+        private IDisposable _createBoxHandler;
         public void Awake()
         {
             _player = GetComponent<Player>();
@@ -31,7 +33,7 @@ namespace TicTocGuardians.Scripts.Game.Player
         {
             Beaver beaver = _player as Beaver;
 
-            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.B)
+            _createBoxHandler = GlobalInputBinder.CreateGetKeyDownStream(KeyCode.B)
                 .Where(_ =>
                 {
                     Debug.Log(beaver.IsBoxCreatable());
@@ -43,38 +45,52 @@ namespace TicTocGuardians.Scripts.Game.Player
                 });
 
 
-            var pushPointEnterStream = this.OnTriggerEnterAsObservable().Where(x => x.CompareTag("BeaverBoxPushPoint")).Select(x => x.GetComponentInParent<BeaverBox>());
-            var pushPointExitStream = this.OnTriggerExitAsObservable().Where(x => x.CompareTag("BeaverBoxPushPoint")).Select(x => x.GetComponentInParent<BeaverBox>());
 
-            var pushStream = Observable.Zip(GlobalInputBinder.CreateGetAxisStream("Horizontal"),
-                GlobalInputBinder.CreateGetAxisStream("Vertical")).ThrottleFirst(TimeSpan.FromSeconds(1.0f)).Skip(1);
 
-            pushPointEnterStream.Subscribe(x =>
+            var inputStream = Observable.Zip(GlobalInputBinder.CreateGetAxisStream("Horizontal"),
+                GlobalInputBinder.CreateGetAxisStream("Vertical"));
+
+                _pushHandler = inputStream.Where(_=>beaver.GetPushTarget()!=null).ThrottleFirst(TimeSpan.FromSeconds(1.0f)).Skip(1).TakeWhile(_=>beaver.GetPushTarget()!=null)
+                .Subscribe(v =>
+                {
+                    var box = beaver.GetPushTarget() as BeaverBox;
+                    if (Vector3.Dot(box.contactDirection, new Vector3(v[0], 0, v[1])) < -0.3)
                     {
-                        Debug.Log("setTarget");
-                        beaver.SetPushTarget(x);
-                        pushStream.TakeUntil(pushPointExitStream)
-                            .Where(v =>
-                            {
-                                Debug.Log(new Vector3(v[0], 0, v[1]));
-                                return Vector3.Dot(x.contactDirection, new Vector3(v[0], 0, v[1])) < -0.3;
-                            })
-                            .Subscribe(_ => x.OnPush());
-                    });
-            pushPointExitStream.Subscribe(x =>
-            {
-                Debug.Log("null");
-                beaver.SetPushTarget(null);
-            });
+                        beaver.Act(new Action(Action.State.Push));
+                    }
+                    else
+                    {
+                        beaver.Act(new Action(Action.State.PushNotReady));
+                    }
+                });
+
+
+
         }
 
+        public void DisposeAllStream()
+        {
+            DisposeMovementStream();
+            switch (type)
+            {
+                case PlayerType.Beaver:
+                    DisposeBeaverStream();
+                    break;
 
+            }
+        }
 
         public void DisposeMovementStream()
         {
             _horizontalMovementHandler.Dispose();
             _verticalMovementHandler.Dispose();
             _jumpHandler.Dispose();
+        }
+
+        public void DisposeBeaverStream()
+        {
+            _pushHandler.Dispose();
+            _createBoxHandler.Dispose();
         }
     }
 }

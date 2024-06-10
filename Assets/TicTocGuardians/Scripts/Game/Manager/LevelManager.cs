@@ -188,7 +188,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
             ingameUI.skipButton.onClick.AddListener(() =>
             {
                 Time.timeScale = 4.0f;
-                playerController.DisposeMovementStream();
+                playerController.DisposeAllStream();
+
             });
 
         }

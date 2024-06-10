@@ -86,10 +86,10 @@ MonoBehaviour:
   acceleration: 0.5
   drag: 0.1
   footOrigin: {fileID: 2281571450007289464}
-  checkGroundDistance: 0.3
+  checkGroundDistance: 1
   repairImage: {fileID: 7921823542591104717}
   repairTarget: {fileID: 0}
-  dimensionCheckDistance: 2
+  dimensionCheckDistance: 1
 --- !u!114 &4129593959931012272
 MonoBehaviour:
   m_ObjectHideFlags: 0

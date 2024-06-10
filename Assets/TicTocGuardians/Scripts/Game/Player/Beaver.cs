@@ -9,6 +9,7 @@ using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
 using Unity.Burst.CompilerServices;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
 namespace TicTocGuardians.Scripts.Game.Player
@@ -32,14 +33,56 @@ namespace TicTocGuardians.Scripts.Game.Player
             {
                 if (Physics.Raycast(boxCreatePoint.position, Vector3.down, boxCreateCheckDistance))
                 {
-                    Debug.DrawRay(boxCreatePoint.position, Vector3.down * boxCreateCheckDistance,Color.red);
+                    Debug.DrawRay(boxCreatePoint.position, Vector3.down * boxCreateCheckDistance, Color.red);
                 }
                 else
                 {
                     Debug.DrawRay(boxCreatePoint.position, Vector3.down * boxCreateCheckDistance);
                 }
-                
+
             });
+        }
+
+        public override void CreateDefaultStream()
+        {
+            base.CreateDefaultStream();
+
+            var pushPointStayStream = this.OnTriggerStayAsObservable().Where(x => x.CompareTag("BeaverBoxPushPoint")).Select(x => x.GetComponent<BeaverBoxPushPoint>());
+            var pushPointExitStream = this.OnTriggerExitAsObservable().Where(x => x.CompareTag("BeaverBoxPushPoint")).Select(x => x.GetComponent<BeaverBoxPushPoint>());
+            pushPointStayStream.Subscribe(x =>
+            {
+                _isPushReady = true; 
+                if (Vector3.Distance(x.transform.position, transform.position) > 0.5f)
+                {
+                    SetAnimationState(AnimationState.PushReady);
+                    MoveTo(x.transform.position);
+                    SetDirection(-x.direction);
+                }
+                SetPushTarget(x.GetComponentInParent<BeaverBox>());
+            });
+
+            pushPointExitStream.Subscribe(x =>
+            {
+                _isPushReady = false;
+                SetPushTarget(null);
+            });
+
+            var baseStream = actionSubject.Where(_ => _ != null);
+            baseStream.Where(action => action.state == Action.State.PushNotReady).Subscribe(_ =>
+            {
+                _isPushReady = false;
+            }).AddTo(gameObject);
+
+            baseStream.Where(action => action.state == Action.State.Push)
+                .Subscribe(_ =>
+                {
+                    SetAnimationState(AnimationState.Push);
+                    PushTarget();
+                });
+        }
+        public IPushable GetPushTarget()
+        {
+            return _pushTarget;
         }
 
         public void SetPushTarget(IPushable box)
@@ -54,8 +97,8 @@ namespace TicTocGuardians.Scripts.Game.Player
                 _pushTarget.OnPush();
             }
         }
-        
-        
+
+
         public bool IsBoxCreatable()
         {
             return Physics.Raycast(boxCreatePoint.position, Vector3.down, boxCreateCheckDistance);

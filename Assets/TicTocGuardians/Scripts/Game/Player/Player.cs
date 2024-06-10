@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using TicTocGuardians.Scripts.Game.LevelObjects;
 using TicTocGuardians.Scripts.Game.Manager;
 using TicTocGuardians.Scripts.Interface;
@@ -23,17 +24,21 @@ namespace TicTocGuardians.Scripts.Game.Player
         {
             MoveX,
             MoveZ,
+            Push,
+            PushReady,
+            PushNotReady,
+            PushTargetRelease,
             Jump,
             None
         }
-        public Action(State state, float direction = 0)
+        public Action(State state, object data = null)
         {
             this.state = state;
-            this.direction = direction;
+            this.data = data;
         }
 
         public State state;
-        public float direction;
+        public object data;
     }
 
     [RequireComponent(typeof(CapsuleCollider), typeof(Rigidbody))]
@@ -47,6 +52,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             Falling,
             Landing,
             Push,
+            PushReady,
             Repair
         }
 
@@ -78,12 +84,14 @@ namespace TicTocGuardians.Scripts.Game.Player
         protected static readonly int Jump1 = Animator.StringToHash("Jump");
         protected static readonly int Idle = Animator.StringToHash("Idle");
         protected static readonly int Push = Animator.StringToHash("Push");
+        protected static readonly int PushReady = Animator.StringToHash("PushReady");
         protected static readonly int Repair = Animator.StringToHash("Repair");
         protected static readonly int Landing = Animator.StringToHash("Landing");
 
         protected bool _isJumping = false;
         protected bool _isFalling = false;
         protected bool _isRepair = false;
+        protected bool _isPushReady = false;
         protected static readonly int Falling = Animator.StringToHash("Falling");
 
         public float dimensionCheckDistance;
@@ -124,14 +132,28 @@ namespace TicTocGuardians.Scripts.Game.Player
             Debug.DrawRay(footOrigin.position, Vector3.down * checkGroundDistance, Color.red);
         }
 
-        public void CreateDefaultStream()
+        public virtual void CreateDefaultStream()
         {
             var baseStream = actionSubject.Where(_ => _ != null);
             var moveXStream = baseStream.Where(action => action.state == Action.State.MoveX);
-            moveXStream.Subscribe(action => MoveX(action.direction)).AddTo(gameObject);
+            moveXStream.Subscribe(action =>
+            {
+                if (!_isJumping && IsContactGround())
+                {
+                    SetAnimationState(AnimationState.Run);
+                }
+                MoveX((float)action.data);
+            }).AddTo(gameObject);
 
             var moveZStream = baseStream.Where(action => action.state == Action.State.MoveZ);
-            moveZStream.Subscribe(action => MoveZ(action.direction)).AddTo(gameObject);
+            moveZStream.Subscribe(action =>
+            {
+                if (!_isJumping && IsContactGround())
+                {
+                    SetAnimationState(AnimationState.Run);
+                }
+                MoveZ((float)action.data);
+            }).AddTo(gameObject);
 
             var jumpStream = baseStream.Where(_ => IsContactGround())
                 .Where(action => action.state == Action.State.Jump);
@@ -140,7 +162,24 @@ namespace TicTocGuardians.Scripts.Game.Player
             {
                 _isJumping = true;
                 SetAnimationState(AnimationState.Jump);
+                Observable.Timer(TimeSpan.FromMilliseconds(500))
+                    .Subscribe(_ => _isJumping = false);
             }).AddTo(gameObject);
+
+
+
+            var isFallingStream = this.UpdateAsObservable().Where(_ => !IsContactGround());
+            isFallingStream.Subscribe(_ => _isFalling = true);
+
+            isFallingStream.SelectMany(this.UpdateAsObservable()
+                    .Where(_ => IsContactGround()))
+                .First().Repeat()
+                .Subscribe(_ =>
+                {
+                    SetAnimationState(AnimationState.Landing);
+                    Observable.Timer(TimeSpan.FromMilliseconds(500))
+                        .Subscribe(_ => _isFalling = false);
+                });
 
             var dimensionEnterStream = this.OnTriggerEnterAsObservable()
                 .Where(x => x.CompareTag("Dimension"))
@@ -166,12 +205,11 @@ namespace TicTocGuardians.Scripts.Game.Player
         {
             if (IsContactGround())
             {
-                if (!_isFalling && !_isJumping)
+                if (!_isPushReady && !_isFalling && !_isJumping)
                 {
-                    SetAnimationState(AnimationState.Idle);
-                    if (_rigidbody.velocity.magnitude >= 1)
+                    if (_rigidbody.velocity.magnitude < 1)
                     {
-                        SetAnimationState(AnimationState.Run);
+                        SetAnimationState(AnimationState.Idle);
                     }
                 }
             }
@@ -179,23 +217,8 @@ namespace TicTocGuardians.Scripts.Game.Player
             {
                 if (!_isJumping)
                 {
-                    _isFalling = true;
                     SetAnimationState(AnimationState.Falling);
                 }
-
-                Observable.Timer(TimeSpan.FromSeconds(0.1f))
-                    .Subscribe(_ =>
-                    {
-                        this.UpdateAsObservable().Where(_ => IsContactGround()).Take(1).Subscribe(_ =>
-                        {
-                            SetAnimationState(AnimationState.Landing);
-                            Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ =>
-                            {
-                                _isFalling = false;
-                                _isJumping = false;
-                            }).AddTo(gameObject);
-                        }).AddTo(gameObject);
-                    }).AddTo(gameObject);
             }
         }
 
@@ -218,6 +241,11 @@ namespace TicTocGuardians.Scripts.Game.Player
         public void Act(Action action)
         {
             actionSubject.OnNext(action);
+        }
+
+        public void MoveTo(Vector3 position)
+        {
+            transform.DOMove(position, 0.2f).Rewind();
         }
 
         public void MoveX(float direction)
@@ -257,7 +285,6 @@ namespace TicTocGuardians.Scripts.Game.Player
         public void Jump()
         {
             _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-
         }
 
         public void SetAnimationState(AnimationState state)
@@ -271,6 +298,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             animator.SetBool(Run, false);
             animator.SetBool(Jump1, false);
             animator.SetBool(Push, false);
+            animator.SetBool(PushReady, false);
             animator.SetBool(Repair, false);
             animator.SetBool(Landing, false);
             animator.SetBool(Falling, false);
@@ -296,6 +324,9 @@ namespace TicTocGuardians.Scripts.Game.Player
                     break;
                 case AnimationState.Falling:
                     animator.SetBool(Falling, true);
+                    break;
+                case AnimationState.PushReady:
+                    animator.SetBool(PushReady, true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
