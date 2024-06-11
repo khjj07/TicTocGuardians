@@ -51,32 +51,38 @@ namespace TicTocGuardians.Scripts.Game.Player
             var pushPointExitStream = this.OnTriggerExitAsObservable().Where(x => x.CompareTag("BeaverBoxPushPoint")).Select(x => x.GetComponent<BeaverBoxPushPoint>());
             pushPointStayStream.Subscribe(x =>
             {
-                _isPushReady = true; 
-                if (Vector3.Distance(x.transform.position, transform.position) > 0.5f)
+
+                if (Vector3.Dot(x.direction.normalized, _direction) < -0.3f)
                 {
                     SetAnimationState(AnimationState.PushReady);
-                    MoveTo(x.transform.position);
-                    SetDirection(-x.direction);
+                    _isOperating = true;
+                }
+                else
+                {
+                    _isOperating = false;
+                    SetDirection(-x.direction.normalized);
                 }
                 SetPushTarget(x.GetComponentInParent<BeaverBox>());
+
             });
 
             pushPointExitStream.Subscribe(x =>
             {
-                _isPushReady = false;
                 SetPushTarget(null);
+                _isOperating = false;
             });
 
             var baseStream = actionSubject.Where(_ => _ != null);
-            baseStream.Where(action => action.state == Action.State.PushNotReady).Subscribe(_ =>
-            {
-                _isPushReady = false;
-            }).AddTo(gameObject);
 
             baseStream.Where(action => action.state == Action.State.Push)
                 .Subscribe(_ =>
                 {
                     SetAnimationState(AnimationState.Push);
+                    _movable = false;
+                    Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(_ =>
+                    {
+                        _movable = true;
+                    });
                     PushTarget();
                 });
         }

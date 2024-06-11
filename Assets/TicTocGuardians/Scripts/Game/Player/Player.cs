@@ -26,11 +26,10 @@ namespace TicTocGuardians.Scripts.Game.Player
             MoveZ,
             Push,
             PushReady,
-            PushNotReady,
-            PushTargetRelease,
             Jump,
             None
         }
+
         public Action(State state, object data = null)
         {
             this.state = state;
@@ -87,13 +86,12 @@ namespace TicTocGuardians.Scripts.Game.Player
         protected static readonly int PushReady = Animator.StringToHash("PushReady");
         protected static readonly int Repair = Animator.StringToHash("Repair");
         protected static readonly int Landing = Animator.StringToHash("Landing");
-
-        protected bool _isJumping = false;
-        protected bool _isFalling = false;
-        protected bool _isRepair = false;
-        protected bool _isPushReady = false;
         protected static readonly int Falling = Animator.StringToHash("Falling");
 
+        protected bool _movable = true;
+        protected bool _isFalling = false;
+
+        protected bool _isOperating = false;
         public float dimensionCheckDistance;
 
         public virtual void Awake()
@@ -112,6 +110,7 @@ namespace TicTocGuardians.Scripts.Game.Player
         public virtual void Update()
         {
             MoveAnimation();
+
             if (_rigidbody.velocity.magnitude > 0.1)
             {
                 var tmp = _rigidbody.velocity;
@@ -119,7 +118,7 @@ namespace TicTocGuardians.Scripts.Game.Player
                 SetDirection(tmp.normalized);
             }
 
-            if (_isRepair)
+            if (repairTarget!=null)
             {
                 Repairing();
             }
@@ -129,16 +128,15 @@ namespace TicTocGuardians.Scripts.Game.Player
             }
 
             Animate();
-            Debug.DrawRay(footOrigin.position, Vector3.down * checkGroundDistance, Color.red);
         }
 
         public virtual void CreateDefaultStream()
         {
             var baseStream = actionSubject.Where(_ => _ != null);
             var moveXStream = baseStream.Where(action => action.state == Action.State.MoveX);
-            moveXStream.Subscribe(action =>
+            moveXStream.Where(_=> _movable).Subscribe(action =>
             {
-                if (!_isJumping && IsContactGround())
+                if (!_isOperating && IsContactGround())
                 {
                     SetAnimationState(AnimationState.Run);
                 }
@@ -146,9 +144,9 @@ namespace TicTocGuardians.Scripts.Game.Player
             }).AddTo(gameObject);
 
             var moveZStream = baseStream.Where(action => action.state == Action.State.MoveZ);
-            moveZStream.Subscribe(action =>
+            moveZStream.Where(_ => _movable).Subscribe(action =>
             {
-                if (!_isJumping && IsContactGround())
+                if (!_isOperating && IsContactGround())
                 {
                     SetAnimationState(AnimationState.Run);
                 }
@@ -160,20 +158,21 @@ namespace TicTocGuardians.Scripts.Game.Player
             jumpStream.Subscribe(action => Jump()).AddTo(gameObject);
             jumpStream.Subscribe(action =>
             {
-                _isJumping = true;
+                _isOperating = true;
                 SetAnimationState(AnimationState.Jump);
                 Observable.Timer(TimeSpan.FromMilliseconds(500))
-                    .Subscribe(_ => _isJumping = false);
+                    .Subscribe(_ => _isOperating = false);
             }).AddTo(gameObject);
 
 
 
             var isFallingStream = this.UpdateAsObservable().Where(_ => !IsContactGround());
-            isFallingStream.Subscribe(_ => _isFalling = true);
 
+            isFallingStream.Subscribe(_ => _isFalling = true);
             isFallingStream.SelectMany(this.UpdateAsObservable()
                     .Where(_ => IsContactGround()))
-                .First().Repeat()
+                    .First().Repeat()
+
                 .Subscribe(_ =>
                 {
                     SetAnimationState(AnimationState.Landing);
@@ -184,6 +183,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             var dimensionEnterStream = this.OnTriggerEnterAsObservable()
                 .Where(x => x.CompareTag("Dimension"))
                 .Select(x => x.GetComponent<DimensionLevelObject>());
+
             var dimensionExitStream = this.OnTriggerExitAsObservable()
                 .Where(x => x.CompareTag("Dimension"))
                 .Select(x => x.GetComponent<DimensionLevelObject>());
@@ -191,12 +191,10 @@ namespace TicTocGuardians.Scripts.Game.Player
             dimensionEnterStream.Subscribe(x =>
             {
                 repairTarget = x;
-                _isRepair = true;
             }).AddTo(gameObject);
 
             dimensionExitStream.Subscribe(x =>
             {
-                _isRepair = false;
                 repairTarget = null;
             }).AddTo(gameObject);
         }
@@ -205,7 +203,7 @@ namespace TicTocGuardians.Scripts.Game.Player
         {
             if (IsContactGround())
             {
-                if (!_isPushReady && !_isFalling && !_isJumping)
+                if (!_isOperating)
                 {
                     if (_rigidbody.velocity.magnitude < 1)
                     {
@@ -215,7 +213,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             }
             else
             {
-                if (!_isJumping)
+                if (!_isOperating)
                 {
                     SetAnimationState(AnimationState.Falling);
                 }
@@ -260,6 +258,7 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         public void SetDirection(Vector3 direction)
         {
+            _direction = direction;
             if (direction.magnitude > 0)
             {
                 animator.transform.rotation = Quaternion.LookRotation(direction);
