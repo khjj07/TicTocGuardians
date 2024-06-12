@@ -135,7 +135,7 @@ MonoBehaviour:
   repairTarget: {fileID: 0}
   dimensionCheckDistance: 1
   boxCreatePoint: {fileID: 6972562023380570967}
-  boxCreateCheckDistance: 0
+  boxCreateCheckDistance: 3
   beaverBoxPrefab: {fileID: -4599495885175602804, guid: bb870ffd09ed5924b9f6221a755416d8, type: 3}
   boxCreateUpDistance: 0
   pushTime: 3
@@ -226,6 +226,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: beaver_idle
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 358168335a7d7e94b9d8f73ec0a39b5c, type: 2}
     - target: {fileID: 7834216257777997746, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}
       propertyPath: m_Materials.Array.size
       value: 4

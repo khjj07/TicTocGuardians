@@ -27,6 +27,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             Push,
             PushReady,
             Jump,
+            Special,
             None
         }
 

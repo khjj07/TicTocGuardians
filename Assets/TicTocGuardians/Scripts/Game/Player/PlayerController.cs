@@ -42,7 +42,7 @@ namespace TicTocGuardians.Scripts.Game.Player
                 }).First()
                 .Subscribe(_ =>
                 {
-                    beaver.CreateBox();
+                    beaver.Act(new Action(Action.State.Special));
                 }).AddTo(gameObject);
 
             var inputStream = Observable.Zip(GlobalInputBinder.CreateGetAxisStream("Horizontal"),

@@ -19,12 +19,18 @@ namespace TicTocGuardians.Scripts.Game.Player
         public Transform boxCreatePoint;
         public float boxCreateCheckDistance;
         [SerializeField] private BeaverBox beaverBoxPrefab;
+        private BeaverBox boxInstance;
         [SerializeField] private float boxCreateUpDistance;
         [SerializeField] private float pushTime = 3.0f;
         [SerializeField] private float pushOffset = 2.0f;
         [SerializeField]
         private IPushable _pushTarget;
         private StaticModelLevelObject _targetPlatform;
+
+        public void OnDestroy()
+        {
+            Destroy(boxInstance.gameObject);
+        }
 
         public override void Start()
         {
@@ -39,8 +45,7 @@ namespace TicTocGuardians.Scripts.Game.Player
                 {
                     Debug.DrawRay(boxCreatePoint.position, Vector3.down * boxCreateCheckDistance);
                 }
-
-            });
+            }).AddTo(gameObject);
         }
 
         public override void CreateDefaultStream()
@@ -64,15 +69,21 @@ namespace TicTocGuardians.Scripts.Game.Player
                 }
                 SetPushTarget(x.GetComponentInParent<BeaverBox>());
 
-            });
+            }).AddTo(gameObject);
 
             pushPointExitStream.Subscribe(x =>
             {
                 SetPushTarget(null);
                 _isOperating = false;
-            });
+            }).AddTo(gameObject);
 
             var baseStream = actionSubject.Where(_ => _ != null);
+            baseStream.Where(action => action.state == Action.State.Special)
+                .Subscribe(_ =>
+                {
+
+                    CreateBox();
+                }).AddTo(gameObject);
 
             baseStream.Where(action => action.state == Action.State.Push)
                 .Subscribe(_ =>
@@ -84,7 +95,7 @@ namespace TicTocGuardians.Scripts.Game.Player
                         _movable = true;
                     });
                     PushTarget();
-                });
+                }).AddTo(gameObject);
         }
         public IPushable GetPushTarget()
         {
@@ -112,14 +123,15 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         public void CreateBox()
         {
+            Debug.Log("createBox");
             RaycastHit hit;
             Vector3 boxPosition = Vector3.zero;
-            var instance = Instantiate(beaverBoxPrefab, LevelOrigin.Instance.transform);
+            boxInstance = Instantiate(beaverBoxPrefab, LevelOrigin.Instance.transform);
             Physics.Raycast(boxCreatePoint.position, Vector3.down, out hit, boxCreateCheckDistance);
             boxPosition = hit.collider.transform.position;
             boxPosition.y = boxCreatePoint.position.y;
-            instance.transform.position = boxPosition;
-            instance.transform.DOScale(new Vector3(0.9f, 1, 0.9f), 0.3f);
+            boxInstance.transform.position = boxPosition;
+            boxInstance.transform.DOScale(new Vector3(0.9f, 1, 0.9f), 0.3f);
         }
     }
 }
