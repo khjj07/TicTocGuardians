@@ -28,9 +28,17 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField]
         private Image catLoadingScreen;
 
+        private Canvas _canvas;
+
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
+            _canvas = GetComponent<Canvas>();
+        }
+
+        public void Update()
+        {
+            _canvas.worldCamera = Camera.current;
         }
 
         public void ActiveScene()
@@ -45,6 +53,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             //var previousScene = SceneManager.GetActiveScene();
             var loadOperation = SceneManager.LoadSceneAsync(scene);
+            loadOperation.allowSceneActivation = false;
             defaultLoadingScreen.gameObject.SetActive(false);
             beaverLoadingScreen.gameObject.SetActive(false);
             rabbitLoadingScreen.gameObject.SetActive(false);
@@ -70,7 +79,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
             }
             yield return new WaitForSeconds(defaultDelay);
-            yield return new WaitUntil(() => loadOperation.isDone);
+            yield return new WaitUntil(() => loadOperation.progress>=0.9f);
+            loadOperation.allowSceneActivation = true;
             //SceneManager.UnloadSceneAsync(previousScene.name);
         }
     }

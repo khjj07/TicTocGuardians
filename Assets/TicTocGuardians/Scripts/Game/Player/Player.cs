@@ -178,7 +178,7 @@ namespace TicTocGuardians.Scripts.Game.Player
                     SetAnimationState(AnimationState.Landing);
                     Observable.Timer(TimeSpan.FromMilliseconds(500))
                         .Subscribe(_ => _isFalling = false);
-                });
+                }).AddTo(gameObject);
 
             var dimensionEnterStream = this.OnTriggerEnterAsObservable()
                 .Where(x => x.CompareTag("Dimension"))

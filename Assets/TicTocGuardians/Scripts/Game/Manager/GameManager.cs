@@ -45,11 +45,11 @@ namespace TicTocGuardians.Scripts.Game.Manager
             var levelPreset = _currentLevelPresetListAsset.GetLevel(index);
             if (levelPreset.levelAsset as TutorialLevelAsset != null)
             {
-                StartCoroutine(GlobalLoadingManager.Instance.Load(tutorialScene.name, 1.0f));
+                StartCoroutine(GlobalLoadingManager.Instance.Load(tutorialScene.name, 3.0f));
             }
             else
             {
-                StartCoroutine(GlobalLoadingManager.Instance.Load(generalScene.name, 1.0f));
+                StartCoroutine(GlobalLoadingManager.Instance.Load(generalScene.name, 3.0f));
             }
             
         }

@@ -46,15 +46,22 @@ namespace TicTocGuardians.Scripts.Game.UI
                 playerPreview.Pick();
                 order.gameObject.SetActive(true);
                 _image.sprite = highlightSprite;
-                _selected = true;
             }
             else
             {
                 playerPreview.Wait();
                 order.gameObject.SetActive(false);
                 _image.sprite = normalSprite;
-                _selected = false;
             }
+        }
+        public void Select()
+        {
+             _selected =true;
+        }
+
+        public void UnSelect()
+        {
+            _selected = false;
         }
 
         public bool IsSelected()

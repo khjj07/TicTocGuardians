@@ -150,7 +150,6 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
         public override LevelObjectAsset Serialize(LevelAsset parent)
         {
             var asset = base.Serialize(parent);
-
             asset.AddData(parent, IntegerDataAsset.Create("row", row));
             asset.AddData(parent, IntegerDataAsset.Create("column", column));
             asset.AddData(parent, FloatDataAsset.Create("offset", offset));

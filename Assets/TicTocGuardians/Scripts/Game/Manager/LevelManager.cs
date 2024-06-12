@@ -188,9 +188,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
             ingameUI.skipButton.onClick.AddListener(() =>
             {
                 Time.timeScale = 4.0f;
-                Destroy(playerController);
+                playerController.DisposeAllStream();
             });
-
         }
 
         public void InitializeFailUI()
@@ -225,12 +224,12 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 .Where(x => x.CompareTag("Dimension"))
                 .Select(x => x.GetComponent<DimensionLevelObject>());
 
-            var dimensionExitStream = player.OnTriggerEnterAsObservable()
+            var dimensionExitStream = player.OnTriggerExitAsObservable()
                 .Where(x => x.CompareTag("Dimension"))
                 .Select(x => x.GetComponent<DimensionLevelObject>());
 
-            dimensionEnterStream.Subscribe(AddRepairDimension).AddTo(gameObject);
-            dimensionExitStream.Subscribe(RemoveRepairDimension).AddTo(gameObject);
+            dimensionEnterStream.Subscribe(AddRepairDimension).AddTo(player.gameObject);
+            dimensionExitStream.Subscribe(RemoveRepairDimension).AddTo(player.gameObject);
 
         }
     }

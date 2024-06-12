@@ -45,7 +45,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         private int _currentPlayPhaseIndex = 0;
 
         private Subject<Phase> _phaseSubject = new Subject<Phase>();
-        private List<PlayerType> _playerOrder = new List<PlayerType>();
+        public List<PlayerType> _playerOrder = new List<PlayerType>();
         private PlayerCloneData[] _cloneData = new PlayerCloneData[3];
         private List<PlayerClone> _currentClones = new List<PlayerClone>();
         private PlayerRecorder _recorder;
@@ -170,7 +170,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             if (!orderingUI.selectButtons[i].IsSelected())
             {
                 AddPlayerOrder(orderingUI.selectButtons[i].type);
-
+                orderingUI.selectButtons[i].Select();
                 if (_playerOrder.Count >= 3)
                 {
                     orderingUI.SubmitAvailable();
@@ -178,6 +178,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             }
             else
             {
+                orderingUI.selectButtons[i].UnSelect();
                 for (int j = 0; j < _playerOrder.Count; j++)
                 {
                     if (orderingUI.selectButtons[i].type == _playerOrder[j])

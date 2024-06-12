@@ -3,6 +3,7 @@ using TicTocGuardians.Scripts.Game.UI;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
@@ -23,7 +24,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         private void TitleBegin()
         {
-
             _tapToStartButtonRect.localScale = Vector3.zero;
             cinemaPlayer.AddCallback(OnCinemaEnd);
             cinemaPlayer.Play();
@@ -34,7 +34,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             _tapToStartButtonRect.DOScale(Vector3.one, 1f).SetEase(Ease.OutBounce).OnComplete(() =>
             {
                 this.UpdateAsObservable().Where(_ => Input.anyKey).First()
-                    .Subscribe(_ => StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene",1.0f))).AddTo(gameObject);
+                    .Subscribe(_ => SceneManager.LoadSceneAsync("LobbyScene")).AddTo(gameObject);
             });
         }
 

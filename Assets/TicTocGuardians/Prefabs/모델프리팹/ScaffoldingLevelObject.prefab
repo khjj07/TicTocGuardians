@@ -45,9 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modelPrefab: {fileID: 0}
-  stepInEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  stepOutEvent:
-    m_PersistentCalls:
-      m_Calls: []
+  reactableObject: {fileID: 0}

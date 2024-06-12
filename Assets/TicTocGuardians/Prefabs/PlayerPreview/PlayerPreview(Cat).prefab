@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 382088f1c8a6d3442ba97d04161065e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultState: 0
 --- !u!1001 &5447293801955381638
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -150,7 +151,7 @@ MonoBehaviour:
   outlineMode: 0
   outlineColor: {r: 0.1509434, g: 0.11605554, b: 0.11605554, a: 1}
   outlineWidth: 10
-  precomputeOutline: 0
+  precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
 --- !u!1 &5141357104693636311 stripped
