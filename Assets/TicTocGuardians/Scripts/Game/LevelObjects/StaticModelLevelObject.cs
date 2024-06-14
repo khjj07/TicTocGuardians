@@ -28,6 +28,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                 var instance = Instantiate(child, transform);
                 var col = instance.AddComponent<MeshCollider>();
                 col.sharedMesh = child.sharedMesh;
+                col.convex = true;
             }
         }
     }

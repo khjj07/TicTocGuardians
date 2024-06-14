@@ -12,6 +12,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
     public class ScaffoldingModelLevelObject : StaticModelLevelObject
     {
         public LevelObject reactableObject;
+        public ParticleSystem[] buttonPressedParticlePrefab =new ParticleSystem[2];
         public override LevelObjectAsset Serialize(LevelAsset parent)
         {
             var instance = base.Serialize(parent);
@@ -29,12 +30,25 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
         {
             GetComponentInChildren<MeshCollider>().OnCollisionEnterAsObservable()
                 .Where(collision => collision.contacts[0].normal.y < -0.7)
+                .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
                 .Select(_=> reactableObject as IReactable)
-                .Subscribe(x=> x.React());
+                .Subscribe(x=>
+                {
+                    CreateStepInParticle();
+                    x.React();
+                });
 
             GetComponentInChildren<MeshCollider>().OnCollisionExitAsObservable()
                 .Select(_ => reactableObject as IReactable)
                 .Subscribe(x => x.React());
+        }
+
+        private void CreateStepInParticle()
+        {
+            var instance1 = Instantiate(buttonPressedParticlePrefab[0]);
+            var instance2 = Instantiate(buttonPressedParticlePrefab[1]);
+            instance1.transform.position = transform.position;
+            instance2.transform.position = transform.position;
         }
 
         public void OnDrawGizmos()
