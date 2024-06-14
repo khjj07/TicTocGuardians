@@ -5,7 +5,9 @@ using TicTocGuardians.Scripts.Game.Manager;
 using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
+using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace TicTocGuardians.Scripts.Game.Player
 {
@@ -27,6 +29,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             Push,
             PushReady,
             Jump,
+            Wait,
             Special,
             None
         }
@@ -53,6 +56,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             Landing,
             Push,
             PushReady,
+            Wait,
             Repair
         }
 
@@ -94,6 +98,8 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         protected bool _isOperating = false;
         public float dimensionCheckDistance;
+        private bool _isWaiting;
+        private static readonly int Wait = Animator.StringToHash("Wait");
 
         public virtual void Awake()
         {
@@ -198,13 +204,24 @@ namespace TicTocGuardians.Scripts.Game.Player
             {
                 repairTarget = null;
             }).AddTo(gameObject);
+
+            baseStream.Where(action => action.state == Action.State.Wait)
+                .Subscribe(_ =>
+                {
+                    SetAnimationState(AnimationState.Wait);
+                    _isWaiting = true;
+                });
         }
 
         public void MoveAnimation()
         {
             if (IsContactGround())
             {
-                if (!_isOperating)
+                if (_isWaiting)
+                {
+                    SetAnimationState(AnimationState.Wait);
+                }
+                else if (!_isOperating)
                 {
                     if (_rigidbody.velocity.magnitude < 1)
                     {
@@ -287,6 +304,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
 
+
         public void SetAnimationState(AnimationState state)
         {
             animationState = state;
@@ -302,6 +320,7 @@ namespace TicTocGuardians.Scripts.Game.Player
             animator.SetBool(Repair, false);
             animator.SetBool(Landing, false);
             animator.SetBool(Falling, false);
+            animator.SetBool(Wait, false);
             switch (animationState)
             {
                 case AnimationState.Idle:
@@ -327,6 +346,9 @@ namespace TicTocGuardians.Scripts.Game.Player
                     break;
                 case AnimationState.PushReady:
                     animator.SetBool(PushReady, true);
+                    break;
+                case AnimationState.Wait:
+                    animator.SetBool(Wait,true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

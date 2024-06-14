@@ -137,6 +137,7 @@ MonoBehaviour:
   boxCreatePoint: {fileID: 6972562023380570967}
   boxCreateCheckDistance: 3
   beaverBoxPrefab: {fileID: -4599495885175602804, guid: bb870ffd09ed5924b9f6221a755416d8, type: 3}
+  boxCreateParticlePrefab: {fileID: 991464031927972707, guid: 1eb94b208ec1da34aad1818953c353a1, type: 3}
   boxCreateUpDistance: 0
   pushTime: 3
   pushOffset: 2
@@ -270,11 +271,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outlineMode: 0
-  outlineColor: {r: 0.1509434, g: 0.11605554, b: 0.11605554, a: 1}
+  outlineColor: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 1}
   outlineWidth: 3
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!1 &7381025405875578911 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}
+  m_PrefabInstance: {fileID: 7687576746242463054}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6214219495220167519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7381025405875578911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eca7ae50c0be3f4c8d1e155d1074fd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkParticlePrefabs:
+  - {fileID: 2982856096251217113, guid: a6e118c1a21c0cf43ab371db942e3e71, type: 3}
+  - {fileID: 2311077856527610966, guid: 6d83f4ddedf49024da6803bcf8bfc662, type: 3}
+  - {fileID: 8449694793445027319, guid: 4bece036cbafe2b498ce337a158619c7, type: 3}
+  landingParticlePrefabs:
+  - {fileID: 6960193925964126832, guid: 42978ca5bcd23b64eaba8807dbdb7b42, type: 3}
+  - {fileID: 7194289704339746841, guid: 7cc700583dc0ee94eaa14d27f4cb4e5f, type: 3}
+  footOrigin: {fileID: 2281571450007289464}
 --- !u!4 &7864827755494945445 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 312a3e643bb6acf409b982950e84a27a, type: 3}

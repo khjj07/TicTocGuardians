@@ -9,15 +9,16 @@ namespace TicTocGuardians.Scripts.Game.ETC
     public class BeaverBox : MonoBehaviour, IMovable, IPushable
     {
         public BeaverBoxPushPoint[] pushPoints;
-
+        public ParticleSystem[] moveParticle = new ParticleSystem[2];
+        public Transform particleOrigin;
         public Vector3 contactDirection;
-        public float offset =2.0f;
+        public float offset = 2.0f;
         private bool _isMove = false;
         private Rigidbody _rigidbody;
 
         public void Awake()
         {
-            _rigidbody=GetComponent<Rigidbody>();
+            _rigidbody = GetComponent<Rigidbody>();
         }
         public void Start()
         {
@@ -28,7 +29,7 @@ namespace TicTocGuardians.Scripts.Game.ETC
                 {
                     contactDirection = pushPoint.direction.normalized;
                 });
-                pushPoint.OnTriggerExitAsObservable().Where(x=>x.CompareTag("Player")).Subscribe(_ =>
+                pushPoint.OnTriggerExitAsObservable().Where(x => x.CompareTag("Player")).Subscribe(_ =>
                 {
                     contactDirection = Vector3.zero;
                 });
@@ -51,12 +52,12 @@ namespace TicTocGuardians.Scripts.Game.ETC
                 }
 
             }
-            _isMove=false;
+            _isMove = false;
         }
 
         public void MoveX(float speed)
         {
-            transform.Translate(Vector3.right* speed*Time.deltaTime,Space.World);
+            transform.Translate(Vector3.right * speed * Time.deltaTime, Space.World);
             _isMove = true;
         }
 
@@ -66,11 +67,29 @@ namespace TicTocGuardians.Scripts.Game.ETC
             _isMove = true;
         }
 
+        public void PlayMoveParticle()
+        {
+            particleOrigin.rotation = Quaternion.LookRotation(-contactDirection);
+            moveParticle[0].Play();
+            moveParticle[1].Play();
+        }
+
+        public void StopMoveParticle()
+        {
+            moveParticle[0].Stop();
+            moveParticle[1].Stop();
+        }
+
+
         public void OnPush()
         {
             if (!Physics.Raycast(transform.position, -contactDirection, offset))
             {
-                transform.DOMove(-contactDirection * offset, 0.5f).SetRelative(true);
+                PlayMoveParticle();
+                transform.DOMove(-contactDirection * offset, 0.5f).SetRelative(true).OnComplete(() =>
+                {
+                    StopMoveParticle();
+                });
             }
         }
     }

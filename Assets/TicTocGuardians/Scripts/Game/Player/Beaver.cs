@@ -20,16 +20,20 @@ namespace TicTocGuardians.Scripts.Game.Player
         public float boxCreateCheckDistance;
         [SerializeField] private BeaverBox beaverBoxPrefab;
         private BeaverBox boxInstance;
+
+        [SerializeField] private ParticleSystem boxCreateParticlePrefab;
         [SerializeField] private float boxCreateUpDistance;
         [SerializeField] private float pushTime = 3.0f;
         [SerializeField] private float pushOffset = 2.0f;
-        [SerializeField]
         private IPushable _pushTarget;
         private StaticModelLevelObject _targetPlatform;
 
         public void OnDestroy()
         {
-            Destroy(boxInstance.gameObject);
+            if (boxInstance)
+            {
+                Destroy(boxInstance.gameObject);
+            }
         }
 
         public override void Start()
@@ -121,6 +125,11 @@ namespace TicTocGuardians.Scripts.Game.Player
             return Physics.Raycast(boxCreatePoint.position, Vector3.down, boxCreateCheckDistance);
         }
 
+        public void CreateBoxCreateParticle()
+        {
+            var instance = Instantiate(boxCreateParticlePrefab);
+            instance.transform.position=boxCreatePoint.position;
+        }
         public void CreateBox()
         {
             Debug.Log("createBox");
@@ -131,7 +140,8 @@ namespace TicTocGuardians.Scripts.Game.Player
             boxPosition = hit.collider.transform.position;
             boxPosition.y = boxCreatePoint.position.y;
             boxInstance.transform.position = boxPosition;
-            boxInstance.transform.DOScale(new Vector3(0.9f, 1, 0.9f), 0.3f);
+            boxInstance.transform.DOScale(new Vector3(0.9f, 1, 0.9f), 0.5f).SetDelay(0.5f).SetEase(Ease.InCubic);
+            CreateBoxCreateParticle();
         }
     }
 }

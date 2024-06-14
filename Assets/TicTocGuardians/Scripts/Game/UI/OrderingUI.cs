@@ -12,6 +12,7 @@ namespace TicTocGuardians.Scripts.Game.UI
         public Sprite[] orderSprites = new Sprite[3];
         public Button submitButton;
         public Button cancelButton;
+        public Image submitText;
 
         public void Start()
         {
@@ -31,11 +32,13 @@ namespace TicTocGuardians.Scripts.Game.UI
         {
             submitButton.gameObject.SetActive(true);
             cancelButton.gameObject.SetActive(true);
+            submitText.gameObject.SetActive(true);
         }
         public void SubmitUnavilable()
         {
             submitButton.gameObject.SetActive(false);
             cancelButton.gameObject.SetActive(false);
+            submitText.gameObject.SetActive(false);
         }
     }
 }

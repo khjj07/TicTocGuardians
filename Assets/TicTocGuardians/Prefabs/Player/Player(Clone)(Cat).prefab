@@ -229,7 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outlineMode: 0
-  outlineColor: {r: 0.1509434, g: 0.11605554, b: 0.11605554, a: 1}
+  outlineColor: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 1}
   outlineWidth: 3
   precomputeOutline: 0
   bakeKeys: []
@@ -260,6 +260,26 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6477090856581970314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5141357104693636311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eca7ae50c0be3f4c8d1e155d1074fd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkParticlePrefabs:
+  - {fileID: 2982856096251217113, guid: a6e118c1a21c0cf43ab371db942e3e71, type: 3}
+  - {fileID: 2311077856527610966, guid: 6d83f4ddedf49024da6803bcf8bfc662, type: 3}
+  - {fileID: 8449694793445027319, guid: 4bece036cbafe2b498ce337a158619c7, type: 3}
+  landingParticlePrefabs:
+  - {fileID: 6960193925964126832, guid: 42978ca5bcd23b64eaba8807dbdb7b42, type: 3}
+  - {fileID: 7194289704339746841, guid: 7cc700583dc0ee94eaa14d27f4cb4e5f, type: 3}
+  footOrigin: {fileID: 2281571450007289464}
 --- !u!4 &5481467505245533805 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 03408102fd830a245946a11c36166390, type: 3}

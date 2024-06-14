@@ -36,7 +36,7 @@ ModelImporter:
       name: BeaverRun
       takeName: rig|rig.001|rig|rig|rig|rigAction
       internalID: -570203734490656272
-      firstFrame: 0
+      firstFrame: 4
       lastFrame: 25
       wrapMode: 0
       orientationOffsetY: 0
@@ -56,7 +56,21 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.122198455
+        functionName: CreateWalkParticle
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 2eca7ae50c0be3f4c8d1e155d1074fd8, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.45744073
+        functionName: CreateWalkParticle
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 2eca7ae50c0be3f4c8d1e155d1074fd8, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

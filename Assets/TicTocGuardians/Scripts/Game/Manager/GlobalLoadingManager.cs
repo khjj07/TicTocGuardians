@@ -14,13 +14,10 @@ namespace TicTocGuardians.Scripts.Game.Manager
     {
         public enum LoadingMode
         {
-            Default,
             Beaver,
             Rabbit,
             Cat
         }
-        [SerializeField]
-        private Image defaultLoadingScreen;
         [SerializeField]
         private Image beaverLoadingScreen;
         [SerializeField]
@@ -43,7 +40,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void ActiveScene()
         {
-            defaultLoadingScreen.gameObject.SetActive(false);
             beaverLoadingScreen.gameObject.SetActive(false);
             rabbitLoadingScreen.gameObject.SetActive(false);
             catLoadingScreen.gameObject.SetActive(false);
@@ -54,18 +50,14 @@ namespace TicTocGuardians.Scripts.Game.Manager
             //var previousScene = SceneManager.GetActiveScene();
             var loadOperation = SceneManager.LoadSceneAsync(scene);
             loadOperation.allowSceneActivation = false;
-            defaultLoadingScreen.gameObject.SetActive(false);
             beaverLoadingScreen.gameObject.SetActive(false);
             rabbitLoadingScreen.gameObject.SetActive(false);
             catLoadingScreen.gameObject.SetActive(false);
 
-            LoadingMode mode = (LoadingMode)Random.Range(0, 4);
+            LoadingMode mode = (LoadingMode)Random.Range(0, 3);
 
             switch (mode)
             {
-                case LoadingMode.Default:
-                    defaultLoadingScreen.gameObject.SetActive(true);
-                    break;
                 case LoadingMode.Beaver:
                     beaverLoadingScreen.gameObject.SetActive(true);
                     break;

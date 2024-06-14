@@ -293,7 +293,14 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public override void InitializeIngameUI()
         {
-            base.InitializeIngameUI();
+            ingameUI.skipButton.onClick.AddListener(() =>
+            {
+                Time.timeScale = 4.0f;
+                playerController.DisposeAllStream();
+                playerController.GetComponent<Player.Player>().Act(new Action(Action.State.Wait));
+                _recorder.Wait();
+            });
+
             ingameUI.changeOrderButton.onClick.AddListener(() =>
             {
                 PlayPhaseForceEnd();

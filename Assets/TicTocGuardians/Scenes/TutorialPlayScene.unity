@@ -465,7 +465,7 @@ MonoBehaviour:
   playerPrefabs:
   - {fileID: 2252679738851899754, guid: 2999bc7dc79b4a4498f67760eb69c259, type: 3}
   - {fileID: 7486971043672711894, guid: 20f8414dd283a34408ecd10f68840be6, type: 3}
-  - {fileID: 6356664021852180705, guid: ea4d6bfb1f58ac042b9556e964030bcc, type: 3}
+  - {fileID: 6356664021852180705, guid: c1cd21f43ee58e048a57bfee5cb05658, type: 3}
   playerInstances: []
   playerController: {fileID: 0}
   repairingDimensions: []

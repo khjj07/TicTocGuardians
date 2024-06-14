@@ -25,10 +25,16 @@ namespace TicTocGuardians.Scripts.Game.Player
             }
         }
 
+        public void Wait()
+        {
+            _currentActionBuffer.Add(new Action(Action.State.Wait));
+        }
+
         public void RecordStop()
         {
             _isRecord = false;
         }
+
         public List<List<Action>> GetActionLists()
         {
             return _actions;

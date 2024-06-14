@@ -60,7 +60,6 @@ namespace TicTocGuardians.Scripts.Game.Player
                         else
                         {
                             beaver.Act(new Action(Action.State.Push));
-                            Debug.Log("push");
                             _pushTime = 0;
                         }
                     }

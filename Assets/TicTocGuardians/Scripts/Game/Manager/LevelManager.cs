@@ -15,6 +15,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using static UnityEngine.UI.Image;
+using Action = TicTocGuardians.Scripts.Game.Player.Action;
 
 namespace TicTocGuardians.Scripts.Game.Manager
 {
@@ -185,11 +186,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void InitializeIngameUI()
         {
-            ingameUI.skipButton.onClick.AddListener(() =>
-            {
-                Time.timeScale = 4.0f;
-                playerController.DisposeAllStream();
-            });
+            
         }
 
         public void InitializeFailUI()
