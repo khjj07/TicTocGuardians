@@ -29,20 +29,22 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
 
         public void Start()
         {
-            GetComponentInChildren<MeshCollider>().OnCollisionEnterAsObservable()
-                .Where(collision => collision.contacts[0].normal.y < -0.7)
-                .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
-                .Select(_=> reactableObject as IReactable)
-                .Subscribe(x=>
+            this.UpdateAsObservable().Select(_ =>
+            {
+                RaycastHit result;
+                Physics.BoxCast(transform.position, Vector3.one / 2, Vector3.up, out result);
+                return result.collider;
+            }).DistinctUntilChanged().Skip(1).Subscribe(x =>
+            {
+                var obj = reactableObject as IReactable;
+                obj.React();
+                if (x != null)
                 {
                     GlobalSoundManager.Instance.PlaySFX("SFX_Button");
                     CreateStepInParticle();
-                    x.React();
-                }).AddTo(gameObject);
+                }
+            });
 
-            GetComponentInChildren<MeshCollider>().OnCollisionExitAsObservable()
-                .Select(_ => reactableObject as IReactable)
-                .Subscribe(x => x.React()).AddTo(gameObject);
         }
 
         private void CreateStepInParticle()
