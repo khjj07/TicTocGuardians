@@ -48,6 +48,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public bool isPlaying = false;
         public bool isSkip = false;
         public bool isPause = false;
+        public bool _isEnd = false;
 
         public virtual void Start()
         {
@@ -141,8 +142,16 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void SetTimer(double time)
         {
-            currentTime = time;
-            timerText.SetText(currentTime.ToString("N2"));
+            if (time >= 0)
+            {
+                currentTime = time;
+                timerText.SetText(currentTime.ToString("N2"));
+            }
+            else
+            {
+                currentTime = 0.0f;
+                timerText.SetText(currentTime.ToString("N2"));
+            }
         }
 
         public void StartTimer()
@@ -166,7 +175,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void PlayPhaseEnd()
         {
-            
             isPlaying = false;
             Time.timeScale = 1.0f;
             if (timerHandler != null)
@@ -313,13 +321,16 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
             dimensionEnterStream.Subscribe(x=>
             {
-                player.Act(new Action(Action.State.Repair));
                 AddRepairDimension(x);
             }).AddTo(player.gameObject);
             dimensionExitStream.Subscribe(x=>
             {
-                player.Act(new Action(Action.State.RepairRelease));
                 RemoveRepairDimension(x);
+            }).AddTo(player.gameObject);
+
+            player.UpdateAsObservable().Where(_=>_isEnd && player.repairTarget!=null).Subscribe(x =>
+            {
+                player.Act(new Action(Action.State.Repair));
             }).AddTo(player.gameObject);
 
         }

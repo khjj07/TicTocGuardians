@@ -188,9 +188,6 @@ namespace TicTocGuardians.Scripts.Game.Player
             baseStream.Where(action => action.state == Action.State.Repair)
                 .Subscribe(_ => _isRepairing = true);
 
-            baseStream.Where(action => action.state == Action.State.RepairRelease)
-                .Subscribe(_ => _isRepairing = false);
-
             var isFallingStream = this.UpdateAsObservable().Where(_ => !IsContactGround());
 
             isFallingStream.Subscribe(_ => _isFalling = true);
@@ -263,11 +260,13 @@ namespace TicTocGuardians.Scripts.Game.Player
         public void Repairing()
         {
             repairImage.gameObject.SetActive(true);
+            _isWaiting = true;
         }
 
         public void UnRepairing()
         {
             repairImage.gameObject.SetActive(false);
+            _isWaiting = false;
         }
 
 

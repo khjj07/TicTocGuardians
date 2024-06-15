@@ -52,15 +52,19 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void PlayPhaseEnd()
         {
             base.PlayPhaseEnd();
-            Destroy(playerController.gameObject);
-            if (repairingDimensions.Count == 1)
+            _isEnd = true;
+            Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ =>
             {
-                ChangeState(Phase.Success);
-            }
-            else
-            {
-                ChangeState(Phase.Fail);
-            }
+                Destroy(playerController.gameObject);
+                if (repairingDimensions.Count == 1)
+                {
+                    ChangeState(Phase.Success);
+                }
+                else
+                {
+                    ChangeState(Phase.Fail);
+                }
+            }).AddTo(gameObject);
         }
 
         public override void RePlay()

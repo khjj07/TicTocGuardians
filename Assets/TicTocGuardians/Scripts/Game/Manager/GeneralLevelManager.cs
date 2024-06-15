@@ -226,23 +226,30 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void PlayPhaseEnd()
         {
             base.PlayPhaseEnd();
-            DestroyAllPlayer();
+          
             if (_currentPlayPhaseIndex < _playerOrder.Count - 1)
             {
+                DestroyAllPlayer();
                 CreateCloneData(_playerOrder[_currentPlayPhaseIndex], _recorder.GetActionLists());
                 ResetRepairing();
                 NextState();
             }
             else
             {
-                if (repairingDimensions.Count == _playerOrder.Count)
+                _isEnd = true;
+                Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ =>
                 {
-                    ChangeState(Phase.Success);
-                }
-                else
-                {
-                    ChangeState(Phase.Fail);
-                }
+                    DestroyAllPlayer();
+                    if (repairingDimensions.Count == _playerOrder.Count)
+                    {
+                        ChangeState(Phase.Success);
+                    }
+                    else
+                    {
+                        ChangeState(Phase.Fail);
+                    }
+                });
+
             }
         }
 
