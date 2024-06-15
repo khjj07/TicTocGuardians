@@ -85,7 +85,6 @@ namespace TicTocGuardians.Scripts.Game.Player
             baseStream.Where(action => action.state == Action.State.Special)
                 .Subscribe(_ =>
                 {
-
                     CreateBox();
                 }).AddTo(gameObject);
 

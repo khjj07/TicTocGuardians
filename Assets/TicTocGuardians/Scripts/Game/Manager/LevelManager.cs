@@ -166,6 +166,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void PlayPhaseEnd()
         {
+            
             isPlaying = false;
             Time.timeScale = 1.0f;
             if (timerHandler != null)

@@ -52,6 +52,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void PlayPhaseEnd()
         {
             base.PlayPhaseEnd();
+            Destroy(playerController.gameObject);
             if (repairingDimensions.Count == 1)
             {
                 ChangeState(Phase.Success);
