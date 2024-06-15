@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -375,6 +375,14 @@ MonoBehaviour:
   changeOrderButton: {fileID: 6110787272606911178}
   replayButton: {fileID: 6110787271700777232}
   skipButton: {fileID: 6110787272086178191}
+  defaultPortraitSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  highLightPortraitSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   portraits:
   - {fileID: 6110787272019260816}
   - {fileID: 6110787272150013983}
@@ -545,7 +553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -808,7 +816,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}

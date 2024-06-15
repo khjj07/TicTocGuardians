@@ -80,9 +80,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95a95f649316a0e4394489d58dbbc10b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 15
+  jumpForce: 10
   animationState: 0
-  speedMax: 5
+  speedMax: 1.5
   acceleration: 0.5
   footOrigin: {fileID: 2281571450007289464}
   checkGroundDistance: 0.3
