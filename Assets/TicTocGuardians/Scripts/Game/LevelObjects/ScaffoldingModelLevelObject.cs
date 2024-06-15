@@ -29,7 +29,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
 
         public void Start()
         {
-            GetComponentInChildren<BoxCollider>().OnCollisionEnterAsObservable()
+            GetComponentInChildren<MeshCollider>().OnCollisionEnterAsObservable()
                 .Where(collision => collision.contacts[0].normal.y < -0.7)
                 .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
                 .Select(_=> reactableObject as IReactable)
@@ -38,11 +38,11 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                     GlobalSoundManager.Instance.PlaySFX("SFX_Button");
                     CreateStepInParticle();
                     x.React();
-                });
+                }).AddTo(gameObject);
 
-            GetComponentInChildren<BoxCollider>().OnCollisionExitAsObservable()
+            GetComponentInChildren<MeshCollider>().OnCollisionExitAsObservable()
                 .Select(_ => reactableObject as IReactable)
-                .Subscribe(x => x.React());
+                .Subscribe(x => x.React()).AddTo(gameObject);
         }
 
         private void CreateStepInParticle()
