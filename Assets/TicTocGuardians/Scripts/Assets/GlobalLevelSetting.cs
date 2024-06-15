@@ -10,8 +10,9 @@ namespace TicTocGuardians.Scripts.Assets
     public class GlobalLevelSetting : ScriptableSingleton<GlobalLevelSetting>
     {
         public ModelLevelObject defaultTilePrefab;
-        [FormerlySerializedAs("unPassableModelLevelObject")] public UnPassableLevelObject unPassableLevelObject;
-        [FormerlySerializedAs("dimensionPrefab")] public DimensionLevelObject dimensionLevelObjectPrefab;
+        public UnPassableLevelObject unPassableLevelObject;
+        public UnPassableLevelObject bottomGuard;
+        public DimensionLevelObject dimensionLevelObjectPrefab;
         public Transform dummy;
         public Mesh playerMesh;
     }

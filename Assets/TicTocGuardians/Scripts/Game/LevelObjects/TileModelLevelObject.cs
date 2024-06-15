@@ -70,6 +70,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
         [SerializeField] private Vector3 tileRotation;
         [SerializeField] private Vector3 tileScale=Vector3.one;
         [SerializeField] private bool blockAround = false;
+        [SerializeField] private bool bottomGuard = false;
 
         [Range(1, 100)]
         public int row;
@@ -105,6 +106,10 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                         instance.transform.localRotation = Quaternion.Euler(tileRotation);
                         instance.transform.localScale = tileScale;
                         instance.Initialize(modelPrefab);
+                        if (bottomGuard)
+                        {
+                            CreateBottomGuard(j, i);
+                        }
                     }
                     else
                     {
@@ -142,6 +147,17 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             instance.transform.localScale = tmpScale;
         }
 
+        public void CreateBottomGuard(int x, int z)
+        {
+            var instance = (UnPassableLevelObject)PrefabUtility.InstantiatePrefab(GlobalLevelSetting.instance.bottomGuard, transform);
+            instance.transform.localPosition = new Vector3(x * offset, 0, -z * offset) + tileOffset;
+            instance.transform.localRotation = Quaternion.Euler(tileRotation);
+            var tmpScale = tileScale;
+            tmpScale.x *= offset;
+            tmpScale.z *= offset;
+            instance.transform.localScale = tmpScale;
+        }
+
         public override void Initialize(GameObject modelPrefab)
         {
             this.modelPrefab = modelPrefab;
@@ -154,6 +170,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             asset.AddData(parent, IntegerDataAsset.Create("column", column));
             asset.AddData(parent, FloatDataAsset.Create("offset", offset));
             asset.AddData(parent, BoolDataAsset.Create("blockAround", blockAround));
+            asset.AddData(parent, BoolDataAsset.Create("bottomGuard", bottomGuard));
             asset.AddData(parent, Bool2DArrayDataAsset.Create("data", data.ToArray(), row, column));
             asset.AddData(parent, Vector3DataAsset.Create("tileOffset",tileOffset));
             asset.AddData(parent, Vector3DataAsset.Create("tileRotation", tileRotation));
@@ -171,6 +188,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             tileRotation = (Vector3)asset.GetValue("tileRotation");
             tileScale = (Vector3)asset.GetValue("tileScale");
             blockAround = (bool)asset.GetValue("blockAround");
+            bottomGuard = (bool)asset.GetValue("bottomGuard");
             Bool2DArrayDataAsset tmp = asset.GetData("data") as Bool2DArrayDataAsset;
             data.FromArray(tmp.GetDataToArray(),row,column);
             GenerateTile(modelPrefab);

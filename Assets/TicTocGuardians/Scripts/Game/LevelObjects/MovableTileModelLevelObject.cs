@@ -247,7 +247,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             base.Deserialize(asset);
             modelPrefab= (GameObject)asset.GetValue("modelPrefab");
             instance.Deserialize((LevelObjectAsset)asset.GetValue("instance"));
-
+            
             var allChildren = pointsOrigin.GetComponentsInChildren<Transform>();
             foreach (Transform child in allChildren)
             {
