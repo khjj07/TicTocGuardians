@@ -45,7 +45,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2281571449447862080}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: c7a36bc72923adc448fb10ad44a4f858, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
@@ -80,15 +80,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95a95f649316a0e4394489d58dbbc10b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 10
+  jumpForce: 15
   animationState: 0
   speedMax: 5
   acceleration: 0.5
-  drag: 0.1
   footOrigin: {fileID: 2281571450007289464}
   checkGroundDistance: 1
   repairImage: {fileID: 177009060262258711}
   repairTarget: {fileID: 0}
+  _movable: 1
+  _isFalling: 0
+  _isRepairing: 0
+  _isOperating: 0
   dimensionCheckDistance: 1
   boxCreatePoint: {fileID: 3555796334701131178}
   boxCreateCheckDistance: 3

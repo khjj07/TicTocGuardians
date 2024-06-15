@@ -12,7 +12,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
         public float speed;
         public void Start()
         {
-            GetComponentInChildren<MeshCollider>().OnCollisionStayAsObservable()
+            GetComponentInChildren<BoxCollider>().OnCollisionStayAsObservable()
                 .Select(x => x.collider.GetComponent<IMovable>())
                 .Subscribe(obj =>
                 {

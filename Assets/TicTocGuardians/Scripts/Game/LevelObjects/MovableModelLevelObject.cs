@@ -83,7 +83,6 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
 
         public void Start()
         {
-
             this.UpdateAsObservable().Where(_ => isMove)
                 .Subscribe(_ => Move()).AddTo(gameObject);
             this.UpdateAsObservable().Where(_ => isMove)

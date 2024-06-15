@@ -13,7 +13,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
         [SerializeField] private ParticleSystem[] spawnPointChangeParticlePrefab = new ParticleSystem[2];
         public void Start()
         {
-            GetComponentInChildren<MeshCollider>().OnCollisionEnterAsObservable()
+            GetComponentInChildren<BoxCollider>().OnCollisionEnterAsObservable()
                 .Where(collision => collision.contacts[0].normal.y < -0.7)
                 .First()
                 .Subscribe(_ => ChangeSpawnPoint());

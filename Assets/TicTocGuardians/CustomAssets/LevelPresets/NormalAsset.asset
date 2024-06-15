@@ -13,9 +13,15 @@ MonoBehaviour:
   m_Name: NormalAsset
   m_EditorClassIdentifier: 
   presets:
-  - name: 01
+  - name: "01. \uC694\uC6D01 : \uC7AC\uBE60\uB978 \uD1A0\uB07C \uB8E8\uB8E8"
     levelAsset: {fileID: 0}
-  - name: 02
+  - name: "02. \uC694\uC6D02 : \uB0A0\uB78D\uD55C \uACE0\uC591\uC774 \uB8E8\uC2DC"
     levelAsset: {fileID: 0}
-  - name: 03
+  - name: "03. \uC694\uC6D03 : \uB611\uB611\uD55C \uBE44\uBC84 \uD1A0\uB9AC"
+    levelAsset: {fileID: 0}
+  - name: "04. \uC2E4\uC804 \uC5F0\uC2B5"
+    levelAsset: {fileID: 0}
+  - name: "05. \uC2E0\uAE30\uD55C \uBC1C\uD310"
+    levelAsset: {fileID: 0}
+  - name: "06. \uC774\uC5B4\uC9C0\uB294 \uBCA8\uD2B8"
     levelAsset: {fileID: 0}

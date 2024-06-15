@@ -29,7 +29,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
 
         public void Start()
         {
-            GetComponentInChildren<MeshCollider>().OnCollisionEnterAsObservable()
+            GetComponentInChildren<BoxCollider>().OnCollisionEnterAsObservable()
                 .Where(collision => collision.contacts[0].normal.y < -0.7)
                 .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
                 .Select(_=> reactableObject as IReactable)
@@ -40,7 +40,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                     x.React();
                 });
 
-            GetComponentInChildren<MeshCollider>().OnCollisionExitAsObservable()
+            GetComponentInChildren<BoxCollider>().OnCollisionExitAsObservable()
                 .Select(_ => reactableObject as IReactable)
                 .Subscribe(x => x.React());
         }

@@ -1,11 +1,8 @@
-using TicTocGuardians.Scripts.Assets;
-using TicTocGuardians.Scripts.Assets.LevelAsset;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace TicTocGuardians.Scripts.Game.LevelObjects
 {
-    public class StaticModelLevelObject : ModelLevelObject
+    public class BackgroundModelLevelObject : ModelLevelObject
     {
         public override void Deserialize(LevelObjectAsset asset)
         {
@@ -14,7 +11,6 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             foreach (var child in allChildren)
             {
                 var instance = Instantiate(child, transform);
-                var col = instance.AddComponent<BoxCollider>();
             }
         }
 
@@ -25,7 +21,6 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             foreach (var child in allChildren)
             {
                 var instance = Instantiate(child, transform);
-                var col = instance.AddComponent<BoxCollider>();
             }
         }
     }
