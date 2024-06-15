@@ -6,12 +6,15 @@ using UniRx;
 using UniRx.Triggers;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace TicTocGuardians.Scripts.Game.LevelObjects
 {
     public class RailLevelObject : LevelObject
     {
+        public MeshRenderer[] railDecals = new MeshRenderer[3];
         public float speed;
+        private static readonly int RailSpeed = Shader.PropertyToID("_RailSpeed");
 
         public override LevelObjectAsset Serialize(LevelAsset parent)
         {
@@ -23,9 +26,18 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
         {
             base.Deserialize(asset);
             speed = (float)asset.GetValue("speed");
-            var renderer = GetComponentInChildren<MeshRenderer>();
-            renderer.sharedMaterial = new Material(renderer.sharedMaterial);
-            renderer.sharedMaterial.SetFloat("RailSpeed",speed);
+            foreach (var rail in railDecals)
+            {
+                if (rail.material.HasProperty(RailSpeed))
+                {
+                    rail.material.SetFloat(RailSpeed, speed);
+                }
+                else
+                {
+                    Debug.LogWarning("Property not found on shader: " + RailSpeed);
+                }
+            }
+            
         }
 
         public void Start()
