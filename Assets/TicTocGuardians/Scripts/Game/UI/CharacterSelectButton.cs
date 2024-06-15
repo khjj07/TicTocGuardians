@@ -1,4 +1,5 @@
 using System;
+using TicTocGuardians.Scripts.Game.Manager;
 using TicTocGuardians.Scripts.Game.Player;
 using UnityEngine;
 using UnityEngine.Events;
@@ -41,6 +42,7 @@ namespace TicTocGuardians.Scripts.Game.UI
 
         public void OnClick()
         {
+            GlobalSoundManager.Instance.PlaySFX("SFX_PickNumber");
             if (!_selected)
             {
                 playerPreview.Pick();

@@ -1,4 +1,5 @@
-﻿using TicTocGuardians.Scripts.Interface;
+﻿using System;
+using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
 using Unity.VisualScripting;
@@ -20,6 +21,8 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                     obj.MoveX(forward.x * speed);
                     obj.MoveZ(forward.z * speed);
                 }).AddTo(gameObject);
+
+            //Observable.Interval(TimeSpan.FromSeconds(0.1f)).Subscribe()
         }
     }
 }

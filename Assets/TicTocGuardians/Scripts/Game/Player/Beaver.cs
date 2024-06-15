@@ -132,7 +132,7 @@ namespace TicTocGuardians.Scripts.Game.Player
         }
         public void CreateBox()
         {
-            Debug.Log("createBox");
+            GlobalSoundManager.Instance.PlaySFX("SFX_CreateBox");
             RaycastHit hit;
             Vector3 boxPosition = Vector3.zero;
             boxInstance = Instantiate(beaverBoxPrefab, LevelOrigin.Instance.transform);

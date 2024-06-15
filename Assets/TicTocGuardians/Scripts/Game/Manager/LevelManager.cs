@@ -39,18 +39,82 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public IngameUI ingameUI;
         public SuccessUI successUI;
         public FailUI failUI;
+        public OrderingUI orderingUI;
+        public PauseUI pauseUI;
 
         public IDisposable timerHandler;
         public IDisposable movementWaitHandler;
+        public IDisposable pauseStreamHandler;
         public bool isPlaying = false;
+        public bool isSkip = false;
+        public bool isPause = false;
 
         public virtual void Start()
         {
             GameManager.Instance.ActiveLevel(this);
             GlobalLoadingManager.Instance.ActiveScene();
+            GlobalSoundManager.Instance.PlayBGM("BGM_Ingame");
             InitializeIngameUI();
             InitializeSuccessUI();
             InitializeFailUI();
+            InitializePauseUI();
+            CreateShortCutStream();
+        }
+
+        public void Continue()
+        {
+            if (isSkip)
+            {
+                Time.timeScale = 4;
+            }
+            else
+            {
+                Time.timeScale = 1;
+            }
+            pauseUI.gameObject.SetActive(false);
+            isPause = false;
+        }
+
+        public void Restart()
+        {
+            Time.timeScale = 1;
+            GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex());
+        }
+
+        public void GoToLevel()
+        {
+            Time.timeScale = 1;
+            StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
+        }
+
+
+        public void InitializePauseUI()
+        {
+            pauseUI.continueButton.onClick.AddListener(Continue);
+            pauseUI.restartButton.onClick.AddListener(Restart);
+            pauseUI.levelButton.onClick.AddListener(GoToLevel);
+            pauseUI.gameObject.SetActive(false);
+        }
+        
+        public IDisposable CreatePauseStream()
+        {
+            return GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Escape).Subscribe(_ =>
+            {
+            
+                if (!isPause)
+                {
+                    Time.timeScale = 0;
+                    pauseUI.gameObject.SetActive(true);
+                    pauseUI.transform.localScale = Vector3.zero;
+                    pauseUI.transform.DOScale(Vector3.one, 0.3f);
+                    isPause = true;
+                }
+                else
+                {
+                    Continue();
+                }
+               
+            }).AddTo(gameObject);
         }
 
         public virtual void LoadLevel(LevelAsset asset)
@@ -91,6 +155,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public virtual void PlayPhaseStart(PlayerController player)
         {
             SetTimer(timeLimit);
+            pauseStreamHandler=CreatePauseStream();
             CreateMovementWaitStream(player);
         }
 
@@ -102,6 +167,22 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public virtual void PlayPhaseEnd()
         {
             isPlaying = false;
+            Time.timeScale = 1.0f;
+            if (timerHandler != null)
+            {
+                timerHandler.Dispose();
+                timerHandler = null;
+            }
+            if (movementWaitHandler != null)
+            {
+                movementWaitHandler.Dispose();
+                movementWaitHandler = null;
+            }
+            if (pauseStreamHandler != null)
+            {
+                pauseStreamHandler.Dispose();
+                pauseStreamHandler = null;
+            }
         }
 
         public void CreateMovementWaitStream(PlayerController controller)
@@ -134,6 +215,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            StartTimer();
         }
 
         public void AddRepairDimension(DimensionLevelObject repairTarget)
@@ -152,6 +234,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             ingameUI.gameObject.SetActive(false);
             successUI.gameObject.SetActive(false);
             failUI.gameObject.SetActive(false);
+            orderingUI.gameObject.SetActive(false);
         }
 
         public virtual void OnPlayPhaseActive()
@@ -160,6 +243,12 @@ namespace TicTocGuardians.Scripts.Game.Manager
             ingameUI.gameObject.SetActive(true);
             successUI.gameObject.SetActive(false);
             failUI.gameObject.SetActive(false);
+            orderingUI.gameObject.SetActive(false);
+            foreach (var portrait in ingameUI.portraits)
+            {
+                portrait.gameObject.SetActive(false);
+            }
+            ingameUI.changeOrderButton.gameObject.SetActive(false);
         }
 
 
@@ -169,8 +258,10 @@ namespace TicTocGuardians.Scripts.Game.Manager
             ingameUI.gameObject.SetActive(false);
             successUI.gameObject.SetActive(false);
             failUI.gameObject.SetActive(true);
+            orderingUI.gameObject.SetActive(false);
             failUI.label.transform.position = failUI.labelStartPoint.position;
             failUI.label.transform.DOLocalMoveX(0, 0.2f);
+            GlobalSoundManager.Instance.PlaySFX("SFX_FailNotice");
         }
 
 
@@ -180,33 +271,27 @@ namespace TicTocGuardians.Scripts.Game.Manager
             ingameUI.gameObject.SetActive(false);
             failUI.gameObject.SetActive(false);
             successUI.gameObject.SetActive(true);
+            orderingUI.gameObject.SetActive(false);
             successUI.label.transform.position = successUI.labelStartPoint.position;
             successUI.label.transform.DOLocalMoveX(0, 0.2f);
+            GlobalSoundManager.Instance.PlaySFX("SFX_ClearNotice");
         }
 
         public virtual void InitializeIngameUI()
         {
-            
+            ingameUI.skipButton.onClick.AddListener(Skip);
+            ingameUI.replayButton.onClick.AddListener(RePlay);
         }
 
         public void InitializeFailUI()
         {
-            failUI.goToHomeButton.onClick.AddListener(() =>
-            {
-                StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
-            });
-            failUI.retryButton.onClick.AddListener(() =>
-            {
-                GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex());
-            });
+            failUI.goToHomeButton.onClick.AddListener(GoToLevel);
+            failUI.retryButton.onClick.AddListener(Restart);
         }
 
         public void InitializeSuccessUI()
         {
-            successUI.goToHomeButton.onClick.AddListener(() =>
-            {
-                StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
-            });
+            successUI.goToHomeButton.onClick.AddListener(GoToLevel);
             successUI.nextLevelButton.onClick.AddListener(() =>
             {
                 GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex() + 1);
@@ -225,9 +310,61 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 .Where(x => x.CompareTag("Dimension"))
                 .Select(x => x.GetComponent<DimensionLevelObject>());
 
-            dimensionEnterStream.Subscribe(AddRepairDimension).AddTo(player.gameObject);
-            dimensionExitStream.Subscribe(RemoveRepairDimension).AddTo(player.gameObject);
+            dimensionEnterStream.Subscribe(x=>
+            {
+                player.Act(new Action(Action.State.Repair));
+                AddRepairDimension(x);
+            }).AddTo(player.gameObject);
+            dimensionExitStream.Subscribe(x=>
+            {
+                player.Act(new Action(Action.State.RepairRelease));
+                RemoveRepairDimension(x);
+            }).AddTo(player.gameObject);
 
+        }
+
+        public virtual void CreateShortCutStream()
+        {
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.R).Subscribe(_ => RePlay()).AddTo(gameObject);
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.X).Subscribe(_ => Skip()).AddTo(gameObject);
+        }
+
+        public virtual void Skip()
+        {
+            if (isPlaying)
+            {
+                isSkip = true;
+                Time.timeScale = 4.0f;
+                playerController.DisposeAllStream();
+                playerController.GetComponent<Player.Player>().Act(new Action(Action.State.Wait));
+            }
+        }
+
+        public virtual void RePlay()
+        {
+          
+        }
+
+        public virtual void PlayPhaseForceEnd()
+        {
+            isPlaying = false;
+            ResetRepairing();
+            Time.timeScale = 1.0f;
+            if (timerHandler != null)
+            {
+                timerHandler.Dispose();
+                timerHandler = null;
+            }
+            if (movementWaitHandler != null)
+            {
+                movementWaitHandler.Dispose();
+                movementWaitHandler = null;
+            }
+            if (pauseStreamHandler != null)
+            {
+                pauseStreamHandler.Dispose();
+                pauseStreamHandler = null;
+            }
         }
     }
 }

@@ -30,6 +30,8 @@ namespace TicTocGuardians.Scripts.Game.Player
             PushReady,
             Jump,
             Wait,
+            Repair,
+            RepairRelease,
             Special,
             None
         }
@@ -95,6 +97,7 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         protected bool _movable = true;
         protected bool _isFalling = false;
+        protected bool _isRepairing = false;
 
         protected bool _isOperating = false;
         public float dimensionCheckDistance;
@@ -167,11 +170,16 @@ namespace TicTocGuardians.Scripts.Game.Player
             {
                 _isOperating = true;
                 SetAnimationState(AnimationState.Jump);
+                GlobalSoundManager.Instance.PlaySFX("SFX_JUMP_3");
                 Observable.Timer(TimeSpan.FromMilliseconds(500))
                     .Subscribe(_ => _isOperating = false);
             }).AddTo(gameObject);
 
+            baseStream.Where(action => action.state == Action.State.Repair)
+                .Subscribe(_ => _isRepairing = true);
 
+            baseStream.Where(action => action.state == Action.State.RepairRelease)
+                .Subscribe(_ => _isRepairing = false);
 
             var isFallingStream = this.UpdateAsObservable().Where(_ => !IsContactGround());
 
@@ -217,7 +225,11 @@ namespace TicTocGuardians.Scripts.Game.Player
         {
             if (IsContactGround())
             {
-                if (_isWaiting)
+                if (_isRepairing)
+                {
+                    SetAnimationState(AnimationState.Repair);
+                }
+                else if (_isWaiting)
                 {
                     SetAnimationState(AnimationState.Wait);
                 }

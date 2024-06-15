@@ -1,6 +1,7 @@
 using System;
 using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
+using TicTocGuardians.Scripts.Game.Manager;
 using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
@@ -34,6 +35,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                 .Select(_=> reactableObject as IReactable)
                 .Subscribe(x=>
                 {
+                    GlobalSoundManager.Instance.PlaySFX("SFX_Button");
                     CreateStepInParticle();
                     x.React();
                 });

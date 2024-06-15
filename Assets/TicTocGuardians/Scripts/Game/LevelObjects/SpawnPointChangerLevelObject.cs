@@ -4,6 +4,7 @@ using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
+using TicTocGuardians.Scripts.Game.Manager;
 
 namespace TicTocGuardians.Scripts.Game.LevelObjects
 {
@@ -20,6 +21,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
 
         public void ChangeSpawnPoint()
         {
+            GlobalSoundManager.Instance.PlaySFX("SFX_NewStartPoint");
             SpawnPointLevelObject.Instance.transform.position = transform.position + Vector3.up * 3;
             var instance1 = Instantiate(spawnPointChangeParticlePrefab[0]);
             var instance2 = Instantiate(spawnPointChangeParticlePrefab[1]);

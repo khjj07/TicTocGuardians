@@ -24,6 +24,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             tapToStart.localScale = Vector3.zero;
             cinemaPlayer.AddCallback(OnCinemaEnd);
+            GlobalSoundManager.Instance.PlaySFX("IntroSound",1.0f);
             cinemaPlayer.Play();
         }
 

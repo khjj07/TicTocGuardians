@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using TicTocGuardians.Scripts.Game.Manager;
 using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
@@ -50,7 +51,6 @@ namespace TicTocGuardians.Scripts.Game.ETC
 
                     Debug.DrawRay(transform.position, -contactDirection * offset, Color.red);
                 }
-
             }
             _isMove = false;
         }
@@ -85,6 +85,7 @@ namespace TicTocGuardians.Scripts.Game.ETC
         {
             if (!Physics.Raycast(transform.position, -contactDirection, offset))
             {
+                GlobalSoundManager.Instance.PlaySFX("SFX_PullingBox_2");
                 PlayMoveParticle();
                 transform.DOMove(-contactDirection * offset, 0.5f).SetRelative(true).OnComplete(() =>
                 {

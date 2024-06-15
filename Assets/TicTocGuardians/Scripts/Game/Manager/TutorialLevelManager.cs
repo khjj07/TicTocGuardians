@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using Default.Scripts.Util;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
 using TicTocGuardians.Scripts.Game.Player;
@@ -32,6 +33,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void Start()
         {
             base.Start();
+            InitializePhaseSubject();
             ChangeState(Phase.Ready);
         }
 
@@ -49,6 +51,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public override void PlayPhaseEnd()
         {
+            base.PlayPhaseEnd();
             if (repairingDimensions.Count == 1)
             {
                 ChangeState(Phase.Success);
@@ -56,6 +59,20 @@ namespace TicTocGuardians.Scripts.Game.Manager
             else
             {
                 ChangeState(Phase.Fail);
+            }
+        }
+
+        public override void RePlay()
+        {
+            if (isPlaying)
+            {
+                PlayPhaseForceEnd();
+                ChangeState(currentState);
+            }
+            else
+            {
+                PlayPhaseForceEnd();
+                PreviousState();
             }
         }
 
@@ -69,8 +86,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
             _phaseSubject.Where(x => x == Phase.Play).Subscribe(_ =>
             {
-                var player = SpawnPlayer(playerType);
-                PlayPhaseStart(playerController);
+                OnPlayPhaseActive();
             });
 
             _phaseSubject.Where(x => x == Phase.Success).Subscribe(_ =>
@@ -83,6 +99,21 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 OnFailPhaseActive();
             });
         }
+
+        public override void PlayPhaseForceEnd()
+        {
+            base.PlayPhaseForceEnd();
+            Destroy(playerController.gameObject);
+        }
+
+        public override void OnPlayPhaseActive()
+        {
+            base.OnPlayPhaseActive();
+            var player = SpawnPlayer(playerType);
+            CreateDimensionCheckStream(player);
+            PlayPhaseStart(playerController);
+        }
+
         public void ChangeState(Phase state)
         {
             _phaseSubject.OnNext(state);

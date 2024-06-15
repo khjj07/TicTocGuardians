@@ -48,6 +48,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public IEnumerator Load(string scene, float defaultDelay)
         {
             //var previousScene = SceneManager.GetActiveScene();
+            GlobalSoundManager.Instance.StopBGM();
             var loadOperation = SceneManager.LoadSceneAsync(scene);
             loadOperation.allowSceneActivation = false;
             beaverLoadingScreen.gameObject.SetActive(false);
@@ -72,6 +73,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             }
             yield return new WaitForSeconds(defaultDelay);
             yield return new WaitUntil(() => loadOperation.progress>=0.9f);
+            GlobalSoundManager.Instance.PlaySFX("SFX_UI_Select_2");
             loadOperation.allowSceneActivation = true;
             //SceneManager.UnloadSceneAsync(previousScene.name);
         }

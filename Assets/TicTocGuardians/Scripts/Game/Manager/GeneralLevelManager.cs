@@ -34,10 +34,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         [SerializeField] private PlayerClone[] clonePrefabs = new PlayerClone[3];
 
-        [Header("UI")]
-        [SerializeField] private OrderingUI orderingUI;
-
-
         [Header("ป๓ลย")]
         [SerializeField]
         private Phase currentState;
@@ -113,15 +109,16 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void OnReadyPhaseActive()
         {
             base.OnReadyPhaseActive();
-            orderingUI.gameObject.SetActive(false);
             this.UpdateAsObservable().Where(_ => Input.anyKey).First()
                 .Subscribe(_ => ChangeState(Phase.Ordering)).AddTo(gameObject);
         }
 
         public override void OnPlayPhaseActive()
         {
-            base.OnPlayPhaseActive();
             readyUI.gameObject.SetActive(false);
+            ingameUI.gameObject.SetActive(true);
+            successUI.gameObject.SetActive(false);
+            failUI.gameObject.SetActive(false);
             orderingUI.gameObject.SetActive(false);
         }
 
@@ -152,18 +149,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 CreateDimensionCheckStream(instance);
             }
         }
-        public override void OnFailPhaseActive()
-        {
-            base.OnFailPhaseActive();
-            orderingUI.gameObject.SetActive(false);
-        }
-
-        public override void OnSuccessPhaseActive()
-        {
-            base.OnSuccessPhaseActive();
-            orderingUI.gameObject.SetActive(false);
-        }
-
+        
         private void CharacterSelectButtonOnClick(int i)
         {
             orderingUI.SubmitUnavilable();
@@ -209,6 +195,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         private void SubmitOrder()
         {
+            GlobalSoundManager.Instance.PlaySFX("SFX_Char_Set_Finished");
             NextState();
         }
 
@@ -229,30 +216,16 @@ namespace TicTocGuardians.Scripts.Game.Manager
             CreateAllClones();
         }
 
-        public void PlayPhaseForceEnd()
+        public override void PlayPhaseForceEnd()
         {
-            isPlaying = false;
-            if (timerHandler != null)
-            {
-                timerHandler.Dispose();
-                timerHandler = null;
-            }
-            if (movementWaitHandler != null)
-            {
-                movementWaitHandler.Dispose();
-                movementWaitHandler = null;
-            }
-
-            ResetRepairing();
+            base.PlayPhaseForceEnd();
             _recorder.RecordStop();
             DestroyAllPlayer();
-            Time.timeScale = 1.0f;
         }
 
         public override void PlayPhaseEnd()
         {
             base.PlayPhaseEnd();
-            Time.timeScale = 1.0f;
             if (_currentPlayPhaseIndex < _playerOrder.Count - 1)
             {
                 DestroyAllPlayer();
@@ -282,7 +255,12 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 clone.CreateMovementStream();
             }
             _recorder.RecordStart(controller.GetComponent<Player.Player>());
-            StartTimer();
+        }
+
+        public override void CreateShortCutStream()
+        {
+            base.CreateShortCutStream();
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Alpha1).Subscribe(_=> ChangeOrder()).AddTo(gameObject);
         }
 
         public void CreateCloneData(PlayerType type, List<List<Action>> actions)
@@ -293,33 +271,12 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public override void InitializeIngameUI()
         {
-            ingameUI.skipButton.onClick.AddListener(() =>
-            {
-                Time.timeScale = 4.0f;
-                playerController.DisposeAllStream();
-                playerController.GetComponent<Player.Player>().Act(new Action(Action.State.Wait));
-                _recorder.Wait();
-            });
-
+            base.InitializeIngameUI();
             ingameUI.changeOrderButton.onClick.AddListener(() =>
             {
-                PlayPhaseForceEnd();
-                ChangeState(Phase.Ordering);
+                ChangeOrder();
             });
 
-            ingameUI.replayButton.onClick.AddListener(() =>
-            {
-                if (isPlaying)
-                {
-                    PlayPhaseForceEnd();
-                    ChangeState(currentState);
-                }
-                else
-                {
-                    PlayPhaseForceEnd();
-                    PreviousState();
-                }
-            });
             ingameUI.UpdateAsObservable().Select(_ => _playerOrder)
                 .Subscribe(order =>
                 {
@@ -338,6 +295,35 @@ namespace TicTocGuardians.Scripts.Game.Manager
                         }
                     }
                 }).AddTo(gameObject);
+        }
+
+        public void ChangeOrder()
+        {
+            PlayPhaseForceEnd();
+            ChangeState(Phase.Ordering);
+        }
+
+        public override void Skip()
+        {
+            base.Skip();
+            if (isPlaying)
+            {
+                _recorder.Wait();
+            }
+        }
+
+        public override void RePlay()
+        {
+            if (isPlaying)
+            {
+                PlayPhaseForceEnd();
+                ChangeState(currentState);
+            }
+            else
+            {
+                PlayPhaseForceEnd();
+                PreviousState();
+            }
         }
 
         public PlayerClone CreateClone(PlayerCloneData data)

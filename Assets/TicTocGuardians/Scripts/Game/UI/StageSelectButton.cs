@@ -20,6 +20,7 @@ namespace TicTocGuardians.Scripts.Game.UI
         {
             button.onClick.AddListener(() =>
             {
+                GlobalSoundManager.Instance.PlaySFX("SFX_UI_Select_1");
                 GameManager.Instance.LoadLevel(presetList,index);
             });
         }

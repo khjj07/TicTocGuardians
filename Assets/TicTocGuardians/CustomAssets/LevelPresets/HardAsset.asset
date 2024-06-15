@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HardAsset
   m_EditorClassIdentifier: 
   presets:
-  - name: 01
+  - name: "\uC77C\uBC18"
     levelAsset: {fileID: 11400000, guid: 7d2c01aec1e22794da987faeed54be43, type: 2}
-  - name: 02
-    levelAsset: {fileID: 11400000, guid: 7d2c01aec1e22794da987faeed54be43, type: 2}
+  - name: "\uD29C\uD1A0\uB9AC\uC5BC"
+    levelAsset: {fileID: 11400000, guid: 96575d42d8b676c449d6333d436148e6, type: 2}

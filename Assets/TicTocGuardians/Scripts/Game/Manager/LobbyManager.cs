@@ -36,6 +36,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField] private RectTransform hardSelectUIEndPoint;
         void Start()
         {
+            GlobalSoundManager.Instance.PlayBGM("BGM_Main");
             switch (controller.type)
             {
                 case PlayerType.None:
@@ -62,6 +63,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 EventSystem.current.SetSelectedGameObject(normalSelectUI.frame.GetChild(0).gameObject);
                 normalSelectUI.gameObject.SetActive(true);
             });
+
             normalUIArea.stepOutEvent.AddListener(() =>
             {
                 cameraLevelObject.Move(centerCameraPoint.position, 1.0f);
@@ -73,7 +75,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 });
             });
 
-
             hardUIArea.stepInEvent.AddListener(() =>
             {
                 cameraLevelObject.Move(leftCameraPoint.position, 1.0f);
@@ -82,6 +83,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 EventSystem.current.SetSelectedGameObject(hardSelectUI.frame.GetChild(0).gameObject);
                 hardSelectUI.gameObject.SetActive(true);
             });
+
             hardUIArea.stepOutEvent.AddListener(() =>
             {
                 cameraLevelObject.Move(centerCameraPoint.position, 1.0f);
