@@ -115,15 +115,19 @@ namespace TicTocGuardians.Scripts.Game.Player
             CreateDefaultStream();
         }
 
-        public virtual void Update()
+        public void LateUpdate()
         {
-            MoveAnimation();
             if (_rigidbody.velocity.magnitude > 0.1)
             {
                 var tmp = _rigidbody.velocity;
                 tmp.y = 0;
                 SetDirection(tmp.normalized);
             }
+        }
+
+        public virtual void Update()
+        {
+            MoveAnimation();
             if (_isFalling || _isOperating)
             {
                 _capsuleCollider.material.dynamicFriction = 0;
@@ -169,7 +173,7 @@ namespace TicTocGuardians.Scripts.Game.Player
                 MoveZ((float)action.data);
             }).AddTo(gameObject);
 
-            var jumpStream = baseStream.Where(_ => !_isFalling)
+            var jumpStream = baseStream.Where(_ => IsContactGround())
                 .Where(action => action.state == Action.State.Jump);
             jumpStream.Subscribe(action => Jump()).AddTo(gameObject);
             jumpStream.Subscribe(action =>
@@ -295,11 +299,11 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         public void SetDirection(Vector3 direction)
         {
-            _direction = direction;
             if (direction.magnitude > 0)
             {
-                animator.transform.rotation = Quaternion.LookRotation(direction);
+                animator.transform.rotation = Quaternion.Slerp(animator.transform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * 5.0f);
             }
+            _direction = direction;
         }
 
         public void AccelerateX(float direction)
@@ -320,7 +324,7 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         public void Jump()
         {
-            _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         }
 
 
