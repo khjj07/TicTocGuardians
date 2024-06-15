@@ -378,6 +378,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4306945341524371679, guid: 79a6093b4c184d84ab0cbcb3b5f08bff, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79a6093b4c184d84ab0cbcb3b5f08bff, type: 3}
 --- !u!4 &149025581 stripped
@@ -914,6 +918,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2281571449447862081, guid: 79a6093b4c184d84ab0cbcb3b5f08bff, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4306945341524371679, guid: 79a6093b4c184d84ab0cbcb3b5f08bff, type: 3}
+      propertyPath: m_CullingMode
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1769,7 +1777,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -2331,6 +2339,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2281571449447862081, guid: 79a6093b4c184d84ab0cbcb3b5f08bff, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4306945341524371679, guid: 79a6093b4c184d84ab0cbcb3b5f08bff, type: 3}
+      propertyPath: m_CullingMode
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

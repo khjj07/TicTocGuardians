@@ -68,8 +68,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "01. \uC694\uC6D01 : \uC7AC\uBE60\uB978 \uD1A0\uB07C \uBB34\uBB34"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a74a6ca0759767344ac1babca504db20, type: 2}
-  m_sharedMaterial: {fileID: -3542720985762698369, guid: a74a6ca0759767344ac1babca504db20, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ec833650c1db46444bf3f7a56a403a96, type: 2}
+  m_sharedMaterial: {fileID: 3927510612939726005, guid: ec833650c1db46444bf3f7a56a403a96, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -240,9 +240,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e139c72df98f6b846a6c83052c69d9df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  presetList: {fileID: 0}
+  index: 0
   button: {fileID: 496815834027181643}
   text: {fileID: 496815832412527443}
-  placeAsset: {fileID: 0}
 --- !u!114 &8028527373060715966
 MonoBehaviour:
   m_ObjectHideFlags: 0
