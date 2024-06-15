@@ -91,9 +91,21 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void InitializePauseUI()
         {
-            pauseUI.continueButton.onClick.AddListener(Continue);
-            pauseUI.restartButton.onClick.AddListener(Restart);
-            pauseUI.levelButton.onClick.AddListener(GoToLevel);
+            pauseUI.continueButton.onClick.AddListener(()=>
+            {
+                GlobalSoundManager.Instance.PlaySFX("SFX_UI_Select_Click");
+                Continue();
+            });
+            pauseUI.restartButton.onClick.AddListener(() =>
+            {
+                GlobalSoundManager.Instance.PlaySFX("SFX_UI_Select_Click");
+                Restart();
+            });
+            pauseUI.levelButton.onClick.AddListener(() =>
+            {
+                GlobalSoundManager.Instance.PlaySFX("SFX_UI_Select_Click");
+                GoToLevel();
+            });
             pauseUI.gameObject.SetActive(false);
         }
         
