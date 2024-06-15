@@ -22,6 +22,6 @@ MonoBehaviour:
   - name: "04. \uC2E4\uC804 \uC5F0\uC2B5"
     levelAsset: {fileID: 0}
   - name: "05. \uC2E0\uAE30\uD55C \uBC1C\uD310"
-    levelAsset: {fileID: 0}
+    levelAsset: {fileID: 11400000, guid: 205a376d77e844e44a3f4313e0ea05b6, type: 2}
   - name: "06. \uC774\uC5B4\uC9C0\uB294 \uBCA8\uD2B8"
     levelAsset: {fileID: 0}
