@@ -26,6 +26,11 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
         {
             base.Deserialize(asset);
             speed = (float)asset.GetValue("speed");
+           
+        }
+
+        public void Start()
+        {
             foreach (var rail in railDecals)
             {
                 if (rail.material.HasProperty(RailSpeed))
@@ -37,11 +42,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                     Debug.LogWarning("Property not found on shader: " + RailSpeed);
                 }
             }
-            
-        }
 
-        public void Start()
-        {
             GetComponentInChildren<MeshCollider>().OnCollisionStayAsObservable()
                 .Select(x => x.collider.GetComponent<IMovable>())
                 .Subscribe(obj =>
