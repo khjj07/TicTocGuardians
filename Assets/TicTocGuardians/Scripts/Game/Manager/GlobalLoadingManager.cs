@@ -19,30 +19,27 @@ namespace TicTocGuardians.Scripts.Game.Manager
             Cat
         }
         [SerializeField]
-        private Image beaverLoadingScreen;
+        private Canvas beaverLoadingScreen;
         [SerializeField]
-        private Image rabbitLoadingScreen;
+        private Canvas rabbitLoadingScreen;
         [SerializeField]
-        private Image catLoadingScreen;
+        private Canvas catLoadingScreen;
 
-        private Canvas _canvas;
+        [SerializeField]
+        private Camera modelCamera;
 
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
-            _canvas = GetComponent<Canvas>();
         }
 
-        public void Update()
-        {
-            _canvas.worldCamera = Camera.current;
-        }
 
         public void ActiveScene()
         {
             beaverLoadingScreen.gameObject.SetActive(false);
             rabbitLoadingScreen.gameObject.SetActive(false);
             catLoadingScreen.gameObject.SetActive(false);
+            modelCamera.gameObject.SetActive(false);
         }
 
         public IEnumerator Load(string scene, float defaultDelay)
@@ -54,7 +51,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             beaverLoadingScreen.gameObject.SetActive(false);
             rabbitLoadingScreen.gameObject.SetActive(false);
             catLoadingScreen.gameObject.SetActive(false);
-
+            modelCamera.gameObject.SetActive(true);
             LoadingMode mode = (LoadingMode)Random.Range(0, 3);
 
             switch (mode)
