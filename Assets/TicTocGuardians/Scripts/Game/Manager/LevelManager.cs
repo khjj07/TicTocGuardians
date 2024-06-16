@@ -93,6 +93,10 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void InitializePauseUI()
         {
+            pauseUI.continueButton.onClick.RemoveAllListeners();
+            pauseUI.restartButton.onClick.RemoveAllListeners();
+            pauseUI.levelButton.onClick.RemoveAllListeners();
+
             pauseUI.continueButton.onClick.AddListener(()=>
             {
                 GlobalSoundManager.Instance.PlaySFX("SFX_UI_Select_Click");
@@ -352,8 +356,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void CreateShortCutStream()
         {
-            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.R).Subscribe(_ => RePlay()).AddTo(gameObject);
-            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.X).Subscribe(_ => Skip()).AddTo(gameObject);
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.R).Where(_=>isPlaying).Subscribe(_ => RePlay()).AddTo(gameObject);
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.X).Where(_ => isPlaying).Subscribe(_ => Skip()).AddTo(gameObject);
         }
 
         public virtual void Skip()
