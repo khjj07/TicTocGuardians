@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Default.Scripts.Util;
 using TicTocGuardians.Scripts.Assets;
+using TicTocGuardians.Scripts.Game.Player;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -24,6 +25,13 @@ namespace TicTocGuardians.Scripts.Game.Manager
         private Canvas rabbitLoadingScreen;
         [SerializeField]
         private Canvas catLoadingScreen;
+        
+        [SerializeField]
+        private PlayerPreview beaverPreview;
+        [SerializeField]
+        private PlayerPreview rabbitPreview;
+        [SerializeField]
+        private PlayerPreview catPreview;
 
         [SerializeField]
         private Camera modelCamera;
@@ -33,6 +41,13 @@ namespace TicTocGuardians.Scripts.Game.Manager
             DontDestroyOnLoad(gameObject);
         }
 
+        private void Start()
+        {
+            beaverLoadingScreen.gameObject.SetActive(false);
+            rabbitLoadingScreen.gameObject.SetActive(false);
+            catLoadingScreen.gameObject.SetActive(false);
+            modelCamera.gameObject.SetActive(false);
+        }
 
         public void ActiveScene()
         {
@@ -51,6 +66,9 @@ namespace TicTocGuardians.Scripts.Game.Manager
             beaverLoadingScreen.gameObject.SetActive(false);
             rabbitLoadingScreen.gameObject.SetActive(false);
             catLoadingScreen.gameObject.SetActive(false);
+            beaverPreview.Wait();
+            rabbitPreview.Wait();
+            catPreview.GetComponentInChildren<PlayerPreview>().Wait();
             modelCamera.gameObject.SetActive(true);
             LoadingMode mode = (LoadingMode)Random.Range(0, 3);
 
@@ -58,12 +76,15 @@ namespace TicTocGuardians.Scripts.Game.Manager
             {
                 case LoadingMode.Beaver:
                     beaverLoadingScreen.gameObject.SetActive(true);
+                    beaverPreview.Pick();
                     break;
                 case LoadingMode.Rabbit:
                     rabbitLoadingScreen.gameObject.SetActive(true);
+                    rabbitPreview.Pick();
                     break;
                 case LoadingMode.Cat:
                     catLoadingScreen.gameObject.SetActive(true);
+                    catPreview.Pick();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, null);

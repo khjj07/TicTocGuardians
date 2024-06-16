@@ -79,12 +79,14 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public void Restart()
         {
             Time.timeScale = 1;
+            pauseUI.gameObject.SetActive(false);
             GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex());
         }
 
         public void GoToLevel()
         {
             Time.timeScale = 1;
+            pauseUI.gameObject.SetActive(false);
             StartCoroutine(GlobalLoadingManager.Instance.Load("LobbyScene", 1.0f));
         }
 
@@ -335,6 +337,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             {
                 AddRepairDimension(x);
             }).AddTo(player.gameObject);
+
             dimensionExitStream.Subscribe(x=>
             {
                 RemoveRepairDimension(x);

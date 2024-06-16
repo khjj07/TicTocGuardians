@@ -260,13 +260,11 @@ namespace TicTocGuardians.Scripts.Game.Player
         public void Repairing()
         {
             repairImage.gameObject.SetActive(true);
-            _isWaiting = true;
         }
 
         public void UnRepairing()
         {
             repairImage.gameObject.SetActive(false);
-            _isWaiting = false;
         }
 
 

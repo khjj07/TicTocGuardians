@@ -21,7 +21,7 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         public void Awake()
         {
-            _animator = GetComponentInChildren<Animator>();
+            _animator = GetComponentInChildren<Animator>(true);
         }
 
         public void Start()
