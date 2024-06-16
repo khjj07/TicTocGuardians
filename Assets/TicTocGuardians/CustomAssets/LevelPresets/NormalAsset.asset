@@ -20,8 +20,8 @@ MonoBehaviour:
   - name: "03. \uC694\uC6D03 : \uB611\uB611\uD55C \uBE44\uBC84 \uD1A0\uB9AC"
     levelAsset: {fileID: 11400000, guid: c029d02bfbc2897469d74bc9c86cff91, type: 2}
   - name: "04. \uC2E4\uC804 \uC5F0\uC2B5"
-    levelAsset: {fileID: 0}
+    levelAsset: {fileID: 11400000, guid: 2b9ee27c29872e64ab31ba5b3c61ad21, type: 2}
   - name: "05. \uC2E0\uAE30\uD55C \uBC1C\uD310"
-    levelAsset: {fileID: 11400000, guid: 205a376d77e844e44a3f4313e0ea05b6, type: 2}
+    levelAsset: {fileID: 11400000, guid: ab7398e26d985634bb76aa43845699ce, type: 2}
   - name: "06. \uC774\uC5B4\uC9C0\uB294 \uBCA8\uD2B8"
-    levelAsset: {fileID: 0}
+    levelAsset: {fileID: 11400000, guid: 205a376d77e844e44a3f4313e0ea05b6, type: 2}
