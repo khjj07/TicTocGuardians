@@ -13,8 +13,6 @@ namespace TicTocGuardians.Scripts.Assets.LevelAsset
 
         [Header("Objects")]
         public LevelObjectAsset[] objects;
-
-        public LevelObjectAsset spawnPoint;
         public LevelObjectAsset camera;
         public LevelObjectAsset light;
     }

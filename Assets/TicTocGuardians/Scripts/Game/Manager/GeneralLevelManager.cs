@@ -38,14 +38,15 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField]
         private Phase currentState;
 
-        private int _currentPlayPhaseIndex = 0;
+        public int _currentPlayPhaseIndex = 0;
 
         private Subject<Phase> _phaseSubject = new Subject<Phase>();
         public List<PlayerType> _playerOrder = new List<PlayerType>();
         private PlayerCloneData[] _cloneData = new PlayerCloneData[3];
         private List<PlayerClone> _currentClones = new List<PlayerClone>();
         private PlayerRecorder _recorder;
-        
+       
+
         public void Awake()
         {
             _recorder = GetComponent<PlayerRecorder>();
@@ -126,7 +127,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             OnPlayPhaseActive();
             _currentPlayPhaseIndex = 0;
-            var player = SpawnPlayer(_playerOrder[_currentPlayPhaseIndex]);
+            var player = SpawnPlayer(_playerOrder[_currentPlayPhaseIndex], currentSpawnPointIndices[_currentPlayPhaseIndex]);
             PlayPhaseStart(playerController);
         }
 
@@ -134,7 +135,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             OnPlayPhaseActive();
             _currentPlayPhaseIndex = 1;
-            var player = SpawnPlayer(_playerOrder[_currentPlayPhaseIndex]);
+            var player = SpawnPlayer(_playerOrder[_currentPlayPhaseIndex], currentSpawnPointIndices[_currentPlayPhaseIndex]);
             PlayPhaseStart(playerController);
         }
 
@@ -142,7 +143,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             OnPlayPhaseActive();
             _currentPlayPhaseIndex = 2;
-            SpawnPlayer(_playerOrder[_currentPlayPhaseIndex]);
+            SpawnPlayer(_playerOrder[_currentPlayPhaseIndex], currentSpawnPointIndices[_currentPlayPhaseIndex]);
             PlayPhaseStart(playerController);
             foreach (var instance in playerInstances)
             {
@@ -308,6 +309,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             PlayPhaseForceEnd();
             ChangeState(Phase.Ordering);
+            playCount = 0;
         }
 
         public override void Skip()
@@ -321,22 +323,35 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public override void RePlay()
         {
+            base.RePlay();
             if (isPlaying)
             {
                 PlayPhaseForceEnd();
                 ChangeState(currentState);
+                if (playCount > 0)
+                {
+                    playCount--;
+                }
             }
             else
             {
                 PlayPhaseForceEnd();
                 PreviousState();
+                if (playCount > 1)
+                {
+                    playCount -= 2;
+                }
+                else if(playCount > 0)
+                {
+                    playCount--;
+                }
             }
         }
 
-        public PlayerClone CreateClone(PlayerCloneData data)
+        public PlayerClone CreateClone(PlayerCloneData data, int index)
         {
             var instance = Instantiate(clonePrefabs[(int)data.type - 1], origin);
-            instance.transform.position = SpawnPointLevelObject.Instance.transform.position;
+            instance.transform.position = spawnPoints[index].transform.position+Vector3.up*3;
             instance.SetActions(data.actions);
             playerInstances.Add(instance.GetComponent<Player.Player>());
             _currentClones.Add(instance);
@@ -347,7 +362,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             for (int i = 0; i < _currentPlayPhaseIndex; i++)
             {
-                CreateClone(_cloneData[i]);
+                CreateClone(_cloneData[i], currentSpawnPointIndices[i]);
             }
         }
 

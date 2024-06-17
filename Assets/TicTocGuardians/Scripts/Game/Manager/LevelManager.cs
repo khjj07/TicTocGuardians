@@ -50,6 +50,14 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public bool isPause = false;
         public bool _isEnd = false;
 
+        public List<SpawnPointLevelObject> spawnPoints = new List<SpawnPointLevelObject>();
+        public int[] currentSpawnPointIndices = new int[3];
+        public int playCount = 0;
+
+        public void Update()
+        {
+            Debug.Log(playCount);
+        }
         public virtual void Start()
         {
             GameManager.Instance.ActiveLevel(this);
@@ -60,6 +68,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
             InitializeFailUI();
             InitializePauseUI();
             CreateShortCutStream();
+           
+            playCount = 0;
         }
 
         public void Continue()
@@ -144,15 +154,14 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 var instance = Instantiate(obj.prefab, origin);
                 instance.Deserialize(obj);
             }
-            SpawnPointLevelObject.Instance.Deserialize(asset.spawnPoint);
             CameraLevelObject.Instance.Deserialize(asset.camera);
             LightLevelObject.Instance.Deserialize(asset.light);
         }
 
-        public Player.Player SpawnPlayer(PlayerType type)
+        public Player.Player SpawnPlayer(PlayerType type, int spawnPointIndex)
         {
             var instance = Instantiate(playerPrefabs[(int)type - 1], origin);
-            instance.transform.position = SpawnPointLevelObject.Instance.transform.position;
+            instance.transform.position = spawnPoints[spawnPointIndex].transform.position+Vector3.up*3;
             playerController = instance.GetComponent<PlayerController>();
             playerInstances.Add(instance);
             return instance;
@@ -193,6 +202,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void PlayPhaseEnd()
         {
+            playCount++;
             isPlaying = false;
             Time.timeScale = 1.0f;
             if (timerHandler != null)
@@ -219,6 +229,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space).Select(_=>true)).First().Subscribe(_ =>
             {
                 isPlaying = true;
+                playCount++;
                 ActiveLevel(controller);
             }).AddTo(gameObject);
         }
@@ -356,8 +367,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void CreateShortCutStream()
         {
-            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.R).Where(_=>isPlaying).Subscribe(_ => RePlay()).AddTo(gameObject);
-            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.X).Where(_ => isPlaying).Subscribe(_ => Skip()).AddTo(gameObject);
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.R).Where(_=>!_isEnd).Subscribe(_ => RePlay()).AddTo(gameObject);
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.X).Where(_ => !_isEnd).Subscribe(_ => Skip()).AddTo(gameObject);
         }
 
         public virtual void Skip()
@@ -373,7 +384,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void RePlay()
         {
-          
+           
         }
 
         public virtual void PlayPhaseForceEnd()

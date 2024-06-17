@@ -132,7 +132,6 @@ namespace TicTocGuardians.Scripts.LevelEditor
                     }
                 }
                 levelasset.objects = assets.ToArray();
-                levelasset.spawnPoint = SpawnPointLevelObject.Instance.Serialize(levelasset);
                 levelasset.camera = CameraLevelObject.Instance.Serialize(levelasset);
                 levelasset.light = LightLevelObject.Instance.Serialize(levelasset);
 
@@ -161,7 +160,6 @@ namespace TicTocGuardians.Scripts.LevelEditor
                     instance.Deserialize(levelObjectAsset);
                     instances.Add(instance);
                 }
-                SpawnPointLevelObject.Instance.Deserialize(_targetLevelAsset.spawnPoint);
                 CameraLevelObject.Instance.Deserialize(_targetLevelAsset.camera);
                 LightLevelObject.Instance.Deserialize(_targetLevelAsset.light);
             }

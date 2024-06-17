@@ -10,6 +10,7 @@ namespace TicTocGuardians.Scripts.LevelEditor
     {
         public Transform origin;
         public PlayerController playerPrefab;
+        public SpawnPointLevelObject spawnPoint;
         public void Start()
         {
             var instance = Instantiate(playerPrefab, origin);
@@ -30,7 +31,7 @@ namespace TicTocGuardians.Scripts.LevelEditor
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            instance.transform.position = SpawnPointLevelObject.Instance.transform.position;
+            instance.transform.position = spawnPoint.transform.position + Vector3.up * 3;
         }
     }
 }

@@ -69,15 +69,28 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public override void RePlay()
         {
+            base.RePlay();
             if (isPlaying)
             {
                 PlayPhaseForceEnd();
                 ChangeState(currentState);
+                if (playCount > 0)
+                {
+                    playCount--;
+                }
             }
             else
             {
                 PlayPhaseForceEnd();
                 PreviousState();
+                if (playCount > 1)
+                {
+                    playCount -= 2;
+                }
+                else if (playCount > 0)
+                {
+                    playCount--;
+                }
             }
         }
 
@@ -114,7 +127,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void OnPlayPhaseActive()
         {
             base.OnPlayPhaseActive();
-            var player = SpawnPlayer(playerType);
+            var player = SpawnPlayer(playerType,0);
             CreateDimensionCheckStream(player);
             PlayPhaseStart(playerController);
         }
