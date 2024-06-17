@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   presets:
   - name: "01. \uC29D\uC29D \uBE60\uB974\uAC8C!"
-    levelAsset: {fileID: 11400000, guid: 7d2c01aec1e22794da987faeed54be43, type: 2}
+    levelAsset: {fileID: 11400000, guid: 6db6dcaa72603864981d3b31ece0e80f, type: 2}
   - name: "02. \uB204\uAD6C\uB3C4 \uB0A0 \uB9C9\uC9C0 \uBABB\uD574!"
     levelAsset: {fileID: 11400000, guid: 96575d42d8b676c449d6333d436148e6, type: 2}
