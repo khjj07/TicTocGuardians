@@ -125,8 +125,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 creditUI.gameObject.SetActive(true);
                 controller.gameObject.SetActive(false);
                 GlobalInputBinder.CreateGetMouseButtonDownStream(0).Take(3)
-                    .Subscribe(_ => { creditUI.NextSprite(); });
-            });
+                    .Subscribe(_ => { creditUI.NextSprite(); }).AddTo(gameObject);
+            }).AddTo(gameObject);
         }
     }
 }

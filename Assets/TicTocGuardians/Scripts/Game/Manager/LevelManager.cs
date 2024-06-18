@@ -61,11 +61,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
             GlobalSoundManager.Instance.PlayBGM("BGM_Ingame");
         }
 
-        public void Update()
-        {
-            Debug.Log(playCount);
-        }
-
         public void Continue()
         {
             if (isSkip)

@@ -10,10 +10,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
 {
     public class GlobalSoundManager : Singleton<GlobalSoundManager>
     {
-#if UNITY_EDITOR
-        [SerializeField] private DefaultAsset sfxFolder;
-        [SerializeField] private DefaultAsset bgmFolder;
-#endif
         [SerializeField] private AudioSource sfxAudioSource;
         [SerializeField] private AudioSource bgmAudioSource;
         private readonly Dictionary<string, AudioClip> _bgmDictionary = new();
