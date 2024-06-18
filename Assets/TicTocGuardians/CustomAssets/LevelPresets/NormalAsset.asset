@@ -21,7 +21,7 @@ MonoBehaviour:
   - name: " 02. \uC694\uC6D02 : \uB0A0\uB78D\uD55C \uACE0\uC591\uC774 \uB8E8\uC2DC"
     levelAsset: {fileID: 11400000, guid: c0fbc0facd63ab345a37289d8d8e5c92, type: 2}
     previewImage: {fileID: 21300000, guid: 49b80ac527d18864cbed337e09c79059, type: 3}
-    explain: " \uC694\uC6D0\uB4E4\uC911 \uAC00\uC7A5 \uB192\uC774 \uB6F8 \uC218 \uC788\uB294
+    explain: " \uC694\uC6D0\uB4E4\uC911 \uAC00\uC7A5 \uB192\uC774 \uB6F8 \uC218 \uC788\uB294      
       \uCC28\uCC28 \uC694\uC6D0\uACFC \uD568\uAED8 \uD6C8\uB828\uD558\uAE30"
   - name: " 03. \uC694\uC6D03 : \uB611\uB611\uD55C \uBE44\uBC84 \uD1A0\uB9AC"
     levelAsset: {fileID: 11400000, guid: c029d02bfbc2897469d74bc9c86cff91, type: 2}
@@ -38,7 +38,7 @@ MonoBehaviour:
   - name: " 05. \uC2E0\uAE30\uD55C \uBC1C\uD310"
     levelAsset: {fileID: 11400000, guid: ab7398e26d985634bb76aa43845699ce, type: 2}
     previewImage: {fileID: 21300000, guid: 02969670f2c071e4baa2bd4173249073, type: 3}
-    explain: " \uC774\uC81C \uC2E4\uC804\uC774\uB2E4! \uADFC\uB370 \uC5EC\uAE30 \uAC74\uBB3C\uC5D0\uB294
+    explain: " \uC774\uC81C \uC2E4\uC804\uC774\uB2E4! \uADFC\uB370 \uC5EC\uAE30 \uAC74\uBB3C\uC740
       \uC0C9\uAE54\uC774 \uB2E4\uB978 \uBC14\uB2E5\uC774 \uC788\uB294\uB370..?"
   - name: " 06. \uC774\uC5B4\uC9C0\uB294 \uBCA8\uD2B8"
     levelAsset: {fileID: 11400000, guid: 205a376d77e844e44a3f4313e0ea05b6, type: 2}
