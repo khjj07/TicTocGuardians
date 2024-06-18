@@ -41,28 +41,22 @@ namespace TicTocGuardians.Scripts.Game.UI
         public void OnClick()
         {
             GlobalSoundManager.Instance.PlaySFX("SFX_PickNumber");
-            if (!_selected)
-            {
-                playerPreview.Pick();
-                order.gameObject.SetActive(true);
-                _image.sprite = highlightSprite;
-            }
-            else
-            {
-                playerPreview.Wait();
-                order.gameObject.SetActive(false);
-                _image.sprite = normalSprite;
-            }
         }
 
         public void Select()
         {
             _selected = true;
+            playerPreview.Pick();
+            order.gameObject.SetActive(true);
+            _image.sprite = highlightSprite;
         }
 
         public void UnSelect()
         {
             _selected = false;
+            playerPreview.Wait();
+            order.gameObject.SetActive(false);
+            _image.sprite = normalSprite;
         }
 
         public bool IsSelected()

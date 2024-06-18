@@ -22,6 +22,10 @@ namespace TicTocGuardians.Scripts.Game.UI
                 instance.presetList = listAsset;
                 instance.explainUI = explainUI;
                 instance.index = count;
+                instance.button.onClick.AddListener(() =>
+                {
+                    gameObject.SetActive(false);
+                });
                 count++;
             }
 
