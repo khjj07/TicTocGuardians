@@ -19,15 +19,18 @@ namespace TicTocGuardians.Scripts.Game.Manager
         private readonly Dictionary<string, AudioClip> _bgmDictionary = new();
         private readonly Dictionary<string, AudioClip> _sfxDictionary = new();
 
-        public void Awake()
+        public void Start()
         {
-#if UNITY_EDITOR
-            foreach (var bgm in bgmFolder.LoadAllObjectsInFolder<AudioClip>()) _bgmDictionary.Add(bgm.name, bgm);
-            foreach (var bgm in sfxFolder.LoadAllObjectsInFolder<AudioClip>()) _sfxDictionary.Add(bgm.name, bgm);
-#else
-              foreach (var bgm in Resources.LoadAll<AudioClip>("Sounds/BGM")) _bgmDictionary.Add(bgm.name, bgm);
-            foreach (var bgm in Resources.LoadAll<AudioClip>("Sounds/SFX")) _sfxDictionary.Add(bgm.name, bgm);
-#endif
+
+            foreach (var bgm in Resources.LoadAll<AudioClip>("Sounds/BGM"))
+            {
+                _bgmDictionary.Add(bgm.name, bgm);
+            }
+
+            foreach (var sfx in Resources.LoadAll<AudioClip>("Sounds/SFX"))
+            {
+                _sfxDictionary.Add(sfx.name, sfx);
+            }
         }
 
         public void PlayBGM(string name)
