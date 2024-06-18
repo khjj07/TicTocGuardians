@@ -27,7 +27,7 @@ namespace TicTocGuardians.Scripts.Game.UI
             button.OnPointerEnterAsObservable().Subscribe(_ =>
             {
                 explainUI.previewImage.sprite = presetList.presets[index].previewImage;
-                explainUI.name = presetList.presets[index].name;
+                explainUI.title.SetText(presetList.presets[index].name);
                 explainUI.explain.SetText(presetList.presets[index].explain);
                 ;
                 explainUI.OnActive();

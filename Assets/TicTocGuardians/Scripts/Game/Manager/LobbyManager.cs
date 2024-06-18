@@ -42,7 +42,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         private void Start()
         {
-            //PlayerPrefs.DeleteAll();
             controller.gameObject.SetActive(false);
             synopsisUI.gameObject.SetActive(false);
             creditUI.gameObject.SetActive(false);
