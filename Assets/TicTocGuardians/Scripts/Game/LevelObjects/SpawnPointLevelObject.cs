@@ -12,8 +12,18 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             if (LevelManager.Instance) LevelManager.Instance.spawnPoints.Add(this);
         }
 
+        public override void Deserialize(LevelObjectAsset asset)
+        {
+            base.Deserialize(asset);
+        }
+
+        public override void Initialize(GameObject modelObject)
+        {
+            base.Initialize(modelObject);
+        }
+
 #if UNITY_EDITOR
-        private void OnDrawGizmos()
+            private void OnDrawGizmos()
         {
             Gizmos.color = new Color(0, 1, 0, 0.5f);
             Gizmos.DrawMesh(GlobalLevelSetting.instance.playerMesh, transform.position + Vector3.up * 3,

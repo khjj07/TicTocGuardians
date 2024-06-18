@@ -16,6 +16,16 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             CreateChangeStream();
         }
 
+        public override void Deserialize(LevelObjectAsset asset)
+        {
+            base.Deserialize(asset);
+        }
+
+        public override void Initialize(GameObject modelObject)
+        {
+            base.Initialize(modelObject);
+        }
+
         public void CreateChangeStream()
         {
             GetComponentInChildren<MeshCollider>().OnCollisionEnterAsObservable()
