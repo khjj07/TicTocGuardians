@@ -807,7 +807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34db921de1787af48bdd0546910a5c95, type: 3}
   m_Name: Hard02
   m_EditorClassIdentifier: 
-  timeLimit: 25
+  timeLimit: 30
   objects:
   - name: MovableTileLevelObject
     position: {x: -2.828426, y: 7, z: -8.414568}
