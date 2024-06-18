@@ -1,17 +1,19 @@
 using System;
 using System.Threading.Tasks;
+using Default.Scripts.Util;
 using DG.Tweening;
 using TicTocGuardians.Scripts.Game.ETC;
 using TicTocGuardians.Scripts.Game.LevelObjects;
 using TicTocGuardians.Scripts.Game.Player;
 using TicTocGuardians.Scripts.Game.UI;
+using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 namespace TicTocGuardians.Scripts.Game.Manager
 {
-    public class LobbyManager : MonoBehaviour
+    public class LobbyManager : Singleton<LobbyManager>
     {
         [FormerlySerializedAs("levelCamera")] [SerializeField]
         private CameraLevelObject cameraLevelObject;
@@ -20,7 +22,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField]
         private ReactableArea hardUIArea;
 
-        [SerializeField] private PlayerController controller;
+       public PlayerController controller;
 
         [FormerlySerializedAs("difficultySelectUI")] [SerializeField] private DifficultySelectTV difficultySelectTV;
         [SerializeField] private Transform centerCameraPoint;
@@ -34,9 +36,15 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField] private RectTransform normalSelectUIEndPoint;
         [SerializeField] private RectTransform hardSelectUIStartPoint;
         [SerializeField] private RectTransform hardSelectUIEndPoint;
-        void Start()
+
+        [SerializeField] private SynopsisUI synopsisUI;
+        [SerializeField] private CreditUI creditUI;
+
+        public void PlayerActive()
         {
-            GlobalSoundManager.Instance.PlayBGM("BGM_Main");
+            controller.gameObject.SetActive(true);
+            controller.transform.localScale = Vector3.zero;
+            controller.transform.DOScale(1,0.5f);
             switch (controller.type)
             {
                 case PlayerType.None:
@@ -54,6 +62,37 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.F7).Where(_=> !creditUI.isActiveAndEnabled).Subscribe(_ =>
+            {
+                creditUI.gameObject.SetActive(true);
+                controller.gameObject.SetActive(false);
+                GlobalInputBinder.CreateGetMouseButtonDownStream(0).Take(3)
+                    .Subscribe(_ =>
+                    {
+                        creditUI.NextSprite();
+                    });
+            });
+        }
+
+        void Start()
+        {
+            //PlayerPrefs.DeleteAll();
+            controller.gameObject.SetActive(false);
+            synopsisUI.gameObject.SetActive(false);
+            creditUI.gameObject.SetActive(false);
+            if (!PlayerPrefs.HasKey("FirstTimeFlag"))
+            {
+                synopsisUI.gameObject.SetActive(true);
+                synopsisUI.transform.localScale = Vector3.zero;
+                synopsisUI.transform.DOScale(1, 1f);
+                PlayerPrefs.SetInt("FirstTimeFlag",1);
+            }
+            else
+            {
+                PlayerActive();
+            }
+            GlobalSoundManager.Instance.PlayBGM("BGM_Main");
             GlobalLoadingManager.Instance.ActiveScene();
             normalUIArea.stepInEvent.AddListener(() =>
             {
