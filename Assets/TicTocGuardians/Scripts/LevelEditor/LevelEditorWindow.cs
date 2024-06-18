@@ -1,38 +1,24 @@
-using Default.Scripts.Extension;
 using System.Collections.Generic;
-using TicTocGuardians.Scripts.Assets;
+using Default.Scripts.Extension;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
-using TicTocGuardians.Scripts.Game;
 using TicTocGuardians.Scripts.Game.LevelObjects;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 namespace TicTocGuardians.Scripts.LevelEditor
 {
+#if UNITY_EDITOR
     public class LevelEditorWindow : EditorWindow
     {
         private static LevelEditorWindow _window;
-
-        private Vector2 _scrollPosition;
-        private static int _tabIndex = 0;
-        private int _createGridIndex = 0;
-        readonly string[] _tabSubject = { "Create", "Level" };
+        private static int _tabIndex;
+        private readonly string[] _tabSubject = { "Create", "Level" };
+        private int _createGridIndex;
         private GameObject[] _objects;
         private ModelLevelObject _prefab;
+
+        private Vector2 _scrollPosition;
         private LevelAsset _targetLevelAsset;
-
-        public static void Open(Scripts.LevelEditor.LevelEditor tool)
-        {
-            if (_window == null)
-            {
-                _window = CreateInstance<LevelEditorWindow>();
-            }
-
-            _window._objects = LevelEditor.Instance.modelsFolder.LoadAllObjectsInFolder<GameObject>().ToArray();
-            Debug.Log(LevelEditor.Instance.modelsFolder.GetLocalPath());
-            _window.Show();
-        }
 
 
         public void OnGUI()
@@ -49,19 +35,29 @@ namespace TicTocGuardians.Scripts.LevelEditor
             }
         }
 
+        public static void Open(LevelEditor tool)
+        {
+            if (_window == null) _window = CreateInstance<LevelEditorWindow>();
+
+            _window._objects = LevelEditor.Instance.modelsFolder.LoadAllObjectsInFolder<GameObject>().ToArray();
+            Debug.Log(LevelEditor.Instance.modelsFolder.GetLocalPath());
+            _window.Show();
+        }
+
         private void OnGUI_Create()
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
             {
-
-                _prefab = (ModelLevelObject)EditorGUILayout.ObjectField("Level Object", _prefab, typeof(ModelLevelObject), true);
+                _prefab = (ModelLevelObject)EditorGUILayout.ObjectField("Level Object", _prefab,
+                    typeof(ModelLevelObject), true);
 
                 if (GUILayout.Button("Create Level Object", EditorStyles.miniButton) && _prefab)
                 {
-                    var instance = PrefabUtility.InstantiatePrefab(_prefab, Scripts.LevelEditor.LevelEditor.Instance.origin) as ModelLevelObject;
+                    var instance =
+                        PrefabUtility.InstantiatePrefab(_prefab, LevelEditor.Instance.origin) as ModelLevelObject;
 
-                    instance.Initialize(_objects[_createGridIndex] as GameObject);
+                    instance.Initialize(_objects[_createGridIndex]);
 
                     Selection.activeObject = instance;
                 }
@@ -69,21 +65,25 @@ namespace TicTocGuardians.Scripts.LevelEditor
             EditorGUILayout.EndVertical();
 
 
-
-
             EditorGUILayout.BeginVertical();
             {
-                _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.ExpandWidth(true),
+                    GUILayout.ExpandHeight(true));
                 if (_objects != null)
                 {
-                    List<GUIContent> contents = new List<GUIContent>();
+                    var contents = new List<GUIContent>();
                     foreach (var obj in _objects)
                     {
-                        var content = new GUIContent(obj.name, (Texture)AssetPreview.GetAssetPreview(obj)); // file name in the resources folder without the (.png) extension
+                        var content =
+                            new GUIContent(obj.name,
+                                AssetPreview
+                                    .GetAssetPreview(
+                                        obj)); // file name in the resources folder without the (.png) extension
                         contents.Add(content);
                     }
 
-                    _createGridIndex = GUILayout.SelectionGrid(_createGridIndex, contents.ToArray(), 1, EditorStyles.objectFieldThumb, GUILayout.Width(300));
+                    _createGridIndex = GUILayout.SelectionGrid(_createGridIndex, contents.ToArray(), 1,
+                        EditorStyles.objectFieldThumb, GUILayout.Width(300));
                 }
 
                 GUILayout.EndScrollView();
@@ -106,31 +106,26 @@ namespace TicTocGuardians.Scripts.LevelEditor
 
             if (GUILayout.Button("Save Level") && _targetLevelAsset)
             {
-                LevelAsset levelasset = _targetLevelAsset;
+                var levelasset = _targetLevelAsset;
 
-                LevelObject[] allChildren = LevelEditor.Instance.origin.GetComponentsInChildren<LevelObject>(true);
-                List<LevelObjectAsset> assets = new List<LevelObjectAsset>();
+                var allChildren = LevelEditor.Instance.origin.GetComponentsInChildren<LevelObject>(true);
+                var assets = new List<LevelObjectAsset>();
                 var objects = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(levelasset));
 
                 foreach (var child in objects)
-                {
                     if (child != levelasset)
-                    {
                         AssetDatabase.RemoveObjectFromAsset(child);
-                    }
-                }
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
 
                 foreach (var levelObject in allChildren)
-                {
                     if (levelObject.transform.parent == LevelEditor.Instance.origin)
                     {
                         var instance = levelObject.Serialize(levelasset);
                         instance.prefab = PrefabUtility.GetCorrespondingObjectFromSource(levelObject);
                         assets.Add(instance);
                     }
-                }
+
                 levelasset.objects = assets.ToArray();
                 levelasset.camera = CameraLevelObject.Instance.Serialize(levelasset);
                 levelasset.light = LightLevelObject.Instance.Serialize(levelasset);
@@ -143,26 +138,26 @@ namespace TicTocGuardians.Scripts.LevelEditor
 
             if (GUILayout.Button("Load Level") && _targetLevelAsset)
             {
-                LevelObject[] allChildren = Scripts.LevelEditor.LevelEditor.Instance.origin.GetComponentsInChildren<LevelObject>(true);
+                var allChildren = LevelEditor.Instance.origin.GetComponentsInChildren<LevelObject>(true);
 
                 foreach (var child in allChildren)
-                {
                     if (child != null)
-                    {
                         DestroyImmediate(child.gameObject);
-                    }
-                }
 
-                List<LevelObject> instances = new List<LevelObject>();
+                var instances = new List<LevelObject>();
                 foreach (var levelObjectAsset in _targetLevelAsset.objects)
                 {
-                    var instance = PrefabUtility.InstantiatePrefab(levelObjectAsset.prefab, LevelEditor.Instance.origin) as LevelObject;
+                    var instance =
+                        PrefabUtility.InstantiatePrefab(levelObjectAsset.prefab, LevelEditor.Instance.origin) as
+                            LevelObject;
                     instance.Deserialize(levelObjectAsset);
                     instances.Add(instance);
                 }
+
                 CameraLevelObject.Instance.Deserialize(_targetLevelAsset.camera);
                 LightLevelObject.Instance.Deserialize(_targetLevelAsset.light);
             }
         }
     }
+#endif
 }

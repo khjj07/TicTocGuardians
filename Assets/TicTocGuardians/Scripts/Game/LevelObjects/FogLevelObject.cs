@@ -10,19 +10,20 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             public bool simulate = true;
         }
 
+#if UNITY_EDITOR
         [CustomEditor(typeof(FogLevelObject))]
         public class FogLevelObjectInspector : Editor
         {
-            
             public void OnValidate()
             {
                 var levelObject = (FogLevelObject)target;
                 if (levelObject.simulate)
                 {
                     var ps = levelObject.GetComponent<ParticleSystem>();
-                    ps.Simulate(1,true,true); //set value and play straightly
+                    ps.Simulate(1, true, true); //set value and play straightly
                 }
             }
         }
+#endif
     }
 }

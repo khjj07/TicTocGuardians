@@ -1,61 +1,62 @@
-using UnityEngine;
+using System;
 using UnityEditor;
-
+using UnityEngine;
 
 namespace Default.Scripts.Util
 {
     public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
+        private static T _instance;
+
         public static T Instance
         {
             get
             {
                 if (_instance == null)
-                {
                     try
                     {
-                        _instance = (T)FindObjectOfType<T>();
+                        _instance = FindObjectOfType<T>();
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         UnityEngine.Debug.LogError(e.StackTrace);
                         return null;
                     }
-                }
 
                 return _instance;
             }
         }
-
-        private static T _instance;
     }
-
     public class ScriptableSingleton<T> : ScriptableObject where T : ScriptableObject
     {
+        private static T _instance;
+
         public static T instance
         {
             get
             {
                 if (_instance == null)
-                {
                     try
                     {
+#if UNITY_EDITOR
                         var type = typeof(T).ToString();
-                        var guid =AssetDatabase.FindAssets("t:"+ type);
+                        var guid = AssetDatabase.FindAssets("t:" + type);
                         var path = AssetDatabase.GUIDToAssetPath(guid[0]);
-                        _instance = (T)AssetDatabase.LoadAssetAtPath(path,typeof(T));
+                        _instance = (T)AssetDatabase.LoadAssetAtPath(path, typeof(T));
+                        _instance = (T)Resources.Load<T>("Global LevelObject Setting");
+#else
+
+#endif
+
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         UnityEngine.Debug.LogError(e.StackTrace);
                         return null;
                     }
-                }
 
                 return _instance;
             }
         }
-
-        private static T _instance;
     }
 }

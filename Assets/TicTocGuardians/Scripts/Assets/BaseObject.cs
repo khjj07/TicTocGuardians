@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using TicTocGuardians.Scripts.Assets.LevelAsset;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,7 +12,8 @@ namespace TicTocGuardians.Scripts.Assets
         public Vector3 position;
         public Vector3 eulerAngles;
         public Vector3 scale;
-        public List<LevelDataAsset> data = new List<LevelDataAsset>();
+        public List<LevelDataAsset> data = new();
+
         public object GetValue(string name)
         {
             return data.Find(x => x.name == name).GetValue();
@@ -27,7 +27,9 @@ namespace TicTocGuardians.Scripts.Assets
         public void AddData(ScriptableObject parent, LevelDataAsset value)
         {
             data.Add(value);
+#if UNITY_EDITOR
             AssetDatabase.AddObjectToAsset(value, parent);
+#endif
         }
     }
 

@@ -1,23 +1,18 @@
-using System;
 using Default.Scripts.Util;
 using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
 using UnityEditor;
-using UnityEngine;
 
 namespace TicTocGuardians.Scripts.Game.Manager
 {
-    
-
     public class GameManager : Singleton<GameManager>
     {
-        public SceneAsset tutorialScene;
-        public SceneAsset generalScene;
         public LevelPresetListAsset normalPresetList;
         public LevelPresetListAsset hardPresetList;
+        private int _currentIndex;
 
         private LevelPresetListAsset _currentLevelPresetListAsset;
-        private int _currentIndex;
+
         public void Awake()
         {
             DontDestroyOnLoad(gameObject);
@@ -40,18 +35,13 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void LoadLevel(LevelPresetListAsset levelPresetList, int index)
         {
-            _currentLevelPresetListAsset=levelPresetList;
-            _currentIndex=index;
+            _currentLevelPresetListAsset = levelPresetList;
+            _currentIndex = index;
             var levelPreset = _currentLevelPresetListAsset.GetLevel(index);
             if (levelPreset.levelAsset as TutorialLevelAsset != null)
-            {
-                StartCoroutine(GlobalLoadingManager.Instance.Load(tutorialScene.name, 3.0f));
-            }
+                StartCoroutine(GlobalLoadingManager.Instance.Load("TutorialPlayScene", 3.0f));
             else
-            {
-                StartCoroutine(GlobalLoadingManager.Instance.Load(generalScene.name, 3.0f));
-            }
-            
+                StartCoroutine(GlobalLoadingManager.Instance.Load("GeneralPlayScene", 3.0f));
         }
     }
 }

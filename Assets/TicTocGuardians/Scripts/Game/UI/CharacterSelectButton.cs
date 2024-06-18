@@ -1,4 +1,3 @@
-using System;
 using TicTocGuardians.Scripts.Game.Manager;
 using TicTocGuardians.Scripts.Game.Player;
 using UnityEngine;
@@ -9,18 +8,17 @@ namespace TicTocGuardians.Scripts.Game.UI
 {
     public class CharacterSelectButton : MonoBehaviour
     {
-        [HideInInspector]
-        public Button button;
-        [HideInInspector]
-        public PlayerPreview playerPreview;
+        [HideInInspector] public Button button;
+
+        [HideInInspector] public PlayerPreview playerPreview;
 
         public PlayerType type;
         public Image order;
-        private Image _image;
         public Sprite normalSprite;
         public Sprite highlightSprite;
+        private Image _image;
 
-        private bool _selected = false;
+        private bool _selected;
 
         public void Awake()
         {
@@ -56,9 +54,10 @@ namespace TicTocGuardians.Scripts.Game.UI
                 _image.sprite = normalSprite;
             }
         }
+
         public void Select()
         {
-             _selected =true;
+            _selected = true;
         }
 
         public void UnSelect()

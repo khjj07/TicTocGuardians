@@ -8,10 +8,11 @@ namespace Default.Scripts.Debug
         [SerializeField] private Mesh _mesh;
         [SerializeField] private Color _color = Color.red;
         [SerializeField] private Vector3 _scale = Vector3.one;
-        [SerializeField] private bool _wireFrame = false;
+
+        [SerializeField] private bool _wireFrame;
         // Update is called once per frame
 
-        void OnDrawGizmos()
+        private void OnDrawGizmos()
         {
             var scale = Vector3.zero;
             scale.x = transform.localScale.x * _scale.x;
@@ -19,16 +20,10 @@ namespace Default.Scripts.Debug
             scale.z = transform.localScale.z * _scale.z;
             Gizmos.color = _color;
             if (_wireFrame)
-            {
-                Gizmos.DrawWireMesh(_mesh, transform.position,transform.rotation, scale);
-            }
+                Gizmos.DrawWireMesh(_mesh, transform.position, transform.rotation, scale);
             else
-            {
                 Gizmos.DrawMesh(_mesh, transform.position, transform.rotation, scale);
-            }
-            
         }
     }
 #endif
 }
-

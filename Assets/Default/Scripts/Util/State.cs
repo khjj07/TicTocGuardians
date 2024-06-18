@@ -13,8 +13,6 @@ namespace Default.Scripts.Util
         public virtual void OnActive()
         {
             onActiveEvent.Invoke();
-
-
         }
 
         public virtual void OnInactive()

@@ -2,7 +2,6 @@
 using TicTocGuardians.Scripts.Game.LevelObjects;
 using TicTocGuardians.Scripts.Game.Player;
 using UnityEngine;
-using static UnityEngine.UI.Image;
 
 namespace TicTocGuardians.Scripts.LevelEditor
 {
@@ -11,6 +10,7 @@ namespace TicTocGuardians.Scripts.LevelEditor
         public Transform origin;
         public PlayerController playerPrefab;
         public SpawnPointLevelObject spawnPoint;
+
         public void Start()
         {
             var instance = Instantiate(playerPrefab, origin);
@@ -31,6 +31,7 @@ namespace TicTocGuardians.Scripts.LevelEditor
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             instance.transform.position = spawnPoint.transform.position + Vector3.up * 3;
         }
     }

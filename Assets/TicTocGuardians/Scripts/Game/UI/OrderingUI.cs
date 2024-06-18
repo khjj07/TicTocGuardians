@@ -1,5 +1,3 @@
-using System;
-using TicTocGuardians.Scripts.Game.Player;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,10 +19,7 @@ namespace TicTocGuardians.Scripts.Game.UI
 
         public void ResetUI()
         {
-            foreach (var button in selectButtons)
-            {
-                button.ResetUI();
-            }
+            foreach (var button in selectButtons) button.ResetUI();
             SubmitUnavilable();
         }
 
@@ -34,6 +29,7 @@ namespace TicTocGuardians.Scripts.Game.UI
             cancelButton.gameObject.SetActive(true);
             submitText.gameObject.SetActive(true);
         }
+
         public void SubmitUnavilable()
         {
             submitButton.gameObject.SetActive(false);

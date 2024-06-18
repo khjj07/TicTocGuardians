@@ -5,9 +5,7 @@ using TicTocGuardians.Scripts.Game.Manager;
 using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
-using Unity.VisualScripting;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace TicTocGuardians.Scripts.Game.Player
 {
@@ -36,14 +34,14 @@ namespace TicTocGuardians.Scripts.Game.Player
             None
         }
 
+        public State state;
+        public object data;
+
         public Action(State state, object data = null)
         {
             this.state = state;
             this.data = data;
         }
-
-        public State state;
-        public object data;
     }
 
     [RequireComponent(typeof(CapsuleCollider), typeof(Rigidbody))]
@@ -62,28 +60,6 @@ namespace TicTocGuardians.Scripts.Game.Player
             Repair
         }
 
-        [SerializeField]
-        protected float jumpForce;
-        [SerializeField]
-        protected AnimationState animationState;
-
-        [SerializeField]
-        protected float speedMax;
-        [SerializeField]
-        protected float acceleration;
-
-        [SerializeField] protected Transform footOrigin;
-        [SerializeField] protected float checkGroundDistance;
-
-        [SerializeField] protected SpriteRenderer repairImage;
-
-        protected Vector3 _direction;
-        protected CapsuleCollider _capsuleCollider;
-        protected Rigidbody _rigidbody;
-        protected Animator animator;
-        protected Subject<Action> actionSubject;
-        public DimensionLevelObject repairTarget;
-
         protected static readonly int Run = Animator.StringToHash("Run");
         protected static readonly int Jump1 = Animator.StringToHash("Jump");
         protected static readonly int Idle = Animator.StringToHash("Idle");
@@ -92,15 +68,35 @@ namespace TicTocGuardians.Scripts.Game.Player
         protected static readonly int Repair = Animator.StringToHash("Repair");
         protected static readonly int Landing = Animator.StringToHash("Landing");
         protected static readonly int Falling = Animator.StringToHash("Falling");
+        private static readonly int Wait = Animator.StringToHash("Wait");
+
+        [SerializeField] protected float jumpForce;
+
+        [SerializeField] protected AnimationState animationState;
+
+        [SerializeField] protected float speedMax;
+
+        [SerializeField] protected float acceleration;
+
+        [SerializeField] protected Transform footOrigin;
+        [SerializeField] protected float checkGroundDistance;
+
+        [SerializeField] protected SpriteRenderer repairImage;
+        public DimensionLevelObject repairTarget;
 
         public bool _movable = true;
-        public bool _isFalling = false;
-        public bool _isRepairing = false;
+        public bool _isFalling;
+        public bool _isRepairing;
 
-        public bool _isOperating = false;
+        public bool _isOperating;
         public float dimensionCheckDistance;
+        protected CapsuleCollider _capsuleCollider;
+
+        protected Vector3 _direction;
         private bool _isWaiting;
-        private static readonly int Wait = Animator.StringToHash("Wait");
+        protected Rigidbody _rigidbody;
+        protected Subject<Action> actionSubject;
+        protected Animator animator;
 
         public virtual void Awake()
         {
@@ -113,16 +109,6 @@ namespace TicTocGuardians.Scripts.Game.Player
         public virtual void Start()
         {
             CreateDefaultStream();
-        }
-
-        public void LateUpdate()
-        {
-            if (_rigidbody.velocity.magnitude > 0.1)
-            {
-                var tmp = _rigidbody.velocity;
-                tmp.y = 0;
-                SetDirection(tmp.normalized);
-            }
         }
 
         public virtual void Update()
@@ -138,16 +124,33 @@ namespace TicTocGuardians.Scripts.Game.Player
                 _capsuleCollider.material.dynamicFriction = 0.6f;
                 _capsuleCollider.material.staticFriction = 0.6f;
             }
+
             if (repairTarget != null)
-            {
                 Repairing();
-            }
             else
-            {
                 UnRepairing();
-            }
 
             Animate();
+        }
+
+        public void LateUpdate()
+        {
+            if (_rigidbody.velocity.magnitude > 0.1)
+            {
+                var tmp = _rigidbody.velocity;
+                tmp.y = 0;
+                SetDirection(tmp.normalized);
+            }
+        }
+
+        public void MoveX(float direction)
+        {
+            AccelerateX(direction);
+        }
+
+        public void MoveZ(float direction)
+        {
+            AccelerateZ(direction);
         }
 
         public virtual void CreateDefaultStream()
@@ -156,20 +159,14 @@ namespace TicTocGuardians.Scripts.Game.Player
             var moveXStream = baseStream.Where(action => action.state == Action.State.MoveX);
             moveXStream.Where(_ => _movable).Subscribe(action =>
             {
-                if (!_isOperating && !_isFalling)
-                {
-                    SetAnimationState(AnimationState.Run);
-                }
+                if (!_isOperating && !_isFalling) SetAnimationState(AnimationState.Run);
                 MoveX((float)action.data);
             }).AddTo(gameObject);
 
             var moveZStream = baseStream.Where(action => action.state == Action.State.MoveZ);
             moveZStream.Where(_ => _movable).Subscribe(action =>
             {
-                if (!_isOperating && !_isFalling)
-                {
-                    SetAnimationState(AnimationState.Run);
-                }
+                if (!_isOperating && !_isFalling) SetAnimationState(AnimationState.Run);
                 MoveZ((float)action.data);
             }).AddTo(gameObject);
 
@@ -191,14 +188,14 @@ namespace TicTocGuardians.Scripts.Game.Player
             var isFallingStream = this.UpdateAsObservable().Where(_ => !IsContactGround());
 
             isFallingStream.Subscribe(_ => _isFalling = true);
-           this.LateUpdateAsObservable()
-                    .Where(_ => _isFalling && IsContactGround())
-                    .Subscribe(_ =>
-                    {
-                        SetAnimationState(AnimationState.Landing);
-                        Observable.Timer(TimeSpan.FromMilliseconds(300))
-                            .Subscribe(_ => _isFalling = false);
-                    }).AddTo(gameObject);
+            this.LateUpdateAsObservable()
+                .Where(_ => _isFalling && IsContactGround())
+                .Subscribe(_ =>
+                {
+                    SetAnimationState(AnimationState.Landing);
+                    Observable.Timer(TimeSpan.FromMilliseconds(300))
+                        .Subscribe(_ => _isFalling = false);
+                }).AddTo(gameObject);
 
             var dimensionEnterStream = this.OnTriggerEnterAsObservable()
                 .Where(x => x.CompareTag("Dimension"))
@@ -208,15 +205,9 @@ namespace TicTocGuardians.Scripts.Game.Player
                 .Where(x => x.CompareTag("Dimension"))
                 .Select(x => x.GetComponent<DimensionLevelObject>());
 
-            dimensionEnterStream.Subscribe(x =>
-            {
-                repairTarget = x;
-            }).AddTo(gameObject);
+            dimensionEnterStream.Subscribe(x => { repairTarget = x; }).AddTo(gameObject);
 
-            dimensionExitStream.Subscribe(x =>
-            {
-                repairTarget = null;
-            }).AddTo(gameObject);
+            dimensionExitStream.Subscribe(x => { repairTarget = null; }).AddTo(gameObject);
 
             baseStream.Where(action => action.state == Action.State.Wait)
                 .Subscribe(_ =>
@@ -224,8 +215,6 @@ namespace TicTocGuardians.Scripts.Game.Player
                     SetAnimationState(AnimationState.Wait);
                     _isWaiting = true;
                 });
-            
-           
         }
 
         public void MoveAnimation()
@@ -233,27 +222,16 @@ namespace TicTocGuardians.Scripts.Game.Player
             if (IsContactGround())
             {
                 if (_isRepairing)
-                {
                     SetAnimationState(AnimationState.Repair);
-                }
                 else if (_isWaiting)
-                {
                     SetAnimationState(AnimationState.Wait);
-                }
                 else if (!_isOperating && !_isFalling)
-                {
                     if (_rigidbody.velocity.magnitude < 1)
-                    {
                         SetAnimationState(AnimationState.Idle);
-                    }
-                }
             }
             else
             {
-                if (!_isOperating)
-                {
-                    SetAnimationState(AnimationState.Falling);
-                }
+                if (!_isOperating) SetAnimationState(AnimationState.Falling);
             }
         }
 
@@ -270,7 +248,7 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         public bool IsContactGround()
         {
-            Debug.DrawRay(footOrigin.position, Vector3.down * checkGroundDistance,Color.green);
+            Debug.DrawRay(footOrigin.position, Vector3.down * checkGroundDistance, Color.green);
             return Physics.Raycast(footOrigin.position, Vector3.down, checkGroundDistance);
         }
 
@@ -284,39 +262,24 @@ namespace TicTocGuardians.Scripts.Game.Player
             transform.DOMove(position, 0.2f).Rewind();
         }
 
-        public void MoveX(float direction)
-        {
-            AccelerateX(direction);
-        }
-
-        public void MoveZ(float direction)
-        {
-            AccelerateZ(direction);
-        }
-
         public void SetDirection(Vector3 direction)
         {
             if (direction.magnitude > 0)
-            {
-                animator.transform.rotation = Quaternion.Slerp(animator.transform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * 5.0f);
-            }
+                animator.transform.rotation = Quaternion.Slerp(animator.transform.rotation,
+                    Quaternion.LookRotation(direction), Time.deltaTime * 5.0f);
             _direction = direction;
         }
 
         public void AccelerateX(float direction)
         {
             if (MathF.Abs(_rigidbody.velocity.x) < speedMax)
-            {
                 _rigidbody.AddForce(Vector3.right * acceleration * direction, ForceMode.VelocityChange);
-            }
         }
 
         public void AccelerateZ(float direction)
         {
             if (MathF.Abs(_rigidbody.velocity.z) < speedMax)
-            {
                 _rigidbody.AddForce(Vector3.forward * acceleration * direction, ForceMode.VelocityChange);
-            }
         }
 
         public void Jump()
@@ -374,6 +337,5 @@ namespace TicTocGuardians.Scripts.Game.Player
                     throw new ArgumentOutOfRangeException();
             }
         }
-
     }
 }

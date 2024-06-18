@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Default.Scripts.Util;
 using DG.Tweening;
 using TicTocGuardians.Scripts.Game.ETC;
@@ -8,7 +7,6 @@ using TicTocGuardians.Scripts.Game.Player;
 using TicTocGuardians.Scripts.Game.UI;
 using UniRx;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 namespace TicTocGuardians.Scripts.Game.Manager
@@ -17,14 +15,16 @@ namespace TicTocGuardians.Scripts.Game.Manager
     {
         [FormerlySerializedAs("levelCamera")] [SerializeField]
         private CameraLevelObject cameraLevelObject;
-        [SerializeField]
-        private ReactableArea normalUIArea;
-        [SerializeField]
-        private ReactableArea hardUIArea;
 
-       public PlayerController controller;
+        [SerializeField] private ReactableArea normalUIArea;
 
-        [FormerlySerializedAs("difficultySelectUI")] [SerializeField] private DifficultySelectTV difficultySelectTV;
+        [SerializeField] private ReactableArea hardUIArea;
+
+        public PlayerController controller;
+
+        [FormerlySerializedAs("difficultySelectUI")] [SerializeField]
+        private DifficultySelectTV difficultySelectTV;
+
         [SerializeField] private Transform centerCameraPoint;
         [SerializeField] private Transform leftCameraPoint;
         [SerializeField] private Transform rightCameraPoint;
@@ -40,42 +40,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField] private SynopsisUI synopsisUI;
         [SerializeField] private CreditUI creditUI;
 
-        public void PlayerActive()
-        {
-            controller.gameObject.SetActive(true);
-            controller.transform.localScale = Vector3.zero;
-            controller.transform.DOScale(1,0.5f);
-            switch (controller.type)
-            {
-                case PlayerType.None:
-                    break;
-                case PlayerType.Beaver:
-                    controller.CreateMovementStream();
-                    controller.CreateBeaverStream();
-                    break;
-                case PlayerType.Cat:
-                    controller.CreateMovementStream();
-                    break;
-                case PlayerType.Rabbit:
-                    controller.CreateMovementStream();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.F7).Where(_=> !creditUI.isActiveAndEnabled).Subscribe(_ =>
-            {
-                creditUI.gameObject.SetActive(true);
-                controller.gameObject.SetActive(false);
-                GlobalInputBinder.CreateGetMouseButtonDownStream(0).Take(3)
-                    .Subscribe(_ =>
-                    {
-                        creditUI.NextSprite();
-                    });
-            });
-        }
-
-        void Start()
+        private void Start()
         {
             //PlayerPrefs.DeleteAll();
             controller.gameObject.SetActive(false);
@@ -86,18 +51,19 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 synopsisUI.gameObject.SetActive(true);
                 synopsisUI.transform.localScale = Vector3.zero;
                 synopsisUI.transform.DOScale(1, 1f);
-                PlayerPrefs.SetInt("FirstTimeFlag",1);
+                PlayerPrefs.SetInt("FirstTimeFlag", 1);
             }
             else
             {
                 PlayerActive();
             }
+
             GlobalSoundManager.Instance.PlayBGM("BGM_Main");
             GlobalLoadingManager.Instance.ActiveScene();
             normalUIArea.stepInEvent.AddListener(() =>
             {
                 cameraLevelObject.Move(rightCameraPoint.position, 1.0f);
-                 difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Normal);
+                difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Normal);
                 normalSelectUI.transform.DOMove(normalSelectUIEndPoint.position, 1.0f);
                 normalSelectUI.gameObject.SetActive(true);
             });
@@ -105,7 +71,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             normalUIArea.stepOutEvent.AddListener(() =>
             {
                 cameraLevelObject.Move(centerCameraPoint.position, 1.0f);
-               
+
                 difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Select);
                 normalSelectUI.transform.DOMove(normalSelectUIStartPoint.position, 1.0f).OnComplete(() =>
                 {
@@ -130,8 +96,38 @@ namespace TicTocGuardians.Scripts.Game.Manager
                     hardSelectUI.gameObject.SetActive(false);
                 });
             });
-
         }
 
+        public void PlayerActive()
+        {
+            controller.gameObject.SetActive(true);
+            controller.transform.localScale = Vector3.zero;
+            controller.transform.DOScale(1, 0.5f);
+            switch (controller.type)
+            {
+                case PlayerType.None:
+                    break;
+                case PlayerType.Beaver:
+                    controller.CreateMovementStream();
+                    controller.CreateBeaverStream();
+                    break;
+                case PlayerType.Cat:
+                    controller.CreateMovementStream();
+                    break;
+                case PlayerType.Rabbit:
+                    controller.CreateMovementStream();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.F7).Where(_ => !creditUI.isActiveAndEnabled).Subscribe(_ =>
+            {
+                creditUI.gameObject.SetActive(true);
+                controller.gameObject.SetActive(false);
+                GlobalInputBinder.CreateGetMouseButtonDownStream(0).Take(3)
+                    .Subscribe(_ => { creditUI.NextSprite(); });
+            });
+        }
     }
 }

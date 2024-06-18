@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using Default.Scripts.Util;
 using DG.Tweening;
 using TicTocGuardians.Scripts.Game.ETC;
 using TicTocGuardians.Scripts.Game.LevelObjects;
@@ -8,8 +6,6 @@ using TicTocGuardians.Scripts.Game.Manager;
 using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
-using Unity.Burst.CompilerServices;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 
 namespace TicTocGuardians.Scripts.Game.Player
@@ -19,7 +15,6 @@ namespace TicTocGuardians.Scripts.Game.Player
         public Transform boxCreatePoint;
         public float boxCreateCheckDistance;
         [SerializeField] private BeaverBox beaverBoxPrefab;
-        private BeaverBox boxInstance;
 
         [SerializeField] private ParticleSystem boxCreateParticlePrefab;
         [SerializeField] private float boxCreateUpDistance;
@@ -27,14 +22,7 @@ namespace TicTocGuardians.Scripts.Game.Player
         [SerializeField] private float pushOffset = 2.0f;
         private IPushable _pushTarget;
         private StaticModelLevelObject _targetPlatform;
-
-        public void OnDestroy()
-        {
-            if (boxInstance)
-            {
-                Destroy(boxInstance.gameObject);
-            }
-        }
+        private BeaverBox boxInstance;
 
         public override void Start()
         {
@@ -42,25 +30,27 @@ namespace TicTocGuardians.Scripts.Game.Player
             this.UpdateAsObservable().Subscribe(_ =>
             {
                 if (Physics.Raycast(boxCreatePoint.position, Vector3.down, boxCreateCheckDistance))
-                {
                     Debug.DrawRay(boxCreatePoint.position, Vector3.down * boxCreateCheckDistance, Color.red);
-                }
                 else
-                {
                     Debug.DrawRay(boxCreatePoint.position, Vector3.down * boxCreateCheckDistance);
-                }
             }).AddTo(gameObject);
+        }
+
+        public void OnDestroy()
+        {
+            if (boxInstance) Destroy(boxInstance.gameObject);
         }
 
         public override void CreateDefaultStream()
         {
             base.CreateDefaultStream();
 
-            var pushPointStayStream = this.OnTriggerStayAsObservable().Where(x => x.CompareTag("BeaverBoxPushPoint")).Select(x => x.GetComponent<BeaverBoxPushPoint>());
-            var pushPointExitStream = this.OnTriggerExitAsObservable().Where(x => x.CompareTag("BeaverBoxPushPoint")).Select(x => x.GetComponent<BeaverBoxPushPoint>());
+            var pushPointStayStream = this.OnTriggerStayAsObservable().Where(x => x.CompareTag("BeaverBoxPushPoint"))
+                .Select(x => x.GetComponent<BeaverBoxPushPoint>());
+            var pushPointExitStream = this.OnTriggerExitAsObservable().Where(x => x.CompareTag("BeaverBoxPushPoint"))
+                .Select(x => x.GetComponent<BeaverBoxPushPoint>());
             pushPointStayStream.Subscribe(x =>
             {
-
                 if (Vector3.Dot(x.direction.normalized, _direction) < -0.3f)
                 {
                     SetAnimationState(AnimationState.PushReady);
@@ -71,8 +61,8 @@ namespace TicTocGuardians.Scripts.Game.Player
                     _isOperating = false;
                     SetDirection(-x.direction.normalized);
                 }
-                SetPushTarget(x.GetComponentInParent<BeaverBox>());
 
+                SetPushTarget(x.GetComponentInParent<BeaverBox>());
             }).AddTo(gameObject);
 
             pushPointExitStream.Subscribe(x =>
@@ -83,23 +73,18 @@ namespace TicTocGuardians.Scripts.Game.Player
 
             var baseStream = actionSubject.Where(_ => _ != null);
             baseStream.Where(action => action.state == Action.State.Special)
-                .Subscribe(_ =>
-                {
-                    CreateBox();
-                }).AddTo(gameObject);
+                .Subscribe(_ => { CreateBox(); }).AddTo(gameObject);
 
             baseStream.Where(action => action.state == Action.State.Push)
                 .Subscribe(_ =>
                 {
                     SetAnimationState(AnimationState.Push);
                     _movable = false;
-                    Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(_ =>
-                    {
-                        _movable = true;
-                    });
+                    Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(_ => { _movable = true; });
                     PushTarget();
                 }).AddTo(gameObject);
         }
+
         public IPushable GetPushTarget()
         {
             return _pushTarget;
@@ -112,10 +97,7 @@ namespace TicTocGuardians.Scripts.Game.Player
 
         public void PushTarget()
         {
-            if (_pushTarget != null)
-            {
-                _pushTarget.OnPush();
-            }
+            if (_pushTarget != null) _pushTarget.OnPush();
         }
 
 
@@ -127,13 +109,14 @@ namespace TicTocGuardians.Scripts.Game.Player
         public void CreateBoxCreateParticle()
         {
             var instance = Instantiate(boxCreateParticlePrefab);
-            instance.transform.position=boxCreatePoint.position;
+            instance.transform.position = boxCreatePoint.position;
         }
+
         public void CreateBox()
         {
             GlobalSoundManager.Instance.PlaySFX("SFX_CreateBox");
             RaycastHit hit;
-            Vector3 boxPosition = Vector3.zero;
+            var boxPosition = Vector3.zero;
             boxInstance = Instantiate(beaverBoxPrefab, LevelOrigin.Instance.transform);
             Physics.Raycast(boxCreatePoint.position, Vector3.down, out hit, boxCreateCheckDistance);
             boxPosition = hit.collider.transform.position;

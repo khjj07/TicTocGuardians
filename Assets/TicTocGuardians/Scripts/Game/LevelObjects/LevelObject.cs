@@ -1,7 +1,6 @@
 ﻿using System;
 using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
-using UnityEngine;
 
 namespace TicTocGuardians.Scripts.Game.LevelObjects
 {

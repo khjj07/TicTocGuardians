@@ -1,10 +1,7 @@
-﻿using TicTocGuardians.Scripts.Assets.LevelAsset;
-using TicTocGuardians.Scripts.Assets;
-using TicTocGuardians.Scripts.Interface;
+﻿using TicTocGuardians.Scripts.Game.Manager;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using TicTocGuardians.Scripts.Game.Manager;
 
 namespace TicTocGuardians.Scripts.Game.LevelObjects
 {
@@ -12,12 +9,13 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
     {
         [SerializeField] private ParticleSystem[] spawnPointChangeParticlePrefab = new ParticleSystem[2];
         private int playCount;
+
         public override void Start()
         {
             base.Start();
             CreateChangeStream();
         }
-        
+
         public void CreateChangeStream()
         {
             GetComponentInChildren<MeshCollider>().OnCollisionEnterAsObservable()
@@ -36,17 +34,11 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             instance2.transform.position = transform.position;
             this.UpdateAsObservable().Where(_ => playCount > LevelManager.Instance.playCount).First().Subscribe(_ =>
             {
-                for (int i = manager._currentPlayPhaseIndex + 1; i < 3; i++)
-                {
-                    manager.currentSpawnPointIndices[i]--;
-                }
+                for (var i = manager._currentPlayPhaseIndex + 1; i < 3; i++) manager.currentSpawnPointIndices[i]--;
                 CreateChangeStream();
             }).AddTo(gameObject);
             playCount = LevelManager.Instance.playCount;
-            for (int i = manager._currentPlayPhaseIndex+1; i < 3; i++)
-            {
-                manager.currentSpawnPointIndices[i]++;
-            }
+            for (var i = manager._currentPlayPhaseIndex + 1; i < 3; i++) manager.currentSpawnPointIndices[i]++;
         }
     }
 }

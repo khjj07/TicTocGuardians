@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using TicTocGuardians.Scripts.Game.Manager;
 using TMPro;
@@ -15,9 +12,9 @@ public class SynopsisUI : MonoBehaviour
     public TMP_Text page;
     public Button nextButton;
 
-    public Sprite[] imageSprites=new Sprite[4];
-    public Sprite[] descriptionSprites=new Sprite[4];
-    public int currentIndex=0;
+    public Sprite[] imageSprites = new Sprite[4];
+    public Sprite[] descriptionSprites = new Sprite[4];
+    public int currentIndex;
 
     public void Start()
     {
@@ -33,15 +30,13 @@ public class SynopsisUI : MonoBehaviour
             image.sprite = imageSprites[currentIndex];
             description.sprite = descriptionSprites[currentIndex];
             description.SetNativeSize();
-            page.SetText((currentIndex + 1).ToString() + "/4");
+            page.SetText((currentIndex + 1) + "/4");
             if (currentIndex == 3)
-            {
                 transform.DOScale(0, 1f).SetDelay(2.0f).OnComplete(() =>
                 {
                     gameObject.SetActive(false);
                     LobbyManager.Instance.PlayerActive();
                 });
-            }
         }
     }
 
@@ -53,8 +48,7 @@ public class SynopsisUI : MonoBehaviour
             image.sprite = imageSprites[currentIndex];
             description.sprite = descriptionSprites[currentIndex];
             description.SetNativeSize();
-            page.SetText((currentIndex + 1).ToString() + "/4");
+            page.SetText((currentIndex + 1) + "/4");
         }
-
     }
 }

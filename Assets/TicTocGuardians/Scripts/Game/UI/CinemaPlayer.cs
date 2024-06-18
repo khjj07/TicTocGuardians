@@ -3,7 +3,6 @@ using UnityEngine.Video;
 
 namespace TicTocGuardians.Scripts.Game.UI
 {
-    
     public class CinemaPlayer : MonoBehaviour
     {
         private VideoPlayer _videoPlayer;
@@ -23,7 +22,5 @@ namespace TicTocGuardians.Scripts.Game.UI
         {
             _videoPlayer.loopPointReached += eventHandler;
         }
-
-      
     }
 }

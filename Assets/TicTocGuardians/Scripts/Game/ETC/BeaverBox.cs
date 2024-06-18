@@ -14,13 +14,14 @@ namespace TicTocGuardians.Scripts.Game.ETC
         public Transform particleOrigin;
         public Vector3 contactDirection;
         public float offset = 2.0f;
-        private bool _isMove = false;
+        private bool _isMove;
         private Rigidbody _rigidbody;
 
         public void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
         }
+
         public void Start()
         {
             pushPoints = GetComponentsInChildren<BeaverBoxPushPoint>();
@@ -42,16 +43,11 @@ namespace TicTocGuardians.Scripts.Game.ETC
             if (!_isMove)
             {
                 if (!Physics.Raycast(transform.position, -contactDirection, offset))
-                {
-
                     Debug.DrawRay(transform.position, -contactDirection * offset);
-                }
                 else
-                {
-
                     Debug.DrawRay(transform.position, -contactDirection * offset, Color.red);
-                }
             }
+
             _isMove = false;
         }
 
@@ -67,19 +63,6 @@ namespace TicTocGuardians.Scripts.Game.ETC
             _isMove = true;
         }
 
-        public void PlayMoveParticle()
-        {
-            particleOrigin.rotation = Quaternion.LookRotation(-contactDirection);
-            moveParticle[0].Play();
-            moveParticle[1].Play();
-        }
-
-        public void StopMoveParticle()
-        {
-            moveParticle[0].Stop();
-            moveParticle[1].Stop();
-        }
-
 
         public void OnPush()
         {
@@ -92,6 +75,19 @@ namespace TicTocGuardians.Scripts.Game.ETC
                     StopMoveParticle();
                 });
             }
+        }
+
+        public void PlayMoveParticle()
+        {
+            particleOrigin.rotation = Quaternion.LookRotation(-contactDirection);
+            moveParticle[0].Play();
+            moveParticle[1].Play();
+        }
+
+        public void StopMoveParticle()
+        {
+            moveParticle[0].Stop();
+            moveParticle[1].Stop();
         }
     }
 }

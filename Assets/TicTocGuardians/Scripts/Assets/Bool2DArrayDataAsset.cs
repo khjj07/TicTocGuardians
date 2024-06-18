@@ -7,49 +7,45 @@ namespace TicTocGuardians.Scripts.Assets
     [Serializable]
     public class Bool2DArrayDataAsset : LevelDataAsset
     {
-        [Serializable]
-        public class BoolList
-        {
-            public List<bool> data = new List<bool>();
-        }
+        public List<BoolList> value = new();
+        public int row, column;
 
         public override object GetValue()
         {
-            return (object)value;
+            return value;
         }
 
         public bool[,] GetDataToArray()
         {
-            bool[,] result = new bool[row, column];
-            for (int i = 0; i < row; i++)
-            {
-                for (int j = 0; j < column; j++)
-                {
-                    result[i, j] = value[i].data[j];
-                }
-            }
+            var result = new bool[row, column];
+            for (var i = 0; i < row; i++)
+            for (var j = 0; j < column; j++)
+                result[i, j] = value[i].data[j];
             return result;
         }
 
         public static LevelDataAsset Create(string name, bool[,] value, int row, int column)
         {
             var instance = CreateInstance<Bool2DArrayDataAsset>();
+#if UNITY_EDITOR
             EditorUtility.SetDirty(instance);
+#endif
             instance.name = name;
             instance.row = row;
             instance.column = column;
-            for (int i = 0; i < row; i++)
+            for (var i = 0; i < row; i++)
             {
                 instance.value.Add(new BoolList());
-                for (int j = 0; j < column; j++)
-                {
-                    instance.value[i].data.Add(value[i, j]);
-                }
+                for (var j = 0; j < column; j++) instance.value[i].data.Add(value[i, j]);
             }
 
             return instance;
         }
-        public List<BoolList> value = new List<BoolList>();
-        public int row, column;
+
+        [Serializable]
+        public class BoolList
+        {
+            public List<bool> data = new();
+        }
     }
 }

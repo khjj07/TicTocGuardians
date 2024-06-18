@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Security.Cryptography;
-using Default.Scripts.Util;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
 using TicTocGuardians.Scripts.Game.Player;
-using TicTocGuardians.Scripts.Game.UI;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace TicTocGuardians.Scripts.Game.Manager
 {
@@ -22,13 +18,11 @@ namespace TicTocGuardians.Scripts.Game.Manager
             Fail
         }
 
-        private Subject<Phase> _phaseSubject = new Subject<Phase>();
-
         [SerializeField] private PlayerType playerType;
 
-        [Header("상태")]
-        [SerializeField]
-        private Phase currentState;
+        [Header("상태")] [SerializeField] private Phase currentState;
+
+        private readonly Subject<Phase> _phaseSubject = new();
 
         public override void Start()
         {
@@ -46,7 +40,8 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void CreateReadyPhaseStream()
         {
-            this.UpdateAsObservable().Where(_ => Input.anyKey).First().Subscribe(_ => ChangeState(Phase.Play)).AddTo(gameObject);
+            this.UpdateAsObservable().Where(_ => Input.anyKey).First().Subscribe(_ => ChangeState(Phase.Play))
+                .AddTo(gameObject);
         }
 
         public override void PlayPhaseEnd()
@@ -57,13 +52,9 @@ namespace TicTocGuardians.Scripts.Game.Manager
             {
                 Destroy(playerController.gameObject);
                 if (repairingDimensions.Count == 1)
-                {
                     ChangeState(Phase.Success);
-                }
                 else
-                {
                     ChangeState(Phase.Fail);
-                }
             }).AddTo(gameObject);
         }
 
@@ -74,23 +65,15 @@ namespace TicTocGuardians.Scripts.Game.Manager
             {
                 PlayPhaseForceEnd();
                 ChangeState(currentState);
-                if (playCount > 0)
-                {
-                    playCount--;
-                }
+                if (playCount > 0) playCount--;
             }
             else
             {
                 PlayPhaseForceEnd();
                 PreviousState();
                 if (playCount > 1)
-                {
                     playCount -= 2;
-                }
-                else if (playCount > 0)
-                {
-                    playCount--;
-                }
+                else if (playCount > 0) playCount--;
             }
         }
 
@@ -102,20 +85,11 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 CreateReadyPhaseStream();
             });
 
-            _phaseSubject.Where(x => x == Phase.Play).Subscribe(_ =>
-            {
-                OnPlayPhaseActive();
-            });
+            _phaseSubject.Where(x => x == Phase.Play).Subscribe(_ => { OnPlayPhaseActive(); });
 
-            _phaseSubject.Where(x => x == Phase.Success).Subscribe(_ =>
-            {
-                OnSuccessPhaseActive();
-            });
+            _phaseSubject.Where(x => x == Phase.Success).Subscribe(_ => { OnSuccessPhaseActive(); });
 
-            _phaseSubject.Where(x => x == Phase.Fail).Subscribe(_ =>
-            {
-                OnFailPhaseActive();
-            });
+            _phaseSubject.Where(x => x == Phase.Fail).Subscribe(_ => { OnFailPhaseActive(); });
         }
 
         public override void PlayPhaseForceEnd()
@@ -127,7 +101,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void OnPlayPhaseActive()
         {
             base.OnPlayPhaseActive();
-            var player = SpawnPlayer(playerType,0);
+            var player = SpawnPlayer(playerType, 0);
             CreateDimensionCheckStream(player);
             PlayPhaseStart(playerController);
         }
@@ -140,12 +114,12 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void NextState()
         {
-            ChangeState((Phase)(currentState + 1));
+            ChangeState(currentState + 1);
         }
 
         public void PreviousState()
         {
-            ChangeState((Phase)(currentState - 1));
+            ChangeState(currentState - 1);
         }
     }
 }

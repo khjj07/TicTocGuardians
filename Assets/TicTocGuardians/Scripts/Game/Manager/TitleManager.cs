@@ -4,7 +4,6 @@ using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using UnityEngine.Video;
 
 namespace TicTocGuardians.Scripts.Game.Manager
@@ -15,7 +14,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         [SerializeField] private RectTransform tapToStart;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             TitleBegin();
         }
@@ -24,7 +23,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             tapToStart.localScale = Vector3.zero;
             cinemaPlayer.AddCallback(OnCinemaEnd);
-            GlobalSoundManager.Instance.PlaySFX("IntroSound",1.0f);
+            GlobalSoundManager.Instance.PlaySFX("IntroSound", 1.0f);
             cinemaPlayer.Play();
         }
 
@@ -36,7 +35,5 @@ namespace TicTocGuardians.Scripts.Game.Manager
                     .Subscribe(_ => SceneManager.LoadSceneAsync("LobbyScene")).AddTo(gameObject);
             });
         }
-
-
     }
 }

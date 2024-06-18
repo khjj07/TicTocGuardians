@@ -10,6 +10,7 @@ namespace TicTocGuardians.Scripts.Game.ETC
     {
         public UnityEvent stepInEvent;
         public UnityEvent stepOutEvent;
+
         public void Start()
         {
             GetComponent<BoxCollider>().OnTriggerEnterAsObservable()

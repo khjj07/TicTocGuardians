@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Default.Scripts.Util;
 using DG.Tweening;
-using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
 using TicTocGuardians.Scripts.Game.LevelObjects;
 using TicTocGuardians.Scripts.Game.Player;
@@ -10,11 +9,7 @@ using TicTocGuardians.Scripts.Game.UI;
 using TMPro;
 using UniRx;
 using UniRx.Triggers;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Profiling;
-using UnityEngine.Serialization;
-using static UnityEngine.UI.Image;
 using Action = TicTocGuardians.Scripts.Game.Player.Action;
 
 namespace TicTocGuardians.Scripts.Game.Manager
@@ -28,12 +23,11 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public double currentTime;
 
         public Player.Player[] playerPrefabs = new Player.Player[3];
-        public List<Player.Player> playerInstances = new List<Player.Player>();
+        public List<Player.Player> playerInstances = new();
         public PlayerController playerController;
-        public List<DimensionLevelObject> repairingDimensions = new List<DimensionLevelObject>();
+        public List<DimensionLevelObject> repairingDimensions = new();
 
-        [HideInInspector]
-        public double timeStep = 0.01d;
+        [HideInInspector] public double timeStep = 0.01d;
 
         public Canvas readyUI;
         public IngameUI ingameUI;
@@ -41,23 +35,19 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public FailUI failUI;
         public OrderingUI orderingUI;
         public PauseUI pauseUI;
+        public bool isPlaying;
+        public bool isSkip;
+        public bool isPause;
+        public bool _isEnd;
 
-        public IDisposable timerHandler;
+        public List<SpawnPointLevelObject> spawnPoints = new();
+        public int[] currentSpawnPointIndices = new int[3];
+        public int playCount;
         public IDisposable movementWaitHandler;
         public IDisposable pauseStreamHandler;
-        public bool isPlaying = false;
-        public bool isSkip = false;
-        public bool isPause = false;
-        public bool _isEnd = false;
 
-        public List<SpawnPointLevelObject> spawnPoints = new List<SpawnPointLevelObject>();
-        public int[] currentSpawnPointIndices = new int[3];
-        public int playCount = 0;
+        public IDisposable timerHandler;
 
-        public void Update()
-        {
-            Debug.Log(playCount);
-        }
         public virtual void Start()
         {
             GameManager.Instance.ActiveLevel(this);
@@ -68,20 +58,21 @@ namespace TicTocGuardians.Scripts.Game.Manager
             InitializeFailUI();
             InitializePauseUI();
             CreateShortCutStream();
-           
+
             playCount = 0;
+        }
+
+        public void Update()
+        {
+            Debug.Log(playCount);
         }
 
         public void Continue()
         {
             if (isSkip)
-            {
                 Time.timeScale = 4;
-            }
             else
-            {
                 Time.timeScale = 1;
-            }
             pauseUI.gameObject.SetActive(false);
             isPause = false;
         }
@@ -107,7 +98,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             pauseUI.restartButton.onClick.RemoveAllListeners();
             pauseUI.levelButton.onClick.RemoveAllListeners();
 
-            pauseUI.continueButton.onClick.AddListener(()=>
+            pauseUI.continueButton.onClick.AddListener(() =>
             {
                 GlobalSoundManager.Instance.PlaySFX("SFX_UI_Select_Click");
                 Continue();
@@ -124,12 +115,11 @@ namespace TicTocGuardians.Scripts.Game.Manager
             });
             pauseUI.gameObject.SetActive(false);
         }
-        
+
         public IDisposable CreatePauseStream()
         {
             return GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Escape).Subscribe(_ =>
             {
-            
                 if (!isPause)
                 {
                     Time.timeScale = 0;
@@ -142,7 +132,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 {
                     Continue();
                 }
-               
             }).AddTo(gameObject);
         }
 
@@ -154,6 +143,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 var instance = Instantiate(obj.prefab, origin);
                 instance.Deserialize(obj);
             }
+
             CameraLevelObject.Instance.Deserialize(asset.camera);
             LightLevelObject.Instance.Deserialize(asset.light);
         }
@@ -161,7 +151,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public Player.Player SpawnPlayer(PlayerType type, int spawnPointIndex)
         {
             var instance = Instantiate(playerPrefabs[(int)type - 1], origin);
-            instance.transform.position = spawnPoints[spawnPointIndex].transform.position+Vector3.up*3;
+            instance.transform.position = spawnPoints[spawnPointIndex].transform.position + Vector3.up * 3;
             playerController = instance.GetComponent<PlayerController>();
             playerInstances.Add(instance);
             return instance;
@@ -183,15 +173,14 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void StartTimer()
         {
-            timerHandler = this.UpdateAsObservable().TakeWhile(_ => currentTime > 0).Subscribe(_ =>
-            {
-                SetTimer(currentTime - Time.deltaTime);
-            }, null, PlayPhaseEnd).AddTo(gameObject);
+            timerHandler = this.UpdateAsObservable().TakeWhile(_ => currentTime > 0)
+                .Subscribe(_ => { SetTimer(currentTime - Time.deltaTime); }, null, PlayPhaseEnd).AddTo(gameObject);
         }
+
         public virtual void PlayPhaseStart(PlayerController player)
         {
             SetTimer(timeLimit);
-            pauseStreamHandler=CreatePauseStream();
+            pauseStreamHandler = CreatePauseStream();
             CreateMovementWaitStream(player);
         }
 
@@ -210,11 +199,13 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 timerHandler.Dispose();
                 timerHandler = null;
             }
+
             if (movementWaitHandler != null)
             {
                 movementWaitHandler.Dispose();
                 movementWaitHandler = null;
             }
+
             if (pauseStreamHandler != null)
             {
                 pauseStreamHandler.Dispose();
@@ -224,9 +215,10 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void CreateMovementWaitStream(PlayerController controller)
         {
-            movementWaitHandler = Observable.Amb(GlobalInputBinder.CreateGetAxisStreamOptimize("Horizontal").Select(x => Math.Abs(x) != 0),
+            movementWaitHandler = Observable.Amb(
+                GlobalInputBinder.CreateGetAxisStreamOptimize("Horizontal").Select(x => Math.Abs(x) != 0),
                 GlobalInputBinder.CreateGetAxisStreamOptimize("Vertical").Select(x => Math.Abs(x) != 0),
-                GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space).Select(_=>true)).First().Subscribe(_ =>
+                GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space).Select(_ => true)).First().Subscribe(_ =>
             {
                 isPlaying = true;
                 playCount++;
@@ -253,6 +245,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             StartTimer();
         }
 
@@ -282,10 +275,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             successUI.gameObject.SetActive(false);
             failUI.gameObject.SetActive(false);
             orderingUI.gameObject.SetActive(false);
-            foreach (var portrait in ingameUI.portraits)
-            {
-                portrait.gameObject.SetActive(false);
-            }
+            foreach (var portrait in ingameUI.portraits) portrait.gameObject.SetActive(false);
             ingameUI.changeOrderButton.gameObject.SetActive(false);
         }
 
@@ -334,8 +324,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
             {
                 GameManager.Instance.LoadLevel(GameManager.Instance.GetCurrentIndex() + 1);
             });
-
-
         }
 
         public void CreateDimensionCheckStream(Player.Player player)
@@ -343,33 +331,31 @@ namespace TicTocGuardians.Scripts.Game.Manager
             var dimensionEnterStream = player.OnTriggerEnterAsObservable()
                 .Where(x => x.CompareTag("Dimension"))
                 .Select(x => x.GetComponent<DimensionLevelObject>())
-                .Where(x=> !repairingDimensions.Contains(x));
+                .Where(x => !repairingDimensions.Contains(x));
 
             var dimensionExitStream = player.OnTriggerExitAsObservable()
                 .Where(x => x.CompareTag("Dimension"))
                 .Select(x => x.GetComponent<DimensionLevelObject>());
-                
-            dimensionEnterStream.Subscribe(x=>
+
+            dimensionEnterStream.Subscribe(x =>
             {
                 AddRepairDimension(x);
-                dimensionExitStream.First().Subscribe(x =>
-                {
-                    RemoveRepairDimension(x);
-                }).AddTo(player.gameObject);
+                dimensionExitStream.First().Subscribe(x => { RemoveRepairDimension(x); }).AddTo(player.gameObject);
             }).AddTo(player.gameObject);
 
-            
-            player.UpdateAsObservable().Where(_=>_isEnd && player.repairTarget!=null).Subscribe(x =>
+
+            player.UpdateAsObservable().Where(_ => _isEnd && player.repairTarget != null).Subscribe(x =>
             {
                 player.Act(new Action(Action.State.Repair));
             }).AddTo(player.gameObject);
-
         }
 
         public virtual void CreateShortCutStream()
         {
-            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.R).Where(_=>!_isEnd).Subscribe(_ => RePlay()).AddTo(gameObject);
-            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.X).Where(_ => !_isEnd).Subscribe(_ => Skip()).AddTo(gameObject);
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.R).Where(_ => !_isEnd).Subscribe(_ => RePlay())
+                .AddTo(gameObject);
+            GlobalInputBinder.CreateGetKeyDownStream(KeyCode.X).Where(_ => !_isEnd).Subscribe(_ => Skip())
+                .AddTo(gameObject);
         }
 
         public virtual void Skip()
@@ -385,7 +371,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public virtual void RePlay()
         {
-           
         }
 
         public virtual void PlayPhaseForceEnd()
@@ -398,11 +383,13 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 timerHandler.Dispose();
                 timerHandler = null;
             }
+
             if (movementWaitHandler != null)
             {
                 movementWaitHandler.Dispose();
                 movementWaitHandler = null;
             }
+
             if (pauseStreamHandler != null)
             {
                 pauseStreamHandler.Dispose();

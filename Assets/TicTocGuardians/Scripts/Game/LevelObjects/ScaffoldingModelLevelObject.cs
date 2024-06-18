@@ -1,4 +1,3 @@
-using System;
 using TicTocGuardians.Scripts.Assets;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
 using TicTocGuardians.Scripts.Game.Manager;
@@ -6,26 +5,13 @@ using TicTocGuardians.Scripts.Interface;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace TicTocGuardians.Scripts.Game.LevelObjects
 {
     public class ScaffoldingModelLevelObject : StaticModelLevelObject
     {
         public LevelObject reactableObject;
-        public ParticleSystem[] buttonPressedParticlePrefab =new ParticleSystem[2];
-        public override LevelObjectAsset Serialize(LevelAsset parent)
-        {
-            var instance = base.Serialize(parent);
-            instance.AddData(parent,StringDataAsset.Create("reactableObject", reactableObject.name));
-            return instance;
-        }
-
-        public override void Deserialize(LevelObjectAsset asset)
-        {
-            base.Deserialize(asset);
-            reactableObject = GameObject.Find(asset.GetValue("reactableObject") as string).GetComponent<LevelObject>();
-        }
+        public ParticleSystem[] buttonPressedParticlePrefab = new ParticleSystem[2];
 
         public void Start()
         {
@@ -44,7 +30,29 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
                     CreateStepInParticle();
                 }
             });
+        }
 
+        public void OnDrawGizmos()
+        {
+            var obj = reactableObject;
+            if (obj != null)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawLine(transform.position, obj.transform.position);
+            }
+        }
+
+        public override LevelObjectAsset Serialize(LevelAsset parent)
+        {
+            var instance = base.Serialize(parent);
+            instance.AddData(parent, StringDataAsset.Create("reactableObject", reactableObject.name));
+            return instance;
+        }
+
+        public override void Deserialize(LevelObjectAsset asset)
+        {
+            base.Deserialize(asset);
+            reactableObject = GameObject.Find(asset.GetValue("reactableObject") as string).GetComponent<LevelObject>();
         }
 
         private void CreateStepInParticle()
@@ -53,16 +61,6 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             var instance2 = Instantiate(buttonPressedParticlePrefab[1]);
             instance1.transform.position = transform.position;
             instance2.transform.position = transform.position;
-        }
-
-        public void OnDrawGizmos()
-        {
-            var obj = reactableObject as LevelObject;
-            if (obj != null)
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawLine(transform.position, obj.transform.position);
-            }
         }
     }
 }

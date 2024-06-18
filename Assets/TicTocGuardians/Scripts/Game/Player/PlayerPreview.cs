@@ -1,5 +1,3 @@
-using System;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace TicTocGuardians.Scripts.Game.Player
@@ -13,11 +11,12 @@ namespace TicTocGuardians.Scripts.Game.Player
             Run
         }
 
-        private Animator _animator;
-        public State defaultState;
         private static readonly int Pick1 = Animator.StringToHash("Pick");
         private static readonly int Idle = Animator.StringToHash("Idle");
         private static readonly int Run1 = Animator.StringToHash("Run");
+        public State defaultState;
+
+        private Animator _animator;
 
         public void Awake()
         {
@@ -57,9 +56,8 @@ namespace TicTocGuardians.Scripts.Game.Player
         public void Pick()
         {
             _animator.SetBool(Idle, false);
-            _animator.SetBool(Pick1,true);
+            _animator.SetBool(Pick1, true);
             _animator.SetBool(Run1, false);
         }
-
     }
 }

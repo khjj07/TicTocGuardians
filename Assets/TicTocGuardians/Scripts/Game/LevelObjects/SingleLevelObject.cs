@@ -1,30 +1,29 @@
-﻿using Default.Scripts.Util;
+﻿using System;
+using UnityEngine;
 
 namespace TicTocGuardians.Scripts.Game.LevelObjects
 {
     public class SingleLevelObject<T> : LevelObject where T : LevelObject
     {
+        private static T _instance;
+
         public static T Instance
         {
             get
             {
                 if (_instance == null)
-                {
                     try
                     {
-                        _instance = (T)FindObjectOfType<T>();
+                        _instance = FindObjectOfType<T>();
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
-                        UnityEngine.Debug.LogError(e.StackTrace);
+                        Debug.LogError(e.StackTrace);
                         return null;
                     }
-                }
 
                 return _instance;
             }
         }
-
-        private static T _instance;
     }
 }

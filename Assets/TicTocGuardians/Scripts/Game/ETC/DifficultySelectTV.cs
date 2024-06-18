@@ -24,11 +24,12 @@ namespace TicTocGuardians.Scripts.Game.ETC
         [SerializeField] private Material hardScreen;
         [SerializeField] private Material glitchScreen;
 
-        private Subject<State> _stateSubject = new Subject<State>();
-        void Start()
+        private readonly Subject<State> _stateSubject = new();
+
+        private void Start()
         {
             model.DOLocalMoveY(endPoint.localPosition.y, 1.0f);
-        
+
             _stateSubject.Where(x => x == State.Select)
                 .Subscribe(_ => screen.sharedMaterial = selectScreen);
             _stateSubject.Where(x => x == State.Normal)

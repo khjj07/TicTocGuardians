@@ -2,7 +2,7 @@
 {
     public interface IMovable
     {
-        public abstract void MoveX(float direction);
-        public abstract void MoveZ(float direction);
+        public void MoveX(float direction);
+        public void MoveZ(float direction);
     }
 }

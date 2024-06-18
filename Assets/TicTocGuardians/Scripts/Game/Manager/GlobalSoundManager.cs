@@ -10,23 +10,24 @@ namespace TicTocGuardians.Scripts.Game.Manager
 {
     public class GlobalSoundManager : Singleton<GlobalSoundManager>
     {
+#if UNITY_EDITOR
         [SerializeField] private DefaultAsset sfxFolder;
         [SerializeField] private DefaultAsset bgmFolder;
+#endif
         [SerializeField] private AudioSource sfxAudioSource;
         [SerializeField] private AudioSource bgmAudioSource;
-        private Dictionary<string,AudioClip> _bgmDictionary = new Dictionary<string, AudioClip>();
-        private Dictionary<string, AudioClip> _sfxDictionary = new Dictionary<string, AudioClip>();
+        private readonly Dictionary<string, AudioClip> _bgmDictionary = new();
+        private readonly Dictionary<string, AudioClip> _sfxDictionary = new();
 
         public void Awake()
         {
-            foreach (var bgm in bgmFolder.LoadAllObjectsInFolder<AudioClip>())
-            {
-                _bgmDictionary.Add(bgm.name, bgm);
-            }
-            foreach (var bgm in sfxFolder.LoadAllObjectsInFolder<AudioClip>())
-            {
-                _sfxDictionary.Add(bgm.name, bgm);
-            }
+#if UNITY_EDITOR
+            foreach (var bgm in bgmFolder.LoadAllObjectsInFolder<AudioClip>()) _bgmDictionary.Add(bgm.name, bgm);
+            foreach (var bgm in sfxFolder.LoadAllObjectsInFolder<AudioClip>()) _sfxDictionary.Add(bgm.name, bgm);
+#else
+              foreach (var bgm in Resources.LoadAll<AudioClip>("Sounds/BGM")) _bgmDictionary.Add(bgm.name, bgm);
+            foreach (var bgm in Resources.LoadAll<AudioClip>("Sounds/SFX")) _sfxDictionary.Add(bgm.name, bgm);
+#endif
         }
 
         public void PlayBGM(string name)
@@ -34,12 +35,13 @@ namespace TicTocGuardians.Scripts.Game.Manager
             bgmAudioSource.clip = _bgmDictionary[name];
             bgmAudioSource.Play();
         }
+
         public void StopBGM()
         {
             bgmAudioSource.Stop();
         }
 
-        public void PlaySFX(string name, float delay=0)
+        public void PlaySFX(string name, float delay = 0)
         {
             Observable.Timer(TimeSpan.FromSeconds(delay)).Subscribe(_ =>
             {
