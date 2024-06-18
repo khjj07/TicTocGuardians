@@ -43,9 +43,8 @@ namespace Default.Scripts.Util
                         var guid = AssetDatabase.FindAssets("t:" + type);
                         var path = AssetDatabase.GUIDToAssetPath(guid[0]);
                         _instance = (T)AssetDatabase.LoadAssetAtPath(path, typeof(T));
-                        _instance = (T)Resources.Load<T>("Global LevelObject Setting");
 #else
-
+                        _instance = (T)Resources.Load<T>("Global LevelObject Setting");
 #endif
 
                     }
