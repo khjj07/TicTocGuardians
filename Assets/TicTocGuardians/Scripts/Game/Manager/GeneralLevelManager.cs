@@ -126,6 +126,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 AddPlayerOrder(orderingUI.selectButtons[i].type);
                 orderingUI.selectButtons[i].Select();
                 if (_playerOrder.Count >= 3) orderingUI.SubmitAvailable();
+
             }
             else
             {
@@ -139,9 +140,18 @@ namespace TicTocGuardians.Scripts.Game.Manager
             }
 
             foreach (var button in orderingUI.selectButtons)
+            {
                 for (var j = 0; j < _playerOrder.Count; j++)
+                {
                     if (button.type == _playerOrder[j])
                         button.order.sprite = orderingUI.orderSprites[j];
+                    
+                    {
+                      
+                    }
+                }
+            }
+                 
         }
 
         private void CancelOrder()

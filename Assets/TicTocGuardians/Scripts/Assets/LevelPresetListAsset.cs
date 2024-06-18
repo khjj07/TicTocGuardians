@@ -11,7 +11,9 @@ namespace TicTocGuardians.Scripts.Assets
 
         public LevelPreset GetLevel(int index)
         {
-            return presets[index];
+            if(index<presets.Count) 
+                return presets[index];
+            return null;
         }
     }
 }
