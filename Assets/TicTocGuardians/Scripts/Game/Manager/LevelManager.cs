@@ -52,14 +52,13 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             GameManager.Instance.ActiveLevel(this);
             GlobalLoadingManager.Instance.ActiveScene();
-            GlobalSoundManager.Instance.PlayBGM("BGM_Ingame");
             InitializeIngameUI();
             InitializeSuccessUI();
             InitializeFailUI();
             InitializePauseUI();
             CreateShortCutStream();
-
             playCount = 0;
+            GlobalSoundManager.Instance.PlayBGM("BGM_Ingame");
         }
 
         public void Update()
