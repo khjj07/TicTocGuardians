@@ -1,5 +1,6 @@
 ﻿using System;
 using TicTocGuardians.Scripts.Assets.LevelAsset;
+using UnityEngine;
 
 namespace TicTocGuardians.Scripts.Game.ETC
 {
@@ -8,5 +9,7 @@ namespace TicTocGuardians.Scripts.Game.ETC
     {
         public string name;
         public LevelAsset levelAsset;
+        public Sprite previewImage;
+        public string explain;
     }
 }

@@ -342,22 +342,23 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             var dimensionEnterStream = player.OnTriggerEnterAsObservable()
                 .Where(x => x.CompareTag("Dimension"))
-                .Select(x => x.GetComponent<DimensionLevelObject>());
+                .Select(x => x.GetComponent<DimensionLevelObject>())
+                .Where(x=> !repairingDimensions.Contains(x));
 
             var dimensionExitStream = player.OnTriggerExitAsObservable()
                 .Where(x => x.CompareTag("Dimension"))
                 .Select(x => x.GetComponent<DimensionLevelObject>());
-
+                
             dimensionEnterStream.Subscribe(x=>
             {
                 AddRepairDimension(x);
+                dimensionExitStream.First().Subscribe(x =>
+                {
+                    RemoveRepairDimension(x);
+                }).AddTo(player.gameObject);
             }).AddTo(player.gameObject);
 
-            dimensionExitStream.Subscribe(x=>
-            {
-                RemoveRepairDimension(x);
-            }).AddTo(player.gameObject);
-
+            
             player.UpdateAsObservable().Where(_=>_isEnd && player.repairTarget!=null).Subscribe(x =>
             {
                 player.Act(new Action(Action.State.Repair));

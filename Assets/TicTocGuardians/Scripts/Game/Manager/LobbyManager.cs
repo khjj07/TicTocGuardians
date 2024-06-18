@@ -60,7 +60,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 cameraLevelObject.Move(rightCameraPoint.position, 1.0f);
                  difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Normal);
                 normalSelectUI.transform.DOMove(normalSelectUIEndPoint.position, 1.0f);
-                EventSystem.current.SetSelectedGameObject(normalSelectUI.frame.GetChild(0).gameObject);
                 normalSelectUI.gameObject.SetActive(true);
             });
 
@@ -80,7 +79,6 @@ namespace TicTocGuardians.Scripts.Game.Manager
                 cameraLevelObject.Move(leftCameraPoint.position, 1.0f);
                 difficultySelectTV.ChangeStateWithGlitch(DifficultySelectTV.State.Hard);
                 hardSelectUI.transform.DOMove(hardSelectUIEndPoint.position, 1.0f);
-                EventSystem.current.SetSelectedGameObject(hardSelectUI.frame.GetChild(0).gameObject);
                 hardSelectUI.gameObject.SetActive(true);
             });
 

@@ -129,7 +129,7 @@ MonoBehaviour:
   speedMax: 1.5
   acceleration: 0.5
   footOrigin: {fileID: 2281571450007289464}
-  checkGroundDistance: 1
+  checkGroundDistance: 1.2
   repairImage: {fileID: 7986634692866613149}
   repairTarget: {fileID: 0}
   _movable: 1

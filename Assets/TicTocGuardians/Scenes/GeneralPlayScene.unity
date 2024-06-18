@@ -403,6 +403,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 873620791}
+    - target: {fileID: 2482792109769579194, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 3827155720186023020, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -459,14 +463,26 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 873620791}
+    - target: {fileID: 6844072732727398253, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 6844072732778617688, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 873620791}
+    - target: {fileID: 6844072732778617688, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 6844072732866001097, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 873620791}
+    - target: {fileID: 6844072732866001097, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 6844072732929623363, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -599,6 +615,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 873620791}
+    - target: {fileID: 6844072733887396096, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 6844072734060688845, guid: 97fb268aeb2811243bc331c08b601d8a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
