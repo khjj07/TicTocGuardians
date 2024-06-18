@@ -13,17 +13,17 @@ MonoBehaviour:
   m_Name: NormalAsset
   m_EditorClassIdentifier: 
   presets:
-  - name: " 01. \uC694\uC6D01 : \uC7AC\uBE60\uB978 \uD1A0\uB07C \uB8E8\uB8E8"
+  - name: " 01. \uC694\uC6D01: \uC7AC\uBE60\uB978 \uD1A0\uB07C \uB8E8\uB8E8"
     levelAsset: {fileID: 11400000, guid: 662a5eef5c0792142b6f215e31cb55cf, type: 2}
     previewImage: {fileID: 21300000, guid: fd1f36737cae73743ab19e3f3d81bfc3, type: 3}
     explain: " \uC694\uC6D0\uB4E4\uC911 \uAC00\uC7A5 \uBE60\uB974\uAC8C \uB2EC\uB9B4
       \uC218 \uC788\uB294 \uB8E8\uB8E8 \uC694\uC6D0\uACFC \uD568\uAED8 \uD6C8\uB828\uD558\uAE30"
-  - name: " 02. \uC694\uC6D02 : \uB0A0\uB78D\uD55C \uACE0\uC591\uC774 \uB8E8\uC2DC"
+  - name: " 02. \uC694\uC6D02: \uB0A0\uB835\uD55C \uACE0\uC591\uC774 \uB8E8\uC2DC"
     levelAsset: {fileID: 11400000, guid: c0fbc0facd63ab345a37289d8d8e5c92, type: 2}
     previewImage: {fileID: 21300000, guid: 49b80ac527d18864cbed337e09c79059, type: 3}
     explain: " \uC694\uC6D0\uB4E4\uC911 \uAC00\uC7A5 \uB192\uC774 \uB6F8 \uC218 \uC788\uB294      
       \uCC28\uCC28 \uC694\uC6D0\uACFC \uD568\uAED8 \uD6C8\uB828\uD558\uAE30"
-  - name: " 03. \uC694\uC6D03 : \uB611\uB611\uD55C \uBE44\uBC84 \uD1A0\uB9AC"
+  - name: " 03. \uC694\uC6D03: \uB611\uB611\uD55C \uBE44\uBC84 \uD1A0\uB9AC"
     levelAsset: {fileID: 11400000, guid: c029d02bfbc2897469d74bc9c86cff91, type: 2}
     previewImage: {fileID: 21300000, guid: e22c13ba95cd3cb48965b737499b8396, type: 3}
     explain: " \uBC15\uC2A4\uB97C \uB9CC\uB4E4 \uC218 \uC788\uB294 \uD2B9\uBCC4\uD55C

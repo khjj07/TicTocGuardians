@@ -804,7 +804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2fb3641c8688774ba62f9b16915db1c, type: 3}
   m_Name: Normal03_Tutorial
   m_EditorClassIdentifier: 
-  timeLimit: 30
+  timeLimit: 25
   objects:
   - name: Dimension
     position: {x: 11.15, y: 13.3, z: -15.32}

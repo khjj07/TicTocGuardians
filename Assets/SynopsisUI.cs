@@ -29,7 +29,7 @@ public class SynopsisUI : MonoBehaviour
             currentIndex++;
             image.sprite = imageSprites[currentIndex];
             description.sprite = descriptionSprites[currentIndex];
-            description.SetNativeSize();
+            // description.SetNativeSize();
             page.SetText((currentIndex + 1) + "/4");
             if (currentIndex == 3)
                 transform.DOScale(0, 1f).SetDelay(2.0f).OnComplete(() =>
@@ -47,7 +47,7 @@ public class SynopsisUI : MonoBehaviour
             currentIndex--;
             image.sprite = imageSprites[currentIndex];
             description.sprite = descriptionSprites[currentIndex];
-            description.SetNativeSize();
+            // description.SetNativeSize();
             page.SetText((currentIndex + 1) + "/4");
         }
     }
