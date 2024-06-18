@@ -15,12 +15,12 @@ namespace Default.Scripts.Util
 
         public static IObservable<float> CreateGetAxisStream(string axis)
         {
-            return Instance.UpdateAsObservable().Select(_ => Input.GetAxis(axis));
+            return Instance.FixedUpdateAsObservable().Select(_ => Input.GetAxis(axis));
         }
 
         public static IObservable<float> CreateGetAxisStreamOptimize(string axis)
         {
-            return Instance.UpdateAsObservable().Select(_ => Input.GetAxis(axis)).Where(x => x != 0);
+            return Instance.FixedUpdateAsObservable().Select(_ => Input.GetAxis(axis)).Where(x => x != 0);
         }
 
         public static IObservable<bool> CreateGetKeyStream(KeyCode key)
