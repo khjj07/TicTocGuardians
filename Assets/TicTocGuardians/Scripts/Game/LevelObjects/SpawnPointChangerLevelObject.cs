@@ -30,7 +30,7 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
         {
             GetComponentInChildren<MeshCollider>().OnCollisionEnterAsObservable()
                 .Where(collision => collision.contacts[0].normal.y < -0.7)
-                .First()
+                .Take(1)
                 .Subscribe(_ => ChangeSpawnPoint()).AddTo(gameObject);
         }
 
@@ -42,13 +42,19 @@ namespace TicTocGuardians.Scripts.Game.LevelObjects
             var instance2 = Instantiate(spawnPointChangeParticlePrefab[1]);
             instance1.transform.position = transform.position;
             instance2.transform.position = transform.position;
-            this.UpdateAsObservable().Where(_ => playCount > LevelManager.Instance.playCount).First().Subscribe(_ =>
+            this.UpdateAsObservable().Where(_ => playCount > LevelManager.Instance.playCount).Take(1).Subscribe(_ =>
             {
-                for (var i = manager._currentPlayPhaseIndex + 1; i < 3; i++) manager.currentSpawnPointIndices[i]--;
+                for (var i = manager._currentPlayPhaseIndex + 1; i < 3; i++)
+                {
+                    manager.currentSpawnPointIndices[i]--;
+                }
                 CreateChangeStream();
             }).AddTo(gameObject);
             playCount = LevelManager.Instance.playCount;
-            for (var i = manager._currentPlayPhaseIndex + 1; i < 3; i++) manager.currentSpawnPointIndices[i]++;
+            for (var i = manager._currentPlayPhaseIndex + 1; i < 3; i++)
+            {
+                manager.currentSpawnPointIndices[i]++;
+            }
         }
     }
 }

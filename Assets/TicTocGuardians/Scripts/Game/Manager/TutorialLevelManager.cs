@@ -40,7 +40,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public void CreateReadyPhaseStream()
         {
-            this.UpdateAsObservable().Where(_ => Input.anyKey).First().Subscribe(_ => ChangeState(Phase.Play))
+            this.UpdateAsObservable().Where(_ => Input.anyKey).Take(1).Subscribe(_ => ChangeState(Phase.Play))
                 .AddTo(gameObject);
         }
 

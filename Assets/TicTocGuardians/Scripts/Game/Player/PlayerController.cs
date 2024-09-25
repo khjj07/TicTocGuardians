@@ -38,7 +38,7 @@ namespace TicTocGuardians.Scripts.Game.Player
         {
             var beaver = _player as Beaver;
             var s1 = GlobalInputBinder.CreateGetKeyDownStream(KeyCode.B)
-                .Where(_ => { return beaver.IsBoxCreatable(); }).First()
+                .Where(_ => { return beaver.IsBoxCreatable(); }).Take(1)
                 .Subscribe(_ => { beaver.Act(new Action(Action.State.Special)); }).AddTo(gameObject);
 
             var inputStream = Observable.Zip(GlobalInputBinder.CreateGetAxisStream("Horizontal"),

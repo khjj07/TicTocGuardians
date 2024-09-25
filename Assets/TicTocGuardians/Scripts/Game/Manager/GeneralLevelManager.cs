@@ -29,6 +29,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
 
         public int _currentPlayPhaseIndex;
         public List<PlayerType> _playerOrder = new();
+        public int[] currentSpawnPointIndices = new int[3];
         private readonly PlayerCloneData[] _cloneData = new PlayerCloneData[3];
         private readonly List<PlayerClone> _currentClones = new();
 
@@ -78,7 +79,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void OnReadyPhaseActive()
         {
             base.OnReadyPhaseActive();
-            this.UpdateAsObservable().Where(_ => Input.anyKey).First()
+            this.UpdateAsObservable().Where(_ => Input.anyKey).Take(1)
                 .Subscribe(_ => ChangeState(Phase.Ordering)).AddTo(gameObject);
         }
 
@@ -238,7 +239,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public override void InitializeIngameUI()
         {
             base.InitializeIngameUI();
-            ingameUI.changeOrderButton.onClick.AddListener(() => { ChangeOrder(); });
+            ingameUI.changeOrderButton.onClick.AddListener(ChangeOrder);
 
             ingameUI.UpdateAsObservable().Select(_ => _playerOrder)
                 .Subscribe(order =>
@@ -258,6 +259,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             PlayPhaseForceEnd();
             ChangeState(Phase.Ordering);
+            currentSpawnPointIndices= new int[3];
             playCount = 0;
         }
 

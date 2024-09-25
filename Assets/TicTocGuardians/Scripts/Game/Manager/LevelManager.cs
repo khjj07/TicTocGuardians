@@ -41,7 +41,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         public bool _isEnd;
 
         public List<SpawnPointLevelObject> spawnPoints = new();
-        public int[] currentSpawnPointIndices = new int[3];
+        
         public int playCount;
         public IDisposable movementWaitHandler;
         public IDisposable pauseStreamHandler;
@@ -212,7 +212,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             movementWaitHandler = Observable.Amb(
                 GlobalInputBinder.CreateGetAxisStreamOptimize("Horizontal").Select(x => Math.Abs(x) != 0),
                 GlobalInputBinder.CreateGetAxisStreamOptimize("Vertical").Select(x => Math.Abs(x) != 0),
-                GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space).Select(_ => true)).First().Subscribe(_ =>
+                GlobalInputBinder.CreateGetKeyDownStream(KeyCode.Space).Select(_ => true)).Take(1).Subscribe(_ =>
             {
                 isPlaying = true;
                 playCount++;
@@ -334,7 +334,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
             dimensionEnterStream.Subscribe(x =>
             {
                 AddRepairDimension(x);
-                dimensionExitStream.First().Subscribe(x => { RemoveRepairDimension(x); }).AddTo(player.gameObject);
+                dimensionExitStream.Take(1).Subscribe(x => { RemoveRepairDimension(x); }).AddTo(player.gameObject);
             }).AddTo(player.gameObject);
 
 

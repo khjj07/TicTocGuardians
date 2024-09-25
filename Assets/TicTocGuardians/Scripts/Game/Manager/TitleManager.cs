@@ -32,7 +32,7 @@ namespace TicTocGuardians.Scripts.Game.Manager
         {
             tapToStart.DOScale(Vector3.one, 1f).SetEase(Ease.OutBounce).OnComplete(() =>
             {
-                this.UpdateAsObservable().Where(_ => Input.anyKey).First()
+                this.UpdateAsObservable().Where(_ => Input.anyKey).Take(1)
                     .Subscribe(_ => SceneManager.LoadSceneAsync("LobbyScene")).AddTo(gameObject);
             });
         }
